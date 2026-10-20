@@ -1,0 +1,41 @@
+<section class="hero" aria-labelledby="titulo-catalogo">
+  <div class="hero-copy">
+    <span class="eyebrow">TU PRÓXIMO PASO EMPIEZA AQUÍ</span>
+    <h1 id="titulo-catalogo">Una buena entrevista<br>empieza con preparación.</h1>
+    <p>Explora un puesto y conoce sus preguntas. Encuentra las experiencias y las ideas que quieres compartir.</p>
+    <a class="text-link" routerLink="/puestos" fragment="catalogo">Explorar puestos <span aria-hidden="true">↓</span></a>
+  </div>
+  <aside class="hero-note" aria-label="Formato de la práctica">
+    <span class="note-icon" aria-hidden="true">“</span>
+    <h2>Tu experiencia tiene algo que contar.</h2>
+    <p>Los proyectos de clase, las actividades personales y el trabajo en equipo también son un punto de partida.</p>
+    <div class="format-facts"><span><strong>3</strong> preguntas por puesto</span><span><strong>60 s</strong> por respuesta</span></div>
+  </aside>
+</section>
+
+<section id="catalogo" class="catalogue" aria-labelledby="titulo-puestos" [attr.aria-busy]="estado().cargando">
+  <div class="section-heading"><div><span class="eyebrow">ELIGE TU ENFOQUE</span><h2 id="titulo-puestos">¿Para qué puesto quieres prepararte?</h2></div><span class="pill">Catálogo de práctica</span></div>
+  @if (estado().cargando) {
+    <div class="status-panel" role="status">Cargando los puestos disponibles…</div>
+  } @else if (estado().error) {
+    <div class="status-panel error" role="alert"><h3>No pudimos cargar los puestos</h3><p>{{ estado().error }}</p><button type="button" class="button" (click)="recargar.next()">Volver a intentar</button></div>
+  } @else if (estado().puestos.length === 0) {
+    <div class="status-panel" role="status">Aún no hay puestos disponibles. Vuelve a consultar más adelante.</div>
+  } @else {
+    <div class="cards">
+      @for (puesto of estado().puestos; track puesto.id_puesto; let indice = $index) {
+        <article class="card">
+          <div class="card-top"><span class="card-number" aria-hidden="true">0{{ indice + 1 }}</span><span class="tag">{{ puesto.nivel_experiencia }}</span></div>
+          <p class="card-area">{{ puesto.area }}</p><h3>{{ puesto.nombre_puesto }}</h3><p class="card-description">{{ puesto.descripcion }}</p>
+          <a class="button" [routerLink]="['/puestos', puesto.id_puesto, 'preguntas']" [attr.aria-label]="'Ver preguntas de ' + puesto.nombre_puesto">Ver preguntas <span aria-hidden="true">↗</span></a>
+        </article>
+      }
+    </div>
+  }
+</section>
+
+<section id="como-funciona" class="how-it-works" aria-labelledby="titulo-formato">
+  <div><span class="eyebrow">ANTES DE EMPEZAR</span><h2 id="titulo-formato">Conoce el formato</h2><p>Una preparación breve, enfocada en lo que puedes aportar.</p></div>
+  <ol><li><strong>Explora un puesto.</strong> Revisa las competencias que se evalúan.</li><li><strong>Lee sus tres preguntas.</strong> Piensa en ejemplos concretos de tu experiencia.</li><li><strong>Organiza tus ideas.</strong> Cada respuesta tendrá un máximo de 60 segundos.</li></ol>
+</section>
+<p class="availability">Por ahora puedes consultar el catálogo y las preguntas. La grabación y la evaluación estarán disponibles en una próxima etapa.</p>

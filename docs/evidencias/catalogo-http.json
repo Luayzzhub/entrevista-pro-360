@@ -1,0 +1,128 @@
+[
+  {
+    "puesto": {
+      "id_puesto": 1,
+      "nombre_puesto": "Practicante de Desarrollo TI",
+      "area": "Tecnología de la información",
+      "descripcion": "Práctica orientada al desarrollo de software y la resolución de problemas técnicos.",
+      "nivel_experiencia": "Practicante",
+      "activo": true
+    },
+    "preguntas": [
+      {
+        "id_pregunta": 1,
+        "id_puesto": 1,
+        "enunciado": "Preséntate brevemente y explica qué conocimientos o proyectos de tu formación puedes aportar como practicante de desarrollo.",
+        "competencia_evaluada": "Presentación y pertinencia profesional",
+        "orden": 1,
+        "tiempo_limite_seg": 60,
+        "activo": true,
+        "aplica_star": false
+      },
+      {
+        "id_pregunta": 2,
+        "id_puesto": 1,
+        "enunciado": "Describe un problema que hayas encontrado en un proyecto académico o personal de software. Explica tu responsabilidad, qué hiciste y cuál fue el resultado o aprendizaje.",
+        "competencia_evaluada": "Resolución de problemas y responsabilidad",
+        "orden": 2,
+        "tiempo_limite_seg": 60,
+        "activo": true,
+        "aplica_star": true
+      },
+      {
+        "id_pregunta": 3,
+        "id_puesto": 1,
+        "enunciado": "Si una funcionalidad deja de funcionar después de un cambio, ¿cómo investigarías la causa y comprobarías que tu corrección funciona?",
+        "competencia_evaluada": "Razonamiento técnico y verificación",
+        "orden": 3,
+        "tiempo_limite_seg": 60,
+        "activo": true,
+        "aplica_star": false
+      }
+    ]
+  },
+  {
+    "puesto": {
+      "id_puesto": 2,
+      "nombre_puesto": "Soporte Técnico",
+      "area": "Soporte y servicios TI",
+      "descripcion": "Práctica de diagnóstico de incidencias y comunicación de soluciones al usuario.",
+      "nivel_experiencia": "Inicial",
+      "activo": true
+    },
+    "preguntas": [
+      {
+        "id_pregunta": 4,
+        "id_puesto": 2,
+        "enunciado": "Un usuario indica que su computadora no tiene acceso a Internet. ¿Qué comprobaciones iniciales realizarías y en qué orden?",
+        "competencia_evaluada": "Diagnóstico técnico organizado",
+        "orden": 1,
+        "tiempo_limite_seg": 60,
+        "activo": true,
+        "aplica_star": false
+      },
+      {
+        "id_pregunta": 5,
+        "id_puesto": 2,
+        "enunciado": "Cuenta una ocasión en la que ayudaste a alguien a resolver una dificultad tecnológica, en estudios, trabajo o vida cotidiana. Explica qué hiciste y qué resultado obtuviste.",
+        "competencia_evaluada": "Resolución de incidencias y orientación al usuario",
+        "orden": 2,
+        "tiempo_limite_seg": 60,
+        "activo": true,
+        "aplica_star": true
+      },
+      {
+        "id_pregunta": 6,
+        "id_puesto": 2,
+        "enunciado": "¿Cómo explicarías a una persona sin conocimientos técnicos para qué sirve una copia de seguridad y cómo comprobarías que entendió la explicación?",
+        "competencia_evaluada": "Comunicación técnica comprensible",
+        "orden": 3,
+        "tiempo_limite_seg": 60,
+        "activo": true,
+        "aplica_star": false
+      }
+    ]
+  },
+  {
+    "puesto": {
+      "id_puesto": 3,
+      "nombre_puesto": "Atención al Cliente",
+      "area": "Servicio al cliente",
+      "descripcion": "Práctica de escucha, atención de solicitudes y manejo de reclamos.",
+      "nivel_experiencia": "Inicial",
+      "activo": true
+    },
+    "preguntas": [
+      {
+        "id_pregunta": 7,
+        "id_puesto": 3,
+        "enunciado": "¿Qué acciones concretas consideras importantes para brindar una buena atención y comprobar que entendiste la necesidad de una persona?",
+        "competencia_evaluada": "Escucha y orientación al cliente",
+        "orden": 1,
+        "tiempo_limite_seg": 60,
+        "activo": true,
+        "aplica_star": false
+      },
+      {
+        "id_pregunta": 8,
+        "id_puesto": 3,
+        "enunciado": "Describe una ocasión en la que atendiste una solicitud o desacuerdo de otra persona, en estudios, trabajo o una actividad grupal. Explica tu responsabilidad, cómo actuaste y el resultado.",
+        "competencia_evaluada": "Manejo de situaciones y responsabilidad",
+        "orden": 2,
+        "tiempo_limite_seg": 60,
+        "activo": true,
+        "aplica_star": true
+      },
+      {
+        "id_pregunta": 9,
+        "id_puesto": 3,
+        "enunciado": "Un cliente está molesto por una demora que no puedes solucionar de inmediato. ¿Cómo lo atenderías y qué alternativa concreta le ofrecerías?",
+        "competencia_evaluada": "Manejo de reclamos y comunicación",
+        "orden": 3,
+        "tiempo_limite_seg": 60,
+        "activo": true,
+        "aplica_star": false
+      }
+    ]
+  }
+]

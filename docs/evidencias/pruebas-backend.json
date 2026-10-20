@@ -1,0 +1,86 @@
+{
+  "fecha": "2026-10-20",
+  "zona_horaria": "America/Lima",
+  "mysql": {
+    "version": "8.0.44",
+    "tests": 17,
+    "fallos": 0,
+    "errores": 0,
+    "omitidas": 0,
+    "suites": [
+      {
+        "suite": "pe.utp.entrevistapro360.architecture.LayerDependenciesTest",
+        "tests": 1,
+        "fallos": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "casos": [
+          "dominioYAplicacionNoDependenDeFrameworksNiCapasExternas"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.domain.PuestoPreguntaTest",
+        "tests": 6,
+        "fallos": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "casos": [
+          "rechazaPreguntaInactivaODeOtroPuesto",
+          "rechazaCantidadIncompletaYSobrante",
+          "rechazaOrdenDuplicado",
+          "aceptaExactamenteTresPreguntasActivasSinExigirElOrdenDeEntrada",
+          "rechazaPuestoInactivoListaNulaYElementoNulo",
+          "rechazaOrdenFueraDelMvpYDuracionDistintaDeSesenta"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.infrastructure.MySqlSchemaIntegrationTest",
+        "tests": 2,
+        "fallos": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "casos": [
+          "tiposJsonYAccionesReferencialesSeConservanEnMySql",
+          "ochoTablasSesentaYOchoColumnasEngineYCollationExactos"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.presentation.CatalogoIntegrationTest",
+        "tests": 8,
+        "fallos": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "casos": [
+          "rutasPrivadasRequierenAutenticacionConErrorJson",
+          "rechazaIdsMalformadosNegativosCeroYDesbordados",
+          "rutasPublicasNoImplementadasYMetodosNoPermitidosConservanErrorEstandar",
+          "puestoInactivoDevuelve404AunqueConservePreguntas",
+          "listaSoloLosTresPuestosActivosSinAutenticacion",
+          "cadaPuestoTieneSusTresPreguntasEnOrdenConStarSoloEnLaSegunda",
+          "puestoInexistenteDevuelve404YContratoExacto",
+          "preguntaInactivaImpideServirUnCatalogoIncompleto"
+        ]
+      }
+    ]
+  },
+  "h2": {
+    "version": "2.3.232",
+    "tests": 17,
+    "ejecutadas": 15,
+    "fallos": 0,
+    "errores": 0,
+    "omitidas_solo_mysql": 2
+  },
+  "comandos": [
+    "mvn test",
+    "mvn test -Dspring.profiles.active=mysql",
+    "mvn package -DskipTests",
+    "npm run build"
+  ],
+  "esquema_mysql": {
+    "tablas_negocio": 8,
+    "columnas_negocio": 68,
+    "claves_foraneas": 8,
+    "migraciones_flyway": 2
+  }
+}
