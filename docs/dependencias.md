@@ -1,4 +1,4 @@
-# Dependencias del Incremento 1
+# Dependencias hasta el Incremento 2
 
 Las versiones del backend provienen de `backend/pom.xml` y del BOM `spring-boot-dependencies:3.5.7` resuelto por Maven. Las del frontend están fijadas sin rangos en `frontend/package.json` y resueltas en `frontend/package-lock.json`. No se atribuye uso funcional a dependencias reservadas.
 
@@ -11,9 +11,9 @@ Las versiones del backend provienen de `backend/pom.xml` y del BOM `spring-boot-
 | Spring Boot parent / Maven plugin | Composición/build | 3.5.7 | Autoconfiguración y JAR ejecutable | `EntrevistaPro360Application.java`, `pom.xml` |
 | `spring-boot-starter-web` | Presentación | 3.5.7; Spring MVC/Web 6.2.12 | HTTP REST, despacho de solicitudes y JSON | `CatalogoController`, `GlobalExceptionHandler` |
 | `spring-boot-starter-validation` | Presentación | 3.5.7; Hibernate Validator 8.0.3.Final | Validar el ID positivo | `CatalogoController.preguntas` con `@Positive` |
-| `spring-boot-starter-data-jpa` | Infraestructura | 3.5.7; Spring Data JPA 3.5.5; Hibernate ORM 6.6.33.Final | Consultas derivadas, mapeo SQL y transacciones de lectura | `PuestoJpaRepository`, `PreguntaJpaRepository`, `CatalogoJpaAdapter`, entidades JPA |
-| `spring-boot-starter-security` | Infraestructura/presentación | 3.5.7; Spring Security 6.5.6 | Permitir catálogo, exigir autenticación en rutas privadas y responder 401/403 | `SecurityConfig`, `SecurityExceptionHandler` |
-| `spring-security-oauth2-jose` | Identidad futura | 6.5.6, gestionada por Boot | Soporte JWT estándar solicitado | Declarada en `pom.xml`; emisión/verificación JWT **pendiente**, sin cliente ni decoder activo |
+| `spring-boot-starter-data-jpa` | Infraestructura | 3.5.7; Spring Data JPA 3.5.5; Hibernate ORM 6.6.33.Final | Catálogo, identidad, unicidad de correo y actualización transaccional de perfil | `CatalogoJpaAdapter`, `UsuarioJpaAdapter`, tres entidades/repositorios JPA |
+| `spring-boot-starter-security` | Infraestructura/presentación | 3.5.7; Spring Security 6.5.6 | Cadena stateless, autenticación JWT y hash BCrypt con costo 12 por defecto | `SecurityConfig`, `JwtAuthenticationFilter`, `BCryptPasswordHasher`, `SecurityExceptionHandler` |
+| `spring-security-oauth2-jose` | Infraestructura / identidad | 6.5.6, gestionada por Boot | Emitir y verificar JWT HS256, issuer y vigencia exacta | `IdentidadConfig` (`NimbusJwtEncoder`, `NimbusJwtDecoder`), `JwtTokenProvider`, `JwtAuthenticationFilter` |
 | `mysql-connector-j` | Infraestructura, runtime | 9.4.0, gestionada por Boot | JDBC hacia MySQL | `application.yml`, datasource y `CatalogoJpaAdapter`; probado con servidor 8.0.44 |
 | `flyway-core` | Infraestructura | 11.7.2, gestionada por Boot | Historial, validación y aplicación de migraciones | `db/migration/V1__esquema_inicial.sql`, `V2__catalogo_semilla.sql`, `application.yml` |
 | `flyway-mysql` | Infraestructura | 11.7.2, gestionada por Boot | Soporte específico del motor MySQL para Flyway | Mismas migraciones al iniciar con MySQL |
@@ -31,7 +31,8 @@ Los starters declaran su versión mediante el parent. Las transitivas listadas e
 | --- | --- | --- | --- | --- |
 | Node.js / npm | Construcción | Node 24.19.0; npm 11.17.0 utilizados | Instalación y ejecución de Angular CLI | `package.json`, `package-lock.json` |
 | `@angular/core` | Aplicación | 21.2.0 | Componentes standalone, inyección y señales sin Zone.js | `app.config.ts`, `app.component.ts`, componentes de catálogo/preguntas |
-| `@angular/common` | Core HTTP | 21.2.0 | `HttpClient`, proveedor HTTP e interceptor | `core/api-client.ts`, `core/api-error.interceptor.ts`, `app.config.ts` |
+| `@angular/common` | Core HTTP | 21.2.0 | `HttpClient`, proveedor HTTP e interceptores | `core/api-client.ts`, `auth.service.ts`, `auth.interceptor.ts`, `api-error.interceptor.ts`, `app.config.ts` |
+| `@angular/forms` | Identidad y perfil | 21.2.0 | Formularios reactivos, validadores y mensajes por campo | `login.component.ts`, `registro.component.ts`, `perfil.component.ts`, `shared/usuario.validators.ts` |
 | `@angular/compiler` | Compilación Angular | 21.2.0 | Compilación de plantillas | Plantillas de componentes, procesadas por CLI/compiler-cli |
 | `@angular/platform-browser` | Arranque | 21.2.0 | Bootstrap de aplicación web | `src/main.ts` |
 | `@angular/router` | Navegación | 21.2.0 | Rutas diferidas, parámetros, enlaces y títulos | `app.routes.ts`, `preguntas.component.ts`, `public-header.component.ts` |
@@ -43,7 +44,7 @@ Los starters declaran su versión mediante el parent. Las transitivas listadas e
 | `typescript` | Build | 5.9.3 | Comprobación estricta de tipos y compilación | `tsconfig.json`, `tsconfig.app.json`, fuentes `.ts` |
 | Arial / CSS | Compartido | Fuente de sistema; VIS-1.0 | Jerarquía, colores, adaptación móvil y foco | `src/styles.css`; sin framework CSS externo |
 
-No se incorporan Forms/Reactive Forms todavía porque este incremento no tiene formularios. Tampoco se instala un SDK OpenAI en el frontend ni se envían secretos al navegador.
+`ReactiveFormsModule` está activo en las tres pantallas de formulario. Los validadores de contraseña cuentan puntos de código y bytes UTF-8 sin recortar espacios. No se instala un SDK OpenAI en el frontend ni se envían secretos de proveedores al navegador. El Bearer token propio se conserva únicamente en memoria.
 
 ## Herramientas y proveedores pendientes
 
@@ -56,3 +57,5 @@ No se incorporan Forms/Reactive Forms todavía porque este incremento no tiene f
 ## Consulta de versiones
 
 Desde `backend/`, `mvn help:effective-pom` muestra las dependencias resueltas; `mvn dependency:tree` permite ampliar el inventario. Desde `frontend/`, `npm ls --depth=0` compara las dependencias instaladas con el manifiesto. Usa `npm ci` para reproducir el lock. Los requisitos de compatibilidad oficiales están enlazados en README.
+
+No se añadieron dependencias Maven en el Incremento 2: se activó JOSE, ya declarado, y se añadió solamente `@angular/forms` al manifiesto npm. `UsuarioTest`, `AuthPerfilIntegrationTest` e `IdentidadConfigTest` amplían la verificación automatizada con las dependencias de prueba existentes.

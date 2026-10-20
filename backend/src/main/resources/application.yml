@@ -20,6 +20,10 @@ spring:
   jackson:
     property-naming-strategy: SNAKE_CASE
     time-zone: UTC
+    deserialization:
+      fail-on-unknown-properties: true
+    mapper:
+      allow-coercion-of-scalars: false
   mvc:
     problemdetails:
       enabled: false
@@ -27,9 +31,15 @@ server:
   error:
     include-message: never
     include-stacktrace: never
-# Contratos futuros. El catálogo solo requiere DB_*; no inicializa proveedores.
+seguridad:
+  bcrypt:
+    costo: ${BCRYPT_COST:12}
+  jwt:
+    secret: ${JWT_SECRET:}
+    # Sin secreto configurado, IdentidadConfig genera 32 bytes aleatorios por arranque local.
+    permitir-clave-efimera: true
+# Proveedores externos todavía pendientes.
 integraciones:
-  jwt-secret: ${JWT_SECRET:}
   aws-region: ${AWS_REGION:us-east-1}
   s3-bucket: ${S3_BUCKET:}
   openai-api-key: ${OPENAI_API_KEY:}

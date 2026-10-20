@@ -64,4 +64,4 @@ Siempre contienen las tres propiedades siguientes; sin errores de campo, `errore
 | 404/405/406 | `SOLICITUD_INVALIDA` | Ruta pública inexistente, método no admitido o negociación inválida |
 | 500 | `ERROR_INTERNO` | Fallo inesperado; la respuesta no expone excepciones internas |
 
-No hay endpoints de escritura implementados. `/auth/**` está reservado y permitido por la política, pero una ruta aún inexistente devuelve 404.
+El catálogo no tiene endpoints de escritura. Los endpoints de registro, login y perfil del Incremento 2 se detallan en `api-identidad.md`. Una ruta pública aún inexistente devuelve 404.

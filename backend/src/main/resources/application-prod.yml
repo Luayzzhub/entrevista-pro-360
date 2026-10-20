@@ -1,0 +1,5 @@
+seguridad:
+  bcrypt:
+    costo: 12
+  jwt:
+    permitir-clave-efimera: false

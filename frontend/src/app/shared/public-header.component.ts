@@ -12,7 +12,8 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
         </a>
         <nav aria-label="Navegación pública">
           <a routerLink="/puestos" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" ariaCurrentWhenActive="page">Puestos</a>
-          <a routerLink="/puestos" fragment="como-funciona">Cómo funciona</a>
+          <a routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page">Iniciar sesión</a>
+          <a class="nav-register" routerLink="/registro" routerLinkActive="active" ariaCurrentWhenActive="page">Crear cuenta</a>
         </nav>
       </div>
     </header>

@@ -1,13 +1,17 @@
 import { Component, input, output } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
-/** Componente preparado para identidad; no supone que exista una sesión autenticada. */
 @Component({
   selector: 'app-authenticated-header',
+  imports: [RouterLink, RouterLinkActive],
   template: `
     <header class="site-header"><div class="container header-inner">
-      <button type="button" class="brand brand-button" (click)="irAlPanel.emit()">Entrevista Pro <b>360</b></button>
+      <a class="brand" routerLink="/panel">Entrevista Pro <b>360</b></a>
       <nav aria-label="Navegación de cuenta">
-        <span>{{ nombre() }}</span>
+        <a routerLink="/panel" routerLinkActive="active" ariaCurrentWhenActive="page">Panel</a>
+        <a routerLink="/puestos" routerLinkActive="active" ariaCurrentWhenActive="page">Puestos</a>
+        <a routerLink="/perfil" routerLinkActive="active" ariaCurrentWhenActive="page">Perfil</a>
+        <span class="account-name">{{ nombre() }}</span>
         <button type="button" class="button secondary" (click)="cerrarSesion.emit()">Cerrar sesión</button>
       </nav>
     </div></header>
@@ -15,6 +19,5 @@ import { Component, input, output } from '@angular/core';
 })
 export class AuthenticatedHeaderComponent {
   readonly nombre = input.required<string>();
-  readonly irAlPanel = output<void>();
   readonly cerrarSesion = output<void>();
 }

@@ -1,55 +1,72 @@
-# Arquitectura del Incremento 1
+# Arquitectura — Incrementos 1 y 2
 
-Backend modular Spring Boot, Java 17, paquete `pe.utp.entrevistapro360`. Se adopta el contrato de la solicitud y el complemento de decisiones del 19/10/2026.
+Backend modular Spring Boot 3.5.7, Java 17, paquete `pe.utp.entrevistapro360`; frontend Angular 21.2.0 con VIS-1.0. Se implementan los contratos de catálogo e identidad de los dos primeros incrementos.
 
 ## Cuatro capas
 
 | Capa | Responsabilidad | Componentes reales |
 | --- | --- | --- |
-| `presentation` | Transporte HTTP, DTO, validación de parámetros y errores JSON | `CatalogoController`, `PuestoResponse`, `PreguntaResponse`, `ApiError`, `GlobalExceptionHandler`, `SecurityExceptionHandler` |
-| `application` | Coordinar la consulta y declarar los puertos independientes de frameworks | `ConsultarCatalogo`, `ConsultarCatalogoService`, `CatalogoRepository` |
-| `domain` | Modelos puros y regla de las tres preguntas activas del mismo puesto, con órdenes 1, 2 y 3 | `Puesto`, `Pregunta`, `CatalogoInvalidoException` y los otros seis modelos canónicos |
-| `infrastructure` | Implementar persistencia y componer/configurar la aplicación | `CatalogoJpaAdapter`, entidades/repositorios JPA, `ApplicationConfig`, `SecurityConfig`, Flyway |
+| `presentation` | HTTP, DTO públicos, estructura de solicitudes y errores JSON | `CatalogoController`, `AuthController`, `PerfilController`, DTO, `GlobalExceptionHandler`, `SecurityExceptionHandler` |
+| `application` | Casos de uso y puertos independientes de frameworks | Servicios de catálogo, registro, autenticación y perfil; puertos de entrada/salida |
+| `domain` | Modelos e invariantes puros | `Puesto`, `Pregunta`, `Usuario`, excepciones de validación y otros cinco modelos canónicos |
+| `infrastructure` | JPA, BCrypt, JWT, seguridad y composición | Adaptadores/repositorios JPA, `BCryptPasswordHasher`, `JwtTokenProvider`, `JwtAuthenticationFilter`, configuraciones |
 
 ```mermaid
 flowchart LR
-  UI[Angular / CatalogoService] --> REST[presentation / CatalogoController]
-  REST --> IN[application / ConsultarCatalogo]
-  IN --> DOMAIN[domain / Puesto y Pregunta]
-  IN --> PORT[application / CatalogoRepository]
-  JPA[infrastructure / CatalogoJpaAdapter] -. implementa .-> PORT
-  JPA --> MYSQL[(MySQL + Flyway)]
+  UI[Angular / servicios HTTP] --> REST[presentation / controladores]
+  REST --> UC[application / casos de uso y puertos]
+  UC --> D[domain / invariantes]
+  JPA[infrastructure / adaptadores JPA] -. implementa .-> UC
+  CRYPTO[infrastructure / BCrypt y JOSE] -. implementa .-> UC
+  JPA --> DB[(MySQL / Flyway)]
 ```
 
-Dominio y aplicación importan únicamente Java y sus propias capas permitidas. `LayerDependenciesTest` comprueba esta restricción. Los controladores reciben el puerto de entrada; no acceden a JPA. Los modelos del dominio no tienen anotaciones JPA ni Spring. `ApplicationConfig` compone el caso de uso con el puerto de salida. La configuración de seguridad recibe interfaces de Spring; la serialización de errores HTTP permanece en presentación.
+Dominio y aplicación solo importan Java y las capas internas permitidas. `LayerDependenciesTest` mantiene esta regla. Se inyecta `java.time.Clock` para obtener UTC sin depender de Spring en los casos de uso. Los controladores usan puertos de entrada y nunca acceden a JPA. La infraestructura implementa puertos y compone servicios; la serialización de errores permanece en presentación.
 
-## Primera consulta vertical
+## Catálogo y persistencia
 
-1. `CatalogoService` usa `ApiClient`, cuyo prefijo configurable por inyección es `/api/v1`.
-2. El controlador transforma los modelos en DTO de respuesta.
-3. El caso de uso solicita puestos activos o busca primero un puesto activo. Su ausencia produce 404.
-4. El adaptador consulta JPA; las preguntas se filtran por puesto y actividad y se ordenan por `orden`.
-5. El dominio verifica cantidad, pertenencia, actividad y órdenes. Un catálogo inconsistente devuelve 409; no se presenta una práctica incompleta como válida.
-6. El caso de uso entrega las preguntas ordenadas. Angular muestra carga, resultado, ausencia de datos o error con reintento de consulta.
+Se conservan los GET públicos del Incremento 1. El caso de uso busca un puesto activo y valida exactamente tres preguntas activas del mismo puesto, con órdenes 1, 2 y 3. Ausencia/inactividad produce 404; catálogo incompleto, 409. La semilla resuelve IDs por nombre único.
 
-No hay preguntas aleatorias ni respuestas simuladas. El catálogo público permite explorar las tres preguntas. El bloqueo de avance durante una entrevista depende de sesiones/evaluaciones y queda pendiente.
+No se modifican V1/V2: ocho tablas y 68 columnas de negocio, InnoDB, `utf8mb4_unicode_ci`, JSON y acciones referenciales. `flyway_schema_history` es una tabla técnica adicional. Hibernate usa `ddl-auto=validate`; Flyway controla el esquema. Están activos los mapeos JPA de usuarios, puestos y preguntas. Los otros modelos no tienen operaciones de persistencia implementadas aún.
 
-## Persistencia y contratos
+Las operaciones JPA son transaccionales en los adaptadores. Las pruebas MVC atraviesan seguridad, casos de uso y JPA reales, sin mocks del catálogo o identidad. H2 usa las mismas migraciones en modo MySQL; el perfil de pruebas `mysql` repite la integración y comprueba metadatos reales.
 
-`V1__esquema_inicial.sql` crea las ocho tablas y 68 columnas solicitadas, con InnoDB y `utf8mb4_unicode_ci`, claves únicas y acciones referenciales exactas. `V2__catalogo_semilla.sql` carga tres puestos y nueve preguntas mediante búsqueda por nombre único, sin asumir IDs 1, 2 y 3. Flyway añade su tabla técnica `flyway_schema_history`, fuera del conteo de negocio.
+## Registro y acceso
 
-Flyway es la autoridad del esquema: Hibernate usa `ddl-auto=validate`; no crea ni actualiza tablas. En este incremento solo `puestos` y `preguntas` tienen mapeo JPA y operaciones de lectura. Las otras seis entidades puras preparan vocabulario y tipos; sus operaciones y adaptadores de persistencia quedan pendientes. Los `DATETIME` se interpretarán como UTC y los decimales usan `BigDecimal`.
+`RegistrarUsuarioService` normaliza nombre/correo, valida contraseña, comprueba correo existente, calcula BCrypt y persiste. El dominio asigna POSTULANTE/ACTIVO, fecha UTC, actualización nula y resumen nulo. La restricción `uk_usuarios_email` resuelve también colisiones concurrentes: el adaptador la traduce a `EmailYaRegistradoException`, que produce 409. Se prueban el chequeo previo y una colisión SQL real.
 
-`CatalogoIntegrationTest` usa Flyway y JPA reales, sin mocks. `mvn test` utiliza H2 en modo MySQL con las mismas migraciones. El perfil de prueba `mysql`, junto con `TEST_DB_*`, ejecuta la misma consulta contra MySQL; `MySqlSchemaIntegrationTest` comprueba columnas, motor, collation, JSON y claves foráneas específicas del motor.
+`AutenticarUsuarioService` valida datos y compara el password exacto con BCrypt. Un usuario desconocido también realiza una comparación con hash ficticio. Contraseña incorrecta, usuario desconocido, cuenta inactiva o rol incompatible producen el mismo mensaje 401. No se promete bloqueo tras cinco intentos.
 
-## Seguridad y alcance
+BCrypt usa costo 12 por defecto y en el perfil `prod`; las pruebas de integración usan costo 4. Una prueba separada verifica costo 12 y espacios. La contraseña nunca se recorta ni se normaliza silenciosamente. Se exigen al menos 12 puntos de código Unicode y como máximo 72 bytes UTF-8.
 
-Se permiten `/api/v1/puestos/**` y `/api/v1/auth/**`; las demás rutas requieren autenticación. No se implementan todavía endpoints de identidad, emisión/verificación de JWT ni sesiones autenticadas. Se deshabilitan el formulario y Basic; no existe un usuario de prueba automático. La política es stateless y CSRF está deshabilitado para la futura API con token en cabecera. Cuando se implemente autenticación se conectará la verificación JOSE y se probará autorización por propietario.
+## JWT y autenticación por petición
 
-JOSE y AWS SDK S3 están declarados por solicitud, reservados para incrementos siguientes. No se crean clientes S3 ni se llaman APIs OpenAI. Los modelos STT/LLM se conservan como configuración solicitada; su disponibilidad no ha sido verificada. No se necesitan claves AWS/OpenAI para ejecutar el catálogo.
+`JwtTokenProvider` usa `NimbusJwtEncoder` con HS256. Incluye `iss=entrevista-pro-360`, `sub=id_usuario`, `rol=POSTULANTE`, `iat` y `exp=iat+1800`. `NimbusJwtDecoder` verifica firma/algoritmo; validadores comprueban issuer, timestamps, duración exacta y vencimiento sin tolerancia adicional.
 
-## Frontend
+En rutas privadas, `JwtAuthenticationFilter` toma el ID verificado y consulta la base en cada petición. Solo autentica si la cuenta existe, está ACTIVO y conserva rol POSTULANTE. Ausencia de token, firma/tiempo inválidos, cuenta eliminada/inactiva/bloqueada o rol incompatible producen 401 con `ApiError`. El contexto de seguridad contiene el ID; el perfil no usa IDs enviados por el cliente para seleccionar al propietario.
 
-Angular standalone con carpetas por funcionalidad y rutas diferidas. `core/` contiene URL, cliente e interceptor; `shared/` contiene ambas cabeceras; `features/interviews/` implementa catálogo y consulta de preguntas. Las demás carpetas registran su alcance pendiente. La cabecera autenticada es reutilizable y no se muestra hasta disponer de identidad real.
+`JWT_SECRET` requiere al menos 32 bytes UTF-8. Si está vacío en local, se generan 32 bytes criptográficamente aleatorios por arranque, compartidos por encoder/decoder y nunca impresos. Reiniciar invalida esos tokens. El perfil `prod` impide la clave efímera y exige una variable válida. El fixture conocido de pruebas solo aparece en recursos de test.
 
-`styles.css` aplica VIS-1.0: Arial, tamaños 28/24, 20/18, 16 y 14 px, variables de color, foco, enlace para saltar al contenido y adaptación móvil. El texto secundario se usa sobre blanco; sobre crema se usa texto oscuro. El proxy de desarrollo envía `/api/**` al backend; producción debe mantener ese mismo origen mediante un reverse proxy.
+La API es stateless, sin formulario de Spring, Basic ni usuario automático. CSRF está deshabilitado para la credencial explícita en Authorization, sin cookies de autenticación. Catálogo y `/auth/**` son públicos; el resto exige autenticación.
+
+## Perfil y DTO
+
+`GestionarPerfilService` consulta al propietario autenticado y construye un nuevo `Usuario` cambiando solo nombre, resumen y fecha de actualización. El adaptador modifica únicamente esas columnas. ID, correo, hash, rol, estado y fecha de registro se conservan.
+
+Nombre: trim, 1..150. Correo: trim, minúsculas Locale.ROOT, formato válido y máximo 150. Resumen: trim, vacío a null, máximo 500 y texto plano. Jackson usa `SNAKE_CASE`, rechaza propiedades desconocidas y coerción de escalares. PATCH rechaza correo, rol, estado, hash, IDs y cualquier propiedad ajena al DTO. Las respuestas enumeran ocho propiedades públicas y nunca exponen el hash. Las fechas usan ISO 8601 con `Z` y DATETIME UTC con precisión de segundos.
+
+Los errores mantienen `codigo`, `mensaje` y `errores_campo`. Los contratos HTTP se detallan en `api-catalogo.md` y `api-identidad.md`.
+
+## Angular
+
+Componentes standalone y rutas diferidas por funcionalidad. `AuthService` usa signals y mantiene token/usuario únicamente en memoria. Con `expires_in` programa limpieza y navegación a `/login`; guards e interceptor comprueban también vencimiento al actuar. Cerrar sesión elimina ambos datos y el temporizador. Recargar crea un estado no autenticado.
+
+El interceptor agrega Bearer solo a rutas privadas de la API propia y limpia/redirige ante 401 privado. El 401 de login se muestra en su formulario. Una respuesta tardía anterior no restaura el usuario ni elimina una sesión posterior. Los guards protegen panel/perfil; login/registro redirigen al panel si existe sesión vigente.
+
+La cabecera pública ofrece Puestos/Iniciar sesión/Crear cuenta; la autenticada, Panel/Puestos/Perfil/nombre/Cerrar sesión. Reactive Forms implementa validadores Unicode/UTF-8, confirmación exacta, errores de campo y estados de envío. El perfil tiene correo readonly, contador de resumen y avisos. El resumen se presenta como valor de formulario, sin `innerHTML`. VIS-1.0 conserva Arial, colores, foco y adaptación móvil.
+
+Cerrar sesión no revoca un JWT copiado previamente: vence a los 30 minutos y el backend sigue comprobando la cuenta. No hay renovación automática ni tabla de sesiones de autenticación.
+
+## Alcance siguiente
+
+El panel permite explorar puestos y editar el perfil. Sesiones, grabación, multimedia, S3, STT, evaluación, resultados e historial continúan pendientes. JOSE tiene uso real; SDK S3 sigue reservado. No se presenta la disponibilidad de modelos externos como validada.

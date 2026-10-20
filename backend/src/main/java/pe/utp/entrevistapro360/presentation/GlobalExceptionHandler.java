@@ -13,10 +13,40 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import pe.utp.entrevistapro360.application.PuestoNoEncontradoException;
 import pe.utp.entrevistapro360.domain.CatalogoInvalidoException;
 import pe.utp.entrevistapro360.presentation.dto.ApiError;
+import pe.utp.entrevistapro360.domain.ValidacionUsuarioException;
+import pe.utp.entrevistapro360.application.EmailYaRegistradoException;
+import pe.utp.entrevistapro360.application.CredencialesInvalidasException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @ExceptionHandler(ValidacionUsuarioException.class)
+    ResponseEntity<ApiError> usuarioInvalido(ValidacionUsuarioException ex) {
+        return ResponseEntity.badRequest().body(new ApiError("DATOS_INVALIDOS", ex.getMessage(), ex.erroresCampo()));
+    }
+    @ExceptionHandler(EmailYaRegistradoException.class)
+    ResponseEntity<ApiError> emailDuplicado(EmailYaRegistradoException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiError("EMAIL_YA_REGISTRADO", ex.getMessage(), Map.of("email", ex.getMessage())));
+    }
+    @ExceptionHandler(CredencialesInvalidasException.class)
+    ResponseEntity<ApiError> credencialesInvalidas(CredencialesInvalidasException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiError.of("CREDENCIALES_INVALIDAS", ex.getMessage()));
+    }
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    ResponseEntity<ApiError> jsonInvalido(HttpMessageNotReadableException ex) {
+        for (Throwable cause = ex; cause != null; cause = cause.getCause()) {
+            if (cause instanceof UnrecognizedPropertyException campo) {
+                // No reflejar nombres arbitrarios enviados por el cliente.
+                return ResponseEntity.badRequest().body(new ApiError("CAMPOS_NO_PERMITIDOS", "La solicitud contiene campos no permitidos.",
+                        Map.of("solicitud", "Envía únicamente los campos admitidos por esta operación.")));
+            }
+        }
+        return ResponseEntity.badRequest().body(new ApiError("JSON_INVALIDO", "Envía un objeto JSON válido con los tipos de datos esperados.",
+                Map.of("solicitud", "Revisa el formato del cuerpo JSON.")));
+    }
 
     @ExceptionHandler(PuestoNoEncontradoException.class)
     ResponseEntity<ApiError> noEncontrado(PuestoNoEncontradoException ex) {

@@ -1,0 +1,168 @@
+{
+  "fecha": "2026-10-20",
+  "zona_horaria": "America/Lima",
+  "incremento_1_commit": "c626aaf",
+  "incremento_2_commit": null,
+  "origin": null,
+  "github_cli": "no disponible en PATH ni en la ubicación estándar",
+  "h2": {
+    "casos": 44,
+    "ejecutados": 42,
+    "omitidos_solo_mysql": 2,
+    "fallos": 0,
+    "errores": 0
+  },
+  "mysql": {
+    "servidor": "8.0.44",
+    "casos": 44,
+    "omitidos": 0,
+    "fallos": 0,
+    "errores": 0,
+    "suites": [
+      {
+        "suite": "pe.utp.entrevistapro360.architecture.LayerDependenciesTest",
+        "tests": 1,
+        "fallos": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "casos": [
+          "dominioYAplicacionNoDependenDeFrameworksNiCapasExternas"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.domain.PuestoPreguntaTest",
+        "tests": 6,
+        "fallos": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "casos": [
+          "rechazaPreguntaInactivaODeOtroPuesto",
+          "rechazaCantidadIncompletaYSobrante",
+          "rechazaOrdenDuplicado",
+          "aceptaExactamenteTresPreguntasActivasSinExigirElOrdenDeEntrada",
+          "rechazaPuestoInactivoListaNulaYElementoNulo",
+          "rechazaOrdenFueraDelMvpYDuracionDistintaDeSesenta"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.domain.UsuarioTest",
+        "tests": 11,
+        "fallos": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "casos": [
+          "resumenVacioSeNormalizaANullYNoInterpretaHtml",
+          "limitaBytesUtf8ParaCaracteresMultibyteYEmojis",
+          "normalizacionEmailNoDependeDelLocaleDeLaMaquina",
+          "passwordConservaEspaciosExterioresSinNormalizacionSilenciosa",
+          "validacionDeRegistroInformaTodosLosCamposInvalidos",
+          "normalizaNombreYEmail",
+          "validaLimitesDelNombre",
+          "cuentaPuntosDeCodigoEnLugarDeUnidadesUtf16",
+          "actualizarPerfilConservaTodosLosDatosDeIdentidad",
+          "rechazaCorreosInvalidosYLargos",
+          "registroAsignaValoresExclusivosDelServidor"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.infrastructure.config.IdentidadConfigTest",
+        "tests": 3,
+        "fallos": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "casos": [
+          "claveLocalAusenteGeneraMaterialAleatorioSinConstanteCompartida",
+          "bcryptUsaCostoDoceFueraDeLaConfiguracionRapidaDeIntegracion",
+          "claveSeValidaEnBytesUtf8InclusoSiHayMenosDeTreintaYDosCaracteres"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.infrastructure.MySqlSchemaIntegrationTest",
+        "tests": 2,
+        "fallos": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "casos": [
+          "tiposJsonYAccionesReferencialesSeConservanEnMySql",
+          "ochoTablasSesentaYOchoColumnasEngineYCollationExactos"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.presentation.AuthPerfilIntegrationTest",
+        "tests": 13,
+        "fallos": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "casos": [
+          "perfilObtieneAlPropietarioExclusivamenteDelToken",
+          "loginVacioYJsonMalformadoProducen400ConContrato",
+          "correoDuplicadoNormalizadoDevuelve409",
+          "registroInvalidoDevuelveErroresPorCampoYRechazaAsignacionDePrivilegios",
+          "rechazaAusenciaTokenManipuladoVencidoYRolFalsificado",
+          "perfilRechazaCualquierCampoNoPermitidoYDatosFueraDeLimite",
+          "registroPublicoNormalizaAsignaRolEstadoFechasUtcYNuncaExponeHash",
+          "actualizarPerfilPreservaIdentidadYGuardaTextoPlanoYResumenNulo",
+          "colisionRealDeLaClaveUnicaSeTraduceAExcepcionDeNegocio",
+          "loginEmiteHs256ConSubRolYExpiracionExactaDeTreintaMinutos",
+          "loginDesconocidoPasswordIncorrectoYCuentaInactivaDanElMismo401",
+          "tokenEmitidoSeRechazaSiLaCuentaSeBloqueaCambiaRolOSeElimina",
+          "registroPermiteEmojisYRechazaMasDeSetentaYDosBytes"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.presentation.CatalogoIntegrationTest",
+        "tests": 8,
+        "fallos": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "casos": [
+          "rutasPrivadasRequierenAutenticacionConErrorJson",
+          "rechazaIdsMalformadosNegativosCeroYDesbordados",
+          "rutasPublicasNoImplementadasYMetodosNoPermitidosConservanErrorEstandar",
+          "puestoInactivoDevuelve404AunqueConservePreguntas",
+          "listaSoloLosTresPuestosActivosSinAutenticacion",
+          "cadaPuestoTieneSusTresPreguntasEnOrdenConStarSoloEnLaSegunda",
+          "puestoInexistenteDevuelve404YContratoExacto",
+          "preguntaInactivaImpideServirUnCatalogoIncompleto"
+        ]
+      }
+    ]
+  },
+  "migraciones": {
+    "v1_v2_sin_cambios": true,
+    "tablas_negocio": 8,
+    "columnas_negocio": 68
+  },
+  "frontend": {
+    "build": "correcto",
+    "versiones_directas": {
+      "@angular/common": "21.2.0",
+      "@angular/compiler": "21.2.0",
+      "@angular/core": "21.2.0",
+      "@angular/forms": "21.2.0",
+      "@angular/platform-browser": "21.2.0",
+      "@angular/router": "21.2.0",
+      "rxjs": "7.8.2",
+      "tslib": "2.8.1",
+      "@angular/build": "21.2.0",
+      "@angular/cli": "21.2.0",
+      "@angular/compiler-cli": "21.2.0",
+      "typescript": "5.9.3"
+    }
+  },
+  "jar": "generado",
+  "navegador": [
+    "registro con API real",
+    "rechazo de 11 emojis y confirmación diferente",
+    "login rechaza password sin sus espacios originales",
+    "login correcto y cabecera autenticada",
+    "perfil propio con correo readonly",
+    "edición conserva resumen como texto plano",
+    "resumen blanco se normaliza a vacío visible",
+    "guard público redirige al panel con sesión",
+    "recarga elimina sesión y redirige a login",
+    "cierre de sesión vuelve a login y cabecera pública",
+    "retroceder al panel después de salir permanece protegido"
+  ],
+  "limite_verificacion_temporal": "La expiración JWT se prueba con token vencido; no se esperaron 1800 s reales en el navegador."
+}

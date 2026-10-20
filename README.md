@@ -1,6 +1,6 @@
-# Entrevista Pro 360 — Incremento 1
+# Entrevista Pro 360 — Incrementos 1 y 2
 
-Base del MVP universitario: backend Spring Boot con cuatro capas, MySQL/Flyway y frontend Angular con VIS-1.0. Incluye consulta real de puestos y preguntas. La interfaz permite explorar el catálogo; autenticación, grabación, análisis, resultados e historial quedan para los siguientes incrementos.
+Base del MVP universitario: backend Spring Boot de cuatro capas, MySQL/Flyway y Angular VIS-1.0. Incluye catálogo, registro, acceso JWT, salida, perfil básico y panel inicial. Grabación, sesiones de práctica, análisis, resultados e historial corresponden a los siguientes incrementos.
 
 ## Requisitos
 
@@ -12,7 +12,7 @@ Base del MVP universitario: backend Spring Boot con cuatro capas, MySQL/Flyway y
 | npm | Incluido con Node; usar `npm ci` con el lock entregado |
 | Angular CLI | 21.2.0 local, instalado mediante `npm ci`; no requiere instalación global |
 | MySQL | 8.0+ con una base exclusiva del proyecto y usuario con permisos para ejecutar migraciones |
-| Git | Necesario para versionar; repositorio inicializado sin commits |
+| Git | Incremento 1 confirmado en `c626aaf`; Incremento 2 sin commit para revisión |
 | FFmpeg y ffprobe | Necesarios en incrementos de multimedia, accesibles en PATH; no intervienen en este catálogo |
 
 Compatibilidad de referencia: [Spring Boot 3.5](https://docs.spring.io/spring-boot/3.5/system-requirements.html) y [Angular](https://angular.dev/reference/versions). Las versiones declaradas y el uso real están en [docs/dependencias.md](docs/dependencias.md).
@@ -41,7 +41,9 @@ Copy-Item .env.example .env
 
 Spring y Angular no cargan `.env` automáticamente. Este script importa variables al proceso actual sin ejecutar el contenido. En otro terminal hay que volver a cargarlas. Alternativamente, configura las variables en el entorno del IDE o del sistema de despliegue.
 
-`DB_URL`, `DB_USERNAME` y `DB_PASSWORD` son las únicas variables necesarias para el catálogo. `.env.example` también conserva `JWT_SECRET`, `AWS_REGION`, `S3_BUCKET`, `OPENAI_API_KEY`, `STT_MODEL` y `LLM_MODEL` para los contratos futuros. No se han integrado ni validado servicios S3/IA. Las credenciales AWS se obtendrán del proveedor estándar de credenciales, nunca de Angular. No publiques `.env` ni claves.
+`DB_URL`, `DB_USERNAME` y `DB_PASSWORD` conectan la base. `JWT_SECRET` configura HS256 y debe contener al menos 32 bytes UTF-8. Si queda vacío en local, se genera una clave aleatoria por arranque: reiniciar invalida los tokens previos. Para producción activa `SPRING_PROFILES_ACTIVE=prod` y configura una clave propia; este perfil rechaza claves ausentes/cortas y fija BCrypt en costo 12.
+
+`.env.example` conserva además las variables S3/OpenAI para contratos futuros. Estos servicios aún no están integrados ni validados. Las credenciales AWS se obtendrán del proveedor estándar, nunca de Angular. No publiques `.env` ni claves.
 
 ## 3. Arranque del backend
 
@@ -52,6 +54,8 @@ mvn spring-boot:run
 
 El backend escucha en `http://localhost:8080`. Si `java` no apunta al JDK correcto, configura `JAVA_HOME` a tu JDK 17 y añade su carpeta `bin` a PATH. En este equipo se detectó `C:\Program Files\Java\jdk-17`; el acceso directo Oracle de PATH no respondió correctamente durante la inspección.
 
+Maven se descargó localmente para las verificaciones. Si todavía no está en PATH, desde `backend/` puedes usar `..\.tools\apache-maven-3.9.9\bin\mvn.cmd` en lugar de `mvn`, con `JAVA_HOME` configurado. `.tools/` no se versiona.
+
 Prueba la API en un segundo terminal:
 
 ```powershell
@@ -61,7 +65,7 @@ $idPuesto = $puestos[0].id_puesto
 Invoke-RestMethod "http://localhost:8080/api/v1/puestos/$idPuesto/preguntas"
 ```
 
-No se requiere token para estas consultas. El resto de rutas está protegido; identidad todavía no está implementada. Consulta [el contrato HTTP](docs/api-catalogo.md).
+Catálogo, registro y login son públicos. El perfil requiere Bearer JWT y cuenta ACTIVO/POSTULANTE. Consulta los contratos de [catálogo](docs/api-catalogo.md) e [identidad](docs/api-identidad.md).
 
 ## 4. Arranque del frontend
 
@@ -75,6 +79,10 @@ npm start
 
 Abre [http://localhost:4200](http://localhost:4200). `proxy.conf.json` reenvía `/api/**` a `127.0.0.1:8080`. El backend debe estar iniciado para obtener datos. Puedes seleccionar cualquier puesto y leer sus tres preguntas; no hay datos de respaldo simulados. Si el servidor no responde, se muestra un error con reintento.
 
+Recorrido del Incremento 2: `/registro` → `/login` → `/panel` → `/perfil`. Las contraseñas requieren 12 puntos de código Unicode como mínimo y 72 bytes UTF-8 como máximo; sus espacios se conservan. Confirmación debe coincidir exactamente. Tras registrarte inicia sesión con esas credenciales. En el perfil solo se editan nombre y resumen; el correo es de solo lectura.
+
+Token y usuario se mantienen únicamente en memoria: cerrar sesión, vencer 30 minutos o recargar la aplicación requiere volver a acceder. El cierre local no revoca una copia del JWT antes de su expiración. La cabecera cambia según el estado de autenticación y las rutas privadas están protegidas tanto en Angular como en el backend.
+
 ## 5. Pruebas y compilación
 
 ```powershell
@@ -85,7 +93,7 @@ cd ..\frontend
 npm run build
 ```
 
-`mvn test` no requiere MySQL, AWS ni OpenAI: utiliza H2 de prueba y las mismas migraciones Flyway. Verifica reglas del dominio, capas, JPA y endpoints con seguridad. Las pruebas específicas de MySQL se omiten en este modo. H2 no certifica el comportamiento de todos los tipos de MySQL.
+`mvn test` utiliza H2 y las mismas migraciones Flyway, sin AWS/OpenAI. Comprueba dominio, capas, JWT, BCrypt, registro, perfil y catálogo. Las dos pruebas específicas de MySQL se omiten en este modo. Integración usa BCrypt de costo 4; otra prueba comprueba costo 12. H2 no certifica todos los tipos de MySQL. Si conservas `TEST_DB_URL` de una ejecución anterior, elimina esa variable antes del pase H2 (`Remove-Item Env:TEST_DB_URL`).
 
 Para verificar contra MySQL, crea **otra base exclusiva de pruebas**, con el mismo charset y usuario autorizado. Las pruebas insertan y actualizan registros en transacciones revertidas; la base debe contener únicamente la semilla inicial. Desde `backend/`:
 
@@ -103,6 +111,7 @@ El JAR queda en `backend/target/entrevista-pro-360-0.1.0-SNAPSHOT.jar`. Carga la
 - [Arquitectura y límites de capas](docs/arquitectura.md).
 - [Dependencias exactas y uso real](docs/dependencias.md).
 - [Matriz de RF-01 a RF-20](docs/matriz_evidencias_rf.md).
-- [Resultados de verificación](docs/verificacion_incremento_1.md).
+- [Verificación del Incremento 1](docs/verificacion_incremento_1.md).
+- [Verificación del Incremento 2](docs/verificacion_incremento_2.md).
 
-El repositorio contiene además los documentos de diseño originales. No hay commits ni remoto GitHub configurado por este incremento; no se presenta historial de avances inexistente. La inicialización y los archivos están listos para revisión antes del primer commit.
+El Incremento 1 está guardado en `c626aaf` con el mensaje aprobado. GitHub CLI no se encuentra instalado/disponible en este equipo; no se publicó ni configuró `origin`. El Incremento 2 queda en el árbol de trabajo, sin commit, para la auditoría. La documentación de diseño original se mantiene fuera del repositorio.

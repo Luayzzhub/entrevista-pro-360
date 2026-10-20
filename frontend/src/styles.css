@@ -23,7 +23,7 @@ h1 { font-size: 28px; line-height: 1.25; letter-spacing: -.6px; }
 h2 { font-size: 20px; line-height: 1.4; }
 h3 { font-size: 18px; line-height: 1.4; }
 a { color: var(--primario); text-underline-offset: 4px; }
-button, input, select { font: inherit; }
+button, input, select, textarea { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 3px solid var(--confirmacion); outline-offset: 4px; }
 :disabled { opacity: .65; cursor: not-allowed; }
@@ -86,11 +86,50 @@ nav a:hover { text-decoration: underline; }
 .question-card h2 { font-size: 18px; }
 .competency { color: var(--texto-secundario); font-size: 14px; margin-top: 16px; }
 .star-note { margin-top: 14px; background: var(--apoyo); border-radius: 6px; padding: 12px; font-size: 14px; }
+.account-layout { display: grid; grid-template-columns: 1fr 1.1fr; gap: 64px; align-items: start; padding: 52px 0 20px; }
+.account-intro { padding: 28px 0; }
+.account-intro h1 { margin: 18px 0 22px; }
+.account-intro > p { max-width: 420px; }
+.intro-note { background: var(--apoyo); padding: 24px; border-radius: 18px 18px 4px 18px; margin-top: 36px; max-width: 420px; }
+.form-card { background: var(--superficie); border: 1px solid var(--borde); border-radius: 18px; padding: 32px; }
+.form-intro { color: var(--texto-secundario); margin: 6px 0 24px; }
+.field { margin-bottom: 20px; }
+.field label { display: block; font-weight: 700; margin-bottom: 7px; }
+.field input, .field textarea { display: block; width: 100%; min-width: 0; border: 1px solid #798894; background: white; color: var(--texto); border-radius: 8px; padding: 11px 12px; }
+.field textarea { resize: vertical; }
+.field input[aria-invalid="true"], .field textarea[aria-invalid="true"] { border: 2px solid var(--error); padding: 10px 11px; }
+.field input[readonly] { background: #f0f3f1; color: var(--texto); }
+.field-error { color: var(--error); font-size: 14px; margin-top: 6px; }
+.form-help { font-size: 14px; color: var(--texto-secundario); margin-top: 8px; }
+.form-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.form-actions .button { justify-content: center; }
+.notice { padding: 14px 16px; margin: 16px 0; border-radius: 8px; font-size: 14px; background: white; }
+.notice.success { color: var(--confirmacion); border: 1px solid var(--confirmacion); }
+.notice.error { color: var(--error); border: 1px solid var(--error); border-left-width: 4px; }
+.notice.privacy { background: var(--aviso-fondo); color: var(--aviso-texto); }
+.notice.privacy p { margin-top: 5px; }
+.profile-page { max-width: 760px; margin: 36px auto; }
+.profile-page h1 { margin: 8px 0 12px; }
+.character-count { text-align: right; }
+.dashboard { padding: 48px 0 20px; }
+.dashboard-heading h1 { margin: 12px 0 16px; }
+.dashboard-heading p { max-width: 680px; }
+.dashboard-grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 24px; margin-top: 32px; }
+.dashboard-grid h2 { margin: 16px 0 12px; }
+.dashboard-grid .button { margin-top: 24px; }
+.dashboard-practice { border-top: 5px solid var(--primario); }
+.account-email { color: var(--texto-secundario); overflow-wrap: anywhere; }
+.account-status { color: var(--confirmacion); font-size: 14px; margin-top: 12px; }
+.account-name { font-size: 14px; font-weight: 700; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.header-inner nav { flex-wrap: wrap; gap: 18px; }
+.nav-register { border: 1px solid var(--primario); padding: 6px 12px; border-radius: 6px; }
 @media (max-width: 850px) {
   .hero { gap: 30px; padding-top: 40px; }
   .cards { gap: 14px; }
   .card { padding: 20px; }
   .how-it-works { gap: 30px; }
+  .account-layout { gap: 28px; }
+  .header-inner { flex-wrap: wrap; padding-block: 16px; }
 }
 @media (max-width: 680px) {
   .container { width: calc(100% - 32px); }
@@ -109,4 +148,12 @@ nav a:hover { text-decoration: underline; }
   .footer { flex-direction: column; gap: 8px; }
   .question-card { grid-template-columns: 1fr; gap: 8px; padding: 20px; }
   .question-meta { flex-wrap: wrap; }
+  .account-layout, .dashboard-grid { grid-template-columns: 1fr; gap: 24px; }
+  .account-layout { padding-top: 24px; }
+  .account-intro { padding: 0; }
+  .intro-note { margin-top: 20px; }
+  .form-card { padding: 24px; }
+  .header-inner nav { gap: 14px; }
+  .account-name { max-width: 140px; }
+  .form-actions .button { flex: 1 1 auto; }
 }

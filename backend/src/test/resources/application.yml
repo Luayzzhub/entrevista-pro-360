@@ -16,3 +16,13 @@ spring:
     clean-disabled: true
   jackson:
     property-naming-strategy: SNAKE_CASE
+    deserialization:
+      fail-on-unknown-properties: true
+    mapper:
+      allow-coercion-of-scalars: false
+seguridad:
+  bcrypt:
+    costo: 4
+  jwt:
+    secret: clave-exclusiva-de-pruebas-de-al-menos-32-bytes
+    permitir-clave-efimera: false

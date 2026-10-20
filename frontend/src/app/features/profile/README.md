@@ -1,3 +1,3 @@
-# Perfil (pendiente)
+# Perfil — Incremento 2
 
-Consultar y editar nombre/resumen propios; correo de solo lectura. Requiere autenticación real.
+`/perfil`, protegida por `authGuard`, consulta y actualiza el perfil propio en la API. Solo permite editar nombre/resumen; el correo es de solo lectura. El resumen se presenta como texto plano.

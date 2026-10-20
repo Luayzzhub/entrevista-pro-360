@@ -1,3 +1,3 @@
-# Identidad (pendiente)
+# Identidad — Incremento 2
 
-Próximo incremento: registro, acceso, token en memoria y salida. La cabecera autenticada compartida está preparada; no se publica una autenticación simulada.
+`/registro` y `/login` usan formularios reactivos y la API real. `core/AuthService` conserva token y usuario exclusivamente en memoria, limpia la sesión a los 1800 s y al cerrar sesión. Las rutas públicas exclusivas redirigen al panel cuando existe sesión vigente.
