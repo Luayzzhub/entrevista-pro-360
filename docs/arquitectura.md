@@ -1,6 +1,6 @@
-# Arquitectura — Incrementos 1 a 3
+# Arquitectura — Incrementos 1 a 4
 
-Backend modular Spring Boot 3.5.7, Java 17, paquete `pe.utp.entrevistapro360`; frontend Angular 21.2.0 con VIS-1.0. Se implementan catálogo, identidad y gestión de sesiones de entrevista.
+Backend modular Spring Boot 3.5.7, Java 17, paquete `pe.utp.entrevistapro360`; frontend Angular 21.2.0 con VIS-1.0. Se implementan catálogo, identidad, gestión de sesiones y captura/revisión de tomas locales en navegador.
 
 ## Cuatro capas
 
@@ -83,6 +83,22 @@ Cerrar sesión no revoca un JWT copiado previamente: vence a los 30 minutos y el
 
 `SesionComponent` valida el ID antes de consultar, presenta metadatos/progreso/fechas UTC, la pregunta habilitada y el estado individual de las tres preguntas. STAR se muestra solo cuando corresponde. Los estados terminales no ofrecen captura ni cancelación. No hay datos de respaldo simulados ni promedios inventados para sesiones sin completar.
 
+## Captura local MCK 05 / MCK 06 / MCK 07
+
+`SesionComponent` incorpora `CapturaRespuestaComponent` únicamente para una sesión no terminal con pregunta habilitada. El componente recibe puesto/pregunta/total desde la API y conserva el contexto durante preparación, grabación y revisión. `GrabacionMediaService` tiene una instancia por componente, signals de estado y ningún cliente HTTP. `formatos-media.ts` contiene la negociación cerrada y validación pura de duración/tamaño. No se escribe en base ni se avanza la pregunta al grabar o repetir.
+
+Antes de solicitar medios se muestra el aviso de S3/STT/IA y se comprueban las APIs y el primer MIME compatible de la lista contractual: VP8/Opus WebM → VP9/Opus WebM → H.264/AAC MP4. Solo se construye `MediaRecorder(stream, { mimeType })` con ese valor explícito. Ningún formato/API disponible produce un estado de incompatibilidad y bloquea el inicio.
+
+Preparación ejecuta `getUserMedia({video:true,audio:true})`, verifica ambas clases de pista `live && enabled`, escucha `ended` y asigna el stream a `video.srcObject` con `video.muted=true`, `playsinline` y autoplay. Denegación, dispositivos ausentes/ocupados y streams parciales tienen mensajes y reintento; se detienen todas las pistas antes de liberar una preparación fallida. Una resolución de permisos posterior a destruir el componente también detiene el stream recibido.
+
+La captura usa `MediaRecorder.start(250)` y consolida los fragmentos después de `dataavailable` final, en `onstop`. `performance.now()` fija el inicio y el plazo de la pregunta; un timeout se reprograma con el tiempo restante (máximo 100 ms) para actualizar pantalla y pedir `stop()` al llegar al plazo. La duración registrada es el intervalo solicitado de captura; en parada automática el borde es 60.000 s. La planificación del navegador y la duración física del contenedor no se certifican con ese reloj: ffprobe será la validación de servidor del Incremento 5. Un fallo de inicio/error/ended cancela el temporizador y descarta los fragmentos incompletos, sin ofrecerlos como toma válida.
+
+Revisión construye Blob con el MIME negociado, verifica `0 < bytes < 50_000_000` y `1 <= segundos <= 60`, crea una object URL y ofrece video con controles y sonido. Se muestran bytes exactos, KB, duración decimal y formato; los errores obligan a repetir. Confirmar permanece deshabilitado incluso si la toma local es válida. Al repetir se revoca la URL, se elimina Blob/fragmentos y se regresa a preparación. Al terminar la grabación también se apagan los dispositivos; repetir requiere comprobarlos de nuevo.
+
+`DestroyRef` libera timeout, oyentes, recorder, todas las pistas y object URL al salir de sesión o cerrar sesión; cancelar/recargar el detalle retira el componente de captura al cambiar de estado. Los handlers se desconectan antes de detener un recorder descartado para que sus eventos tardíos no reconstruyan una toma. Las tomas nunca se almacenan en localStorage/sessionStorage/IndexedDB ni se envían al backend en este incremento.
+
+Referencias de las APIs: [W3C Media Capture and Streams](https://www.w3.org/TR/mediacapture-streams/) y [W3C MediaStream Recording](https://www.w3.org/TR/mediastream-recording/). Los seis tests puros y la verificación de Chrome con medios emulados se documentan en `verificacion_incremento_4.md`.
+
 ## Alcance siguiente
 
-El panel permite iniciar, continuar y cancelar sesiones y editar el perfil. La captura de cámara/micrófono/video (RF-07..RF-10) se activa en el Incremento 4. Multimedia, S3, STT, evaluación, resultados, cierre automático e historial con filtros continúan pendientes. JOSE tiene uso real; SDK S3 sigue reservado. No se presenta la disponibilidad de modelos externos como validada.
+El panel permite iniciar, continuar/cancelar sesiones y editar el perfil. RF-07/RF-08/RF-10 se implementan localmente en Incremento 4; RF-09 cubre el temporizador/validación de cliente. Confirmación multipart idempotente, ffprobe y carga privada S3 corresponden al Incremento 5. STT, evaluación, resultados, cierre automático e historial con filtros continúan pendientes. JOSE tiene uso real; SDK S3 sigue reservado. No se presenta la disponibilidad de modelos externos como validada.

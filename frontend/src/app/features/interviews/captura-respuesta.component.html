@@ -1,0 +1,49 @@
+<article class="form-card enabled-question capture-panel" aria-labelledby="titulo-captura">
+  <span class="eyebrow">PREGUNTA HABILITADA ACTUAL · {{ media.etapa() === 'revision' ? 'REVISIÓN LOCAL' : media.etapa() === 'preparacion' ? 'PREPARACIÓN' : 'GRABACIÓN' }}</span>
+  <p class="capture-position">{{ puesto() }}</p>
+  <div class="question-meta"><h2 id="titulo-captura">Pregunta {{ pregunta().orden }} de {{ totalPreguntas() }}</h2><span class="tag">{{ pregunta().tiempo_limite_seg }} segundos</span></div>
+  <h3>{{ pregunta().enunciado }}</h3><p class="competency"><strong>Competencia:</strong> {{ pregunta().competencia_evaluada }}</p>
+  @if (pregunta().aplica_star === true) { <aside class="star-note"><strong>Guía STAR</strong>: Situación, Tarea, Acción y Resultado. Organiza un ejemplo concreto y explica tu aporte.</aside> }
+  @else { <p class="form-help">Esta pregunta no requiere la estructura STAR.</p> }
+  <aside class="notice privacy media-privacy"><strong>Privacidad y procesamiento de tu respuesta</strong><p>Al confirmar tu respuesta en la siguiente etapa, el video se almacenará de forma privada en AWS S3; a transcripción (STT) se enviará únicamente el audio extraído y al evaluador de IA solo el texto transcrito, sin tu nombre, correo ni identificadores personales.</p><p>En este incremento la toma permanece en tu navegador y todavía no se envía.</p></aside>
+
+  @if (media.error(); as error) {
+    <div class="notice error" role="alert">@if (media.incompatible()) { <h3>Navegador o dispositivo incompatible</h3> }<p>{{ error }}</p></div>
+  }
+  @if (media.etapa() === 'preparacion') {
+    <h3>1. Prepara tu cámara y micrófono</h3>
+    <p>Comprueba ambos dispositivos antes de grabar. La vista previa tiene el sonido silenciado para evitar acople.</p>
+    <dl class="media-status" aria-label="Estado de dispositivos" aria-live="polite">
+      <div><dt>Cámara</dt><dd>{{ media.camara() }}</dd></div><div><dt>Micrófono</dt><dd>{{ media.microfono() }}</dd></div>
+      <div><dt>Formato soportado</dt><dd>{{ media.formato()?.descripcion || 'No disponible' }}</dd></div>
+    </dl>
+  }
+  @if (media.etapa() !== 'revision') {
+    <div class="camera-preview"><video #vistaPrevia muted playsinline autoplay aria-label="Vista previa de cámara"></video>@if (!media.stream()) { <p>La vista previa aparecerá después de comprobar los permisos.</p> }</div>
+  }
+  @if (media.etapa() === 'preparacion') {
+    <div class="form-actions"><button type="button" class="button secondary" [disabled]="media.solicitando() || media.incompatible()" (click)="media.preparar()">{{ media.solicitando() ? 'Comprobando dispositivos…' : media.error() ? 'Volver a intentar permisos' : 'Comprobar cámara y micrófono' }}</button><button type="button" class="button" [disabled]="!media.puedeGrabar()" (click)="media.iniciar(pregunta().tiempo_limite_seg)">Iniciar grabación</button></div>
+  }
+  @if (media.etapa() === 'grabando' || media.etapa() === 'finalizando') {
+    <p class="recording-status" role="status"><span class="recording-dot" aria-hidden="true"></span>{{ media.etapa() === 'grabando' ? 'Grabando respuesta…' : 'Preparando la revisión local…' }}</p>
+    <div class="recording-clock" role="timer" aria-label="Tiempo de grabación">{{ reloj(media.transcurridoMs()) }} / {{ reloj(pregunta().tiempo_limite_seg * 1000) }}</div><p>Segundos restantes: {{ segundosRestantes() }}</p>
+    <button type="button" class="button stop-recording" [disabled]="media.etapa() !== 'grabando'" (click)="media.detener()">Detener grabación</button>
+  }
+  @if (media.etapa() === 'revision') {
+    @if (media.toma(); as toma) {
+      <h3>3. Revisa tu toma local</h3>
+      @if (media.limiteAlcanzado()) { <p class="notice privacy" role="status">Se alcanzó el límite de {{ pregunta().tiempo_limite_seg }} segundos. La grabación se detuvo automáticamente.</p> }
+      <video class="review-video" controls playsinline [src]="toma.url" aria-label="Reproducir toma local"></video>
+      <dl class="take-metadata">
+        <div><dt>Duración registrada</dt><dd>{{ toma.duracionSegundos | number:'1.1-3' }} s <span>(límite: 1 a 60 s)</span></dd></div>
+        <div><dt>Tamaño del archivo</dt><dd>{{ toma.blob.size / 1000 | number:'1.1-2' }} KB · {{ toma.blob.size }} bytes <span>(límite: &lt; 50 MB)</span></dd></div>
+        <div><dt>Formato</dt><dd>{{ toma.formato.contenedor }} · {{ toma.formato.mimeType }}</dd></div>
+      </dl>
+      @if (toma.errores.length > 0) {
+        <div class="notice error" role="alert"><strong>La toma no es válida.</strong>@for (error of toma.errores; track error) { <p>{{ error }}</p> }<p>Pulsa Volver a grabar para repetir la toma de esta misma pregunta.</p></div>
+      } @else { <p class="notice success">Toma local verificada en el navegador. La confirmación idempotente y carga privada a AWS S3 se activarán en el Incremento 5.</p> }
+      <div class="form-actions"><button type="button" class="button secondary" (click)="media.repetir()">Volver a grabar</button><button type="button" class="button" disabled>Confirmar respuesta</button></div>
+      <p class="form-help">Repetir elimina únicamente esta toma local. No crea respuestas en la base de datos. Al salir o cerrar sesión se descarta la toma del navegador.</p>
+    }
+  }
+</article>

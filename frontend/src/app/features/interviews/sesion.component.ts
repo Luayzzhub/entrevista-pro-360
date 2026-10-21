@@ -5,11 +5,12 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { catchError, combineLatest, map, of, startWith, Subject, switchMap } from 'rxjs';
 import { PreguntaSesion, SesionDetalle, SesionService, EstadoSesion, estadoSesionTexto } from './sesion.service';
 import { CancelarPracticaComponent } from './cancelar-practica.component';
+import { CapturaRespuestaComponent } from './captura-respuesta.component';
 
 interface EstadoVista { cargando: boolean; sesion: SesionDetalle | null; error: string | null; }
 
 @Component({
-  selector: 'app-sesion', imports: [RouterLink, DatePipe, DecimalPipe, CancelarPracticaComponent],
+  selector: 'app-sesion', imports: [RouterLink, DatePipe, DecimalPipe, CancelarPracticaComponent, CapturaRespuestaComponent],
   template: `
     <section class="session-page" aria-labelledby="titulo-sesion" [attr.aria-busy]="estado().cargando">
       <a class="text-link back-link" routerLink="/panel">← Volver al panel</a><span class="eyebrow">TU PRÁCTICA DE ENTREVISTA</span><h1 id="titulo-sesion">Sesión de práctica</h1>
@@ -23,11 +24,7 @@ interface EstadoVista { cargando: boolean; sesion: SesionDetalle | null; error: 
         </header>
         @if (!esTerminal(sesion.estado_sesion)) {
           @if (sesion.pregunta_habilitada; as pregunta) {
-            <article class="form-card enabled-question"><span class="eyebrow">PREGUNTA HABILITADA ACTUAL</span><div class="question-meta"><h2>Pregunta {{ pregunta.orden }} de {{ sesion.total_preguntas }}</h2><span class="tag">{{ pregunta.tiempo_limite_seg }} segundos</span></div><h3>{{ pregunta.enunciado }}</h3><p class="competency"><strong>Competencia:</strong> {{ pregunta.competencia_evaluada }}</p>
-              @if (pregunta.aplica_star) { <p class="star-note">Guía STAR: organiza tu ejemplo en situación, tarea, acción y resultado.</p> }
-              @else { <p class="form-help">Esta pregunta no requiere la guía STAR.</p> }
-              <p class="availability practice-banner">La verificación de cámara y micrófono y la captura de video se activarán en el siguiente incremento.</p>
-            </article>
+            <app-captura-respuesta [puesto]="sesion.nombre_puesto" [pregunta]="pregunta" [totalPreguntas]="sesion.total_preguntas" />
           } @else { <p class="status-panel practice-banner" role="status">No hay otra pregunta habilitada. Consulta el estado de tus respuestas; el avance requiere que la anterior esté evaluada.</p> }
         }
         <h2 class="session-list-title">Las tres preguntas de tu práctica</h2>

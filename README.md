@@ -1,6 +1,6 @@
-# Entrevista Pro 360 — Incrementos 1 a 3
+# Entrevista Pro 360 — Incrementos 1 a 4
 
-Base del MVP universitario: backend Spring Boot de cuatro capas, MySQL/Flyway y Angular VIS-1.0. Incluye catálogo, registro, acceso JWT, salida, perfil y sesiones de práctica: creación exclusiva por usuario, consulta propia, avance secuencial y cancelación idempotente. Panel, catálogo, preguntas y sesión consultan la API real. La captura de video corresponde al Incremento 4; análisis, resultados e historial con filtros siguen pendientes.
+Base del MVP universitario: backend Spring Boot de cuatro capas, MySQL/Flyway y Angular VIS-1.0. Incluye catálogo, registro, acceso JWT, perfil y sesiones con exclusividad, avance secuencial y cancelación idempotente. En una pregunta habilitada permite comprobar cámara/micrófono, grabar hasta 60 segundos y reproducir/repetir una toma local. La confirmación, carga privada a S3 y validación ffprobe se integrarán en el Incremento 5; análisis, resultados e historial completo siguen pendientes.
 
 ## Requisitos
 
@@ -12,8 +12,9 @@ Base del MVP universitario: backend Spring Boot de cuatro capas, MySQL/Flyway y 
 | npm | Incluido con Node; usar `npm ci` con el lock entregado |
 | Angular CLI | 21.2.0 local, instalado mediante `npm ci`; no requiere instalación global |
 | MySQL | 8.0+ con una base exclusiva del proyecto y usuario con permisos para ejecutar migraciones |
-| Git | Incrementos 1 (`c626aaf`) y 2 (`e47eeb6`) publicados; Incremento 3 auditado y aprobado por el Orquestador, confirmado en este commit de `main` |
-| FFmpeg y ffprobe | Necesarios en incrementos de multimedia, accesibles en PATH; no intervienen en este catálogo |
+| Git | Incrementos 1 (`c626aaf`), 2 (`e47eeb6`) y 3 (`214c011`) publicados; Incremento 4 auditado/aprobado por el Orquestador, confirmado en este commit de main |
+| Navegador y dispositivos | Cámara + micrófono; `getUserMedia` y MediaRecorder con uno de los tres formatos negociados. Usar localhost/loopback o HTTPS |
+| FFmpeg y ffprobe | Reservados para procesamiento/validación de servidor desde Incremento 5; no se invocan en la captura local |
 
 Compatibilidad de referencia: [Spring Boot 3.5](https://docs.spring.io/spring-boot/3.5/system-requirements.html) y [Angular](https://angular.dev/reference/versions). Las versiones declaradas y el uso real están en [docs/dependencias.md](docs/dependencias.md).
 
@@ -83,6 +84,16 @@ Recorrido del Incremento 2: `/registro` → `/login` → `/panel` → `/perfil`.
 
 Recorrido del Incremento 3: `/panel` → **Nueva práctica** → `/puestos` → **Ver preguntas** o **Iniciar práctica** → `/sesiones/:id`. La pregunta 1 queda disponible; la siguiente solo se habilita cuando la anterior tiene una respuesta persistida en `EVALUADO`. Este incremento no graba ni sube videos. Mientras exista una sesión pendiente, panel/catálogo/preguntas permiten continuarla o finalizarla con confirmación explícita. Cancelar conserva las respuestas y no genera promedio; después se puede crear otra práctica. Dos POST concurrentes para el mismo usuario producen un 201 y un 409 bajo bloqueo pesimista de su fila en MySQL.
 
+Recorrido del Incremento 4 dentro de la pregunta habilitada:
+
+1. Lee el aviso de procesamiento futuro y pulsa **Comprobar cámara y micrófono**. Autoriza ambos dispositivos; se comprueban pistas vivas y se muestra una vista previa silenciada. Si deniegas el acceso, cambia los permisos en el navegador y pulsa **Volver a intentar permisos**.
+2. Pulsa **Iniciar grabación**. Mantén el contexto de puesto, pregunta, competencia y guía STAR cuando corresponda. El contador usa un reloj monotónico y detiene automáticamente al borde de 60 s; puedes pulsar **Detener grabación** antes.
+3. Reproduce la toma con imagen/audio y revisa duración, formato y bytes. Se exige `1 <= duración <= 60` y `0 < bytes < 50_000_000`. **Volver a grabar** descarta y revoca la toma local y vuelve a preparar la misma pregunta.
+
+**Confirmar respuesta permanece deshabilitado hasta el Incremento 5.** La captura/repetición no llama a un endpoint de escritura ni crea filas en `respuestas_video`; la pregunta no avanza y la sesión conserva su estado persistido. Salir, cancelar la práctica o cerrar sesión libera la cámara/micrófono y descarta la toma local. Recargar también pierde la toma y el acceso en memoria.
+
+La negociación prueba, en orden, `video/webm;codecs=vp8,opus`, `video/webm;codecs=vp9,opus` y `video/mp4;codecs=avc1.42E01E,mp4a.40.2`; si ninguna opción está disponible se bloquea la captura con explicación. La duración mostrada corresponde al intervalo solicitado de captura en cliente; la validación del contenedor y sus pistas/duración con ffprobe sigue pendiente.
+
 Token y usuario se mantienen únicamente en memoria: cerrar sesión, vencer 30 minutos o recargar la aplicación requiere volver a acceder. El cierre local no revoca una copia del JWT antes de su expiración. La cabecera cambia según el estado de autenticación y las rutas privadas están protegidas tanto en Angular como en el backend.
 
 ## 5. Pruebas y compilación
@@ -92,6 +103,7 @@ cd backend
 mvn test
 mvn package
 cd ..\frontend
+npm run test:media
 npm run build
 ```
 
@@ -117,5 +129,6 @@ El JAR queda en `backend/target/entrevista-pro-360-0.1.0-SNAPSHOT.jar`. Carga la
 - [Verificación del Incremento 2](docs/verificacion_incremento_2.md).
 - [Contrato de sesiones](docs/api-sesiones.md).
 - [Verificación del Incremento 3](docs/verificacion_incremento_3.md).
+- [Verificación del Incremento 4](docs/verificacion_incremento_4.md).
 
-Los Incrementos 1 (`c626aaf`) y 2 (`e47eeb6`) están en `main` y publicados en [Luayzzhub/entrevista-pro-360](https://github.com/Luayzzhub/entrevista-pro-360). El Incremento 3 fue auditado y aprobado por el Orquestador y se confirma en este commit de `main` con el mensaje `feat: implementar sesiones de entrevista, bloqueo pesimista y navegacion MCK03-MCK04`. Su publicación se realiza mediante `git push origin main` después del commit. Los informes de los incrementos anteriores conservan su estado histórico. La documentación de diseño original se mantiene fuera del repositorio.
+Los Incrementos 1 (`c626aaf`), 2 (`e47eeb6`) y 3 (`214c011`) están publicados en [Luayzzhub/entrevista-pro-360](https://github.com/Luayzzhub/entrevista-pro-360). El Orquestador auditó y aprobó el Incremento 4, confirmado en este commit con el mensaje exacto `feat: implementar permisos de camara y microfono, captura de 60s y revision local MCK05-MCK07`; después se publica con `git push origin main` y se comprueba mediante `git ls-remote`. Los informes previos conservan el alcance y los resultados de su fecha. La documentación de diseño original se mantiene fuera del repositorio.

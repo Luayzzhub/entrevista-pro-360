@@ -1,0 +1,512 @@
+{
+  "fecha": "2026-10-21",
+  "zona_horaria": "America/Lima",
+  "incremento": 4,
+  "git": {
+    "rama": "main",
+    "base_verificacion": "214c011c7b13e0c365dbac33d592dd1661347001",
+    "incremento_3_commit": "214c011c7b13e0c365dbac33d592dd1661347001",
+    "incremento_3_mensaje": "feat: implementar sesiones de entrevista, bloqueo pesimista y navegacion MCK03-MCK04",
+    "incremento_3_auditado_aprobado": true,
+    "push_incremento_3": {
+      "exit_code": 0,
+      "salida": "To https://github.com/Luayzzhub/entrevista-pro-360.git\n   e47eeb6..214c011  main -> main",
+      "ls_remote_main": "214c011c7b13e0c365dbac33d592dd1661347001"
+    },
+    "incremento_4_commit": "este commit",
+    "incremento_4_auditado_aprobado": true,
+    "publicacion_cierre": "git push origin main y git ls-remote antes del Incremento 5; resultado y hash en su informe",
+    "indice_vacio_durante_verificacion_previa": true
+  },
+  "h2": {
+    "casos": 73,
+    "ejecutados": 71,
+    "fallos": 0,
+    "errores": 0,
+    "omitidos": 2
+  },
+  "mysql": {
+    "casos": 73,
+    "ejecutados": 73,
+    "fallos": 0,
+    "errores": 0,
+    "omitidos": 0,
+    "servidor": "8.0.44",
+    "suites": [
+      {
+        "suite": "pe.utp.entrevistapro360.architecture.LayerDependenciesTest",
+        "casos": 1,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "dominioYAplicacionNoDependenDeFrameworksNiCapasExternas"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.domain.PuestoPreguntaTest",
+        "casos": 6,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "rechazaPreguntaInactivaODeOtroPuesto",
+          "rechazaCantidadIncompletaYSobrante",
+          "rechazaOrdenDuplicado",
+          "aceptaExactamenteTresPreguntasActivasSinExigirElOrdenDeEntrada",
+          "rechazaPuestoInactivoListaNulaYElementoNulo",
+          "rechazaOrdenFueraDelMvpYDuracionDistintaDeSesenta"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.domain.SesionEntrevistaTest",
+        "casos": 15,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "relojRetrocedidoNoProduceFechaFinalAnteriorAlInicio",
+          "cancelaAmbosEstadosNoTerminalesYConservaIdentidad",
+          "cuentaSoloEvaluadasDeEstaSesion",
+          "cancelacionIdempotenteNoCambiaFechaYCompletadaNoSeCancela",
+          "cualquierEtapaNoEvaluadaBloqueaElAvanceIncluidoFallido",
+          "iniciarValidaCatalogoYTruncaUtcASegundos",
+          "terminalRequiereFechaFinalValidaYPromedioSegunEstado",
+          "evaluadasDesbloqueanSegundaYTercera",
+          "sesionNoTerminalNoAdmitePromedioNiFechaFinal",
+          "rechazaIdentidadEstadoOFechaInicialInvalidos",
+          "validaCatalogoTambienAlConsultarAvance",
+          "sinRespuestasHabilitaPrimeraYOrdenaElBanco",
+          "tresEvaluadasOTerminalNoHabilitanPreguntas",
+          "promedioCompletadoValidaRangoYRedondeaHalfUpAEscalaDos",
+          "iniciarRechazaPuestoNuloInactivoYCatalogoIncompletoODuplicado"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.domain.UsuarioTest",
+        "casos": 11,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "resumenVacioSeNormalizaANullYNoInterpretaHtml",
+          "limitaBytesUtf8ParaCaracteresMultibyteYEmojis",
+          "normalizacionEmailNoDependeDelLocaleDeLaMaquina",
+          "passwordConservaEspaciosExterioresSinNormalizacionSilenciosa",
+          "validacionDeRegistroInformaTodosLosCamposInvalidos",
+          "normalizaNombreYEmail",
+          "validaLimitesDelNombre",
+          "cuentaPuntosDeCodigoEnLugarDeUnidadesUtf16",
+          "actualizarPerfilConservaTodosLosDatosDeIdentidad",
+          "rechazaCorreosInvalidosYLargos",
+          "registroAsignaValoresExclusivosDelServidor"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.infrastructure.config.IdentidadConfigTest",
+        "casos": 3,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "claveLocalAusenteGeneraMaterialAleatorioSinConstanteCompartida",
+          "bcryptUsaCostoDoceFueraDeLaConfiguracionRapidaDeIntegracion",
+          "claveSeValidaEnBytesUtf8InclusoSiHayMenosDeTreintaYDosCaracteres"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.infrastructure.MySqlSchemaIntegrationTest",
+        "casos": 2,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "tiposJsonYAccionesReferencialesSeConservanEnMySql",
+          "ochoTablasSesentaYOchoColumnasEngineYCollationExactos"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.presentation.AuthPerfilIntegrationTest",
+        "casos": 13,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "perfilObtieneAlPropietarioExclusivamenteDelToken",
+          "loginVacioYJsonMalformadoProducen400ConContrato",
+          "correoDuplicadoNormalizadoDevuelve409",
+          "registroInvalidoDevuelveErroresPorCampoYRechazaAsignacionDePrivilegios",
+          "rechazaAusenciaTokenManipuladoVencidoYRolFalsificado",
+          "perfilRechazaCualquierCampoNoPermitidoYDatosFueraDeLimite",
+          "registroPublicoNormalizaAsignaRolEstadoFechasUtcYNuncaExponeHash",
+          "actualizarPerfilPreservaIdentidadYGuardaTextoPlanoYResumenNulo",
+          "colisionRealDeLaClaveUnicaSeTraduceAExcepcionDeNegocio",
+          "loginEmiteHs256ConSubRolYExpiracionExactaDeTreintaMinutos",
+          "loginDesconocidoPasswordIncorrectoYCuentaInactivaDanElMismo401",
+          "tokenEmitidoSeRechazaSiLaCuentaSeBloqueaCambiaRolOSeElimina",
+          "registroPermiteEmojisYRechazaMasDeSetentaYDosBytes"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.presentation.CatalogoIntegrationTest",
+        "casos": 8,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "rutasPrivadasRequierenAutenticacionConErrorJson",
+          "rechazaIdsMalformadosNegativosCeroYDesbordados",
+          "rutasPublicasNoImplementadasYMetodosNoPermitidosConservanErrorEstandar",
+          "puestoInactivoDevuelve404AunqueConservePreguntas",
+          "listaSoloLosTresPuestosActivosSinAutenticacion",
+          "cadaPuestoTieneSusTresPreguntasEnOrdenConStarSoloEnLaSegunda",
+          "puestoInexistenteDevuelve404YContratoExacto",
+          "preguntaInactivaImpideServirUnCatalogoIncompleto"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.presentation.SesionIntegrationTest",
+        "casos": 14,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "idPuestoNuloNoPositivoYCamposExtraDan400",
+          "cancelacionAceptaObjetoVacioRechazaExtraYNoCancelaCompletada",
+          "todasLasRutasDeSesionesSonPrivadas",
+          "resumenSinDatosNoInventaPromedio",
+          "dosPostHttpConcurrentesPersistenUnaSolaSesionCon201Y409",
+          "sesionIniciadaOEnProcesoImpideOtraYDevuelveElIdVigente",
+          "cancelarEsIdempotenteConservaRespuestasYPermiteOtraSesion",
+          "resumenEsPropioOrdenaPorInicioYDesempataUltimaCompletadaPorFin",
+          "detalleUsaRespuestasPersistidasYDesbloqueaSoloTrasEvaluado",
+          "puestoInexistenteOInactivoProduce404",
+          "crearDevuelve201LocationPropietarioFechasUtcYPrimeraPregunta",
+          "idsInvalidosSon400EnConsultaYCancelacion",
+          "sesionAjenaEInexistenteSonIndistinguiblesYNoSePuedenCancelar",
+          "catalogoIncompletoProduce409SinCrearSesion"
+        ]
+      }
+    ]
+  },
+  "frontend": {
+    "unitarias_media": {
+      "casos": 6,
+      "correctos": 6,
+      "fallos": 0,
+      "omitidos": 0,
+      "nombres_casos": [
+        "negociación prefiere VP8 y no consulta formatos posteriores si ya es compatible",
+        "negociación recurre a VP9 y después a MP4 en el orden contractual",
+        "ningún formato admitido devuelve null y nunca elige un tipo indeterminado",
+        "límites inclusivos de duración: 1 y 60 s válidos, fuera de ellos inválidos",
+        "tamaño entero positivo estrictamente inferior a 50 000 000 bytes",
+        "una toma inválida informa problemas de tamaño y duración sin ocultar uno de ellos"
+      ]
+    },
+    "build_produccion_aot_plantillas_estrictas": "correcto",
+    "advertencias_presupuesto": 0,
+    "inicial_kb": 286.53,
+    "transferencia_estimada_kb": 78.45,
+    "dependencias_nuevas_proyecto": 0,
+    "package_lock_sin_cambios": true
+  },
+  "jar": {
+    "generado_y_ejecutado_con_mysql": true,
+    "sha256": "fa10ab7344b293b3c846da0bc975b6ca32ace016dc309f00a35a14b409c685f8"
+  },
+  "backend_sin_cambios_incremento_4": true,
+  "migraciones": {
+    "v1_v2_sin_cambios": true,
+    "tablas_negocio": 8,
+    "columnas_negocio": 68,
+    "ddl_auto": "validate",
+    "archivos": [
+      {
+        "archivo": "backend/src/main/resources/db/migration/V1__esquema_inicial.sql",
+        "sha256_arbol_trabajo": "c581ee2254f9b5ffdcfdc5336fc7f54639e920cfb63e6db5d31f289d509cacd6",
+        "contenido_sin_cambios": true
+      },
+      {
+        "archivo": "backend/src/main/resources/db/migration/V2__catalogo_semilla.sql",
+        "sha256_arbol_trabajo": "f322e737190317c92f01ac9176c03dba6828d8f7f9675a9f99d8ffeb28be825b",
+        "contenido_sin_cambios": true
+      }
+    ]
+  },
+  "navegador": {
+    "correcto": true,
+    "fecha": "2026-10-21",
+    "navegador": "155.0.8059.85",
+    "playwright": "1.64.1",
+    "dispositivos": "Emulados por Chromium; grabaciones y reproductor MediaRecorder reales",
+    "reloj_60_s": "Tiempo real, sin aceleración ni reloj simulado",
+    "casos": [
+      {
+        "nombre": "MCK05: cámara y micrófono vivos, aviso S3/STT/IA, preview muted y formato explícito",
+        "correcto": true,
+        "evidencia": [
+          {
+            "tipo": "audio",
+            "estado": "live",
+            "habilitada": true
+          },
+          {
+            "tipo": "video",
+            "estado": "live",
+            "habilitada": true
+          }
+        ]
+      },
+      {
+        "nombre": "MCK06 a MCK07: grabación real >1 s y parada manual, Blob reproducible con imagen y audio",
+        "correcto": true,
+        "evidencia": {
+          "metadatos": "Duración registrada\n2.409 s (límite: 1 a 60 s)\nTamaño del archivo\n133.17 KB · 133172 bytes (límite: < 50 MB)\nFormato\nwebm · video/webm;codecs=vp8,opus",
+          "pistas_reproduccion": [
+            "audio",
+            "video"
+          ],
+          "confirmacion_deshabilitada": true
+        }
+      },
+      {
+        "nombre": "RF10: repetir revoca URL anterior, segunda toma real de la misma pregunta y cero filas en respuestas_video",
+        "correcto": true,
+        "evidencia": {
+          "respuestas_video": 0,
+          "misma_sesion": 15,
+          "urls_distintas": true
+        }
+      },
+      {
+        "nombre": "MCK07: toma <1 s rechazada y exige repetir",
+        "correcto": true,
+        "evidencia": "Duración registrada\n0.05 s (límite: 1 a 60 s)\nTamaño del archivo\n0.0 KB · 0 bytes (límite: < 50 MB)\nFormato\nwebm · video/webm;codecs=vp8,opus"
+      },
+      {
+        "nombre": "RF09 cliente: parada automática al borde de 60 s con reloj real y revisión consolidada",
+        "correcto": true,
+        "evidencia": {
+          "inicio_ms": 10532,
+          "solicitud_stop_ms": 70532.59999999404,
+          "intervalo_ms": 60000.59999999404,
+          "metadatos": "Duración registrada\n60.0 s (límite: 1 a 60 s)\nTamaño del archivo\n3,477.15 KB · 3477152 bytes (límite: < 50 MB)\nFormato\nwebm · video/webm;codecs=vp8,opus"
+        }
+      },
+      {
+        "nombre": "Liberación al salir al panel durante grabación: pistas ended, recorder inactivo y URLs revocadas",
+        "correcto": true,
+        "evidencia": true
+      },
+      {
+        "nombre": "RF07: denegación real de permisos en Chrome bloquea grabación y permite reintentar",
+        "correcto": true,
+        "evidencia": true
+      },
+      {
+        "nombre": "D04: incompatibilidad incompatible bloquea grabación sin MediaRecorder indeterminado",
+        "correcto": true,
+        "evidencia": true
+      },
+      {
+        "nombre": "D04: incompatibilidad sin-recorder bloquea grabación sin MediaRecorder indeterminado",
+        "correcto": true,
+        "evidencia": true
+      },
+      {
+        "nombre": "D04: incompatibilidad sin-getusermedia bloquea grabación sin MediaRecorder indeterminado",
+        "correcto": true,
+        "evidencia": true
+      },
+      {
+        "nombre": "RF07: pista de audio ausente, error claro y liberación del stream parcial real",
+        "correcto": true,
+        "evidencia": true
+      },
+      {
+        "nombre": "Recuperación fallo-start: toma incompleta descartada y medios liberados",
+        "correcto": true,
+        "evidencia": true
+      },
+      {
+        "nombre": "Recuperación desconexion: toma incompleta descartada y medios liberados",
+        "correcto": true,
+        "evidencia": true
+      },
+      {
+        "nombre": "Recuperación error-recorder: toma incompleta descartada y medios liberados",
+        "correcto": true,
+        "evidencia": true
+      },
+      {
+        "nombre": "Permiso resuelto después de salir: todas las pistas se apagan sin reabrir la captura",
+        "correcto": true,
+        "evidencia": true
+      },
+      {
+        "nombre": "Cerrar sesión libera los dispositivos de una preparación activa",
+        "correcto": true,
+        "evidencia": true
+      },
+      {
+        "nombre": "Cancelar práctica durante grabación elimina captura y libera todas las pistas",
+        "correcto": true,
+        "evidencia": true
+      }
+    ],
+    "total_casos": 17,
+    "errores_javascript": [],
+    "respuestas_video_antes": 0,
+    "respuestas_video_despues": 0,
+    "sesion_verificada": 15,
+    "escrituras_http": [
+      {
+        "metodo": "POST",
+        "ruta": "/api/v1/auth/login"
+      },
+      {
+        "metodo": "POST",
+        "ruta": "/api/v1/sesiones"
+      },
+      {
+        "metodo": "POST",
+        "ruta": "/api/v1/auth/login"
+      },
+      {
+        "metodo": "POST",
+        "ruta": "/api/v1/auth/login"
+      },
+      {
+        "metodo": "POST",
+        "ruta": "/api/v1/auth/login"
+      },
+      {
+        "metodo": "POST",
+        "ruta": "/api/v1/auth/login"
+      },
+      {
+        "metodo": "POST",
+        "ruta": "/api/v1/auth/login"
+      },
+      {
+        "metodo": "POST",
+        "ruta": "/api/v1/auth/login"
+      },
+      {
+        "metodo": "POST",
+        "ruta": "/api/v1/auth/login"
+      },
+      {
+        "metodo": "POST",
+        "ruta": "/api/v1/auth/login"
+      },
+      {
+        "metodo": "POST",
+        "ruta": "/api/v1/auth/login"
+      },
+      {
+        "metodo": "POST",
+        "ruta": "/api/v1/auth/login"
+      },
+      {
+        "metodo": "POST",
+        "ruta": "/api/v1/sesiones/15/cancelacion"
+      }
+    ],
+    "mimeTypes_usados": [
+      "video/webm;codecs=vp8,opus",
+      "video/webm;codecs=vp8,opus",
+      "video/webm;codecs=vp8,opus",
+      "video/webm;codecs=vp8,opus",
+      "video/webm;codecs=vp8,opus",
+      "video/webm;codecs=vp8,opus"
+    ],
+    "capturas_locales": [
+      "inc4-preparacion.png",
+      "inc4-revision.png",
+      "inc4-revision-movil.png"
+    ]
+  },
+  "persistencia": {
+    "sql": "SELECT COUNT(*) FROM ep360_incremento4_test.respuestas_video",
+    "antes": 0,
+    "despues_de_repetir": 0,
+    "despues_final": 0,
+    "escrituras_http_de_respuesta": 0,
+    "subidas_s3": 0
+  },
+  "alcance_rf": {
+    "RF-07": "Verificado",
+    "RF-08": "Verificado",
+    "RF-09": "En progreso",
+    "RF-10": "Verificado"
+  },
+  "limites": [
+    "Los dispositivos fueron emulados por Chromium; MediaStream, MediaRecorder, Blob y reproduccion fueron nativos.",
+    "Los fallos/capacidades/ended se inyectaron en la prueba; la denegacion se verifico con permisos reales bloqueados por Chrome.",
+    "La duracion registrada usa el intervalo solicitado de captura en cliente. No certifica la duracion fisica del contenedor.",
+    "Confirmacion multipart idempotente, ffprobe y carga privada S3 pendientes para Incremento 5.",
+    "La grabacion E2E uso VP8/Opus WebM; VP9/MP4 se verifican en negociacion unitaria, no en captura E2E."
+  ],
+  "archivos_implementacion": [
+    {
+      "archivo": "frontend/src/app/features/interviews/formatos-media.ts",
+      "sha256": "c90bde41bb601bd3435b3d7d9b255f11c9dc0ab5c4cac1f5bebb235fb88a9e07"
+    },
+    {
+      "archivo": "frontend/src/app/features/interviews/grabacion-media.service.ts",
+      "sha256": "b615ca512ccd58d099eada48949136f5972e7c34cb8145cf1a81c1ffcf8ea782"
+    },
+    {
+      "archivo": "frontend/src/app/features/interviews/captura-respuesta.component.ts",
+      "sha256": "39c4d3525fbf531a7bbfe5e45ccdef9f8f7c12d00ad7fa5f60e871fa485b73d1"
+    },
+    {
+      "archivo": "frontend/src/app/features/interviews/captura-respuesta.component.html",
+      "sha256": "929bb5dfa706118964b70cf4b2f3eb0a74ecb5047f92423531631729047b327f"
+    },
+    {
+      "archivo": "frontend/src/app/features/interviews/sesion.component.ts",
+      "sha256": "e6f17fd21ac7b64df9c5db1896a77b66f492027a0fd97d55abf6bbb68fd9d3d4"
+    },
+    {
+      "archivo": "frontend/tests/media-captura.test.mjs",
+      "sha256": "cd90e7dc0935b33aa750937d4c319a94155744ca86b156b5aefef6cc4d38afc7"
+    }
+  ],
+  "fuentes_locales": [
+    {
+      "archivo": ".tools/inc3-push.log",
+      "sha256": "776916335fcd9599878b19c4ae80420c51334287d468e74887930bdadbe9ad7c"
+    },
+    {
+      "archivo": ".tools/inc4-h2-test.log",
+      "sha256": "c725f7978bbb4f8669dcbc25e67ea2a6a3ce7b8d109c6243da24d1e54d0f978f"
+    },
+    {
+      "archivo": ".tools/inc4-mysql-test.log",
+      "sha256": "b47784c8eab332ce98df9eb918d9e5bc132bf3cfb743a66e9e3ffed38d11558b"
+    },
+    {
+      "archivo": ".tools/inc4-package.log",
+      "sha256": "a51abcbbafd22077391290a333ff914b74b7f3abc7b830480595dae3e4ef1021"
+    },
+    {
+      "archivo": ".tools/inc4-frontend-test.log",
+      "sha256": "5958112a0838f63b5e023d3dd05b3da305890aa90a1d2000260268450a9ab93b"
+    },
+    {
+      "archivo": ".tools/inc4-frontend-build.log",
+      "sha256": "89ce98a2b14b95b914b88335438878cccb4885e752a93bdc77bc62d5b57fb686"
+    },
+    {
+      "archivo": ".tools/inc4-browser.log",
+      "sha256": "a5a0cfbe0747eb7dc68f860385ef5c372773559828a99241ae8ee1343bd548bc"
+    },
+    {
+      "archivo": ".tools/inc4-browser.json",
+      "sha256": "34091a20cefd9d78861653aefecd45fb63323eeb8575bea04fac2bad050ea628"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-# Dependencias hasta el Incremento 3
+# Dependencias hasta el Incremento 4
 
 Las versiones del backend provienen de `backend/pom.xml` y del BOM `spring-boot-dependencies:3.5.7` resuelto por Maven. Las del frontend están fijadas sin rangos en `frontend/package.json` y resueltas en `frontend/package-lock.json`. No se atribuye uso funcional a dependencias reservadas.
 
@@ -43,6 +43,10 @@ Los starters declaran su versión mediante el parent. Las transitivas listadas e
 | `@angular/compiler-cli` | Build | 21.2.0 | AOT y validación estricta de plantillas | `angularCompilerOptions` en `tsconfig.json`, `npm run build` |
 | `typescript` | Build | 5.9.3 | Comprobación estricta de tipos y compilación | `tsconfig.json`, `tsconfig.app.json`, fuentes `.ts` |
 | Arial / CSS | Compartido | Fuente de sistema; VIS-1.0 | Jerarquía, colores, adaptación móvil y foco | `src/styles.css`; sin framework CSS externo |
+| `navigator.mediaDevices.getUserMedia`, `MediaStreamTrack` | Captura local | Web APIs nativas; comprobación de capacidad en ejecución | Permisos, cámara/micrófono activos, `ended` y liberación con `stop()` | `GrabacionMediaService.preparar`, `pistasActivas`, `liberarDispositivos` |
+| `MediaRecorder` | Grabación local | Web API nativa; sin paquete npm | `isTypeSupported`, MIME explícito, fragmentos cada 250 ms, errores y parada | `formatos-media.ts`, `GrabacionMediaService.iniciar/detener/consolidar` |
+| `performance.now`, `setTimeout`, Blob, object URLs y HTMLVideoElement | Temporizador/revisión local | Web APIs nativas | Reloj monotónico, plazo de 60 s, tamaño/Blob, reproducción y revocación | `GrabacionMediaService`, `CapturaRespuestaComponent` y su plantilla |
+| `node:test`, `node:assert`, TypeScript existente | Pruebas locales | Node del entorno + TypeScript 5.9.3 | Seis tests de reglas puras, sin añadir runner/dependencias | `tests/media-captura.test.mjs`, `npm run test:media` |
 
 `ReactiveFormsModule` está activo en las tres pantallas de formulario. Los validadores de contraseña cuentan puntos de código y bytes UTF-8 sin recortar espacios. No se instala un SDK OpenAI en el frontend ni se envían secretos de proveedores al navegador. El Bearer token propio se conserva únicamente en memoria.
 
@@ -61,3 +65,5 @@ Desde `backend/`, `mvn help:effective-pom` muestra las dependencias resueltas; `
 No se añadieron dependencias Maven en el Incremento 2: se activó JOSE, ya declarado, y se añadió solamente `@angular/forms` al manifiesto npm. `UsuarioTest`, `AuthPerfilIntegrationTest` e `IdentidadConfigTest` amplían la verificación automatizada con las dependencias de prueba existentes.
 
 El Incremento 3 no añade dependencias Maven/npm: reutiliza JPA (`@Lock`), Spring Transaction (`@Transactional`, READ_COMMITTED), Hibernate JSON, Web/TestRestTemplate para HTTP real y `java.util.concurrent` para la barrera/solicitudes de la prueba concurrente. `Clock` del JDK sigue inyectado en los casos de uso. Los nuevos consumidores son `GestionarSesionService`, `SesionJpaAdapter`, `SesionController`, `SesionEntrevistaTest` y `SesionIntegrationTest`. Frontend reutiliza RxJS/signals, HttpClient, Router y pipes de Angular. SDK S3 permanece reservado.
+
+El Incremento 4 no añade dependencias Maven/npm al proyecto ni modifica el lock. Usa signals, `DestroyRef`, `viewChild`, DecimalPipe y Web APIs del navegador. Las pruebas puras utilizan el compilador TypeScript ya instalado y el runner de Node. La verificación de navegador usa Chrome instalado y Playwright en `.tools/browser-check` (auxiliar ignorado, separado de las dependencias de la aplicación), con dispositivos emulados por Chromium y grabaciones reales. Las versiones utilizadas y sus resultados están en `evidencias/pruebas-incremento-4.json`. S3, ffprobe y proveedores de IA no se invocan desde la captura local.

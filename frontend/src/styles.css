@@ -146,6 +146,24 @@ aside.practice-banner { padding: 24px; border: 1px solid var(--borde); border-ra
 .session-list-title { margin-block: 32px 20px; }
 .available-question { border-left: 4px solid var(--confirmacion); }
 .question-card .tag { white-space: normal; margin-bottom: 12px; }
+app-captura-respuesta { display: block; }
+.capture-panel h3 { margin-block: 20px 12px; }
+.capture-position { color: var(--texto-secundario); margin-top: 12px; }
+.media-status, .take-metadata { display: grid; gap: 16px; margin-block: 24px; }
+.media-status { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.media-status div, .take-metadata div { min-width: 0; }
+.media-status dt, .take-metadata dt { color: var(--texto-secundario); font-size: 14px; margin-bottom: 5px; }
+.media-status dd, .take-metadata dd { margin: 0; overflow-wrap: anywhere; font-weight: 700; }
+.take-metadata span { font-weight: 400; color: var(--texto-secundario); }
+.camera-preview { background: #172c3c; border-radius: 10px; overflow: hidden; margin-block: 20px; }
+.camera-preview video, .review-video { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: contain; max-height: 440px; background: #172c3c; }
+.camera-preview p { padding: 20px; color: white; }
+.camera-preview video:not([src]) { min-height: 120px; }
+.review-video { border-radius: 10px; margin-block: 20px; }
+.recording-status { display: flex; align-items: center; gap: 10px; font-weight: 700; margin-top: 24px; }
+.recording-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--error); }
+.recording-clock { font-variant-numeric: tabular-nums; font-size: 32px; font-weight: 700; margin-block: 12px; }
+.stop-recording { margin-top: 20px; }
 @media (max-width: 850px) {
   .hero { gap: 30px; padding-top: 40px; }
   .cards { gap: 14px; }
@@ -155,6 +173,7 @@ aside.practice-banner { padding: 24px; border: 1px solid var(--borde); border-ra
   .header-inner { flex-wrap: wrap; padding-block: 16px; }
 }
 @media (max-width: 680px) {
+  .media-status { grid-template-columns: 1fr; }
   .container { width: calc(100% - 32px); }
   .header-inner { min-height: 100px; gap: 8px; flex-wrap: wrap; padding: 16px 0; }
   .brand { font-size: 16px; }

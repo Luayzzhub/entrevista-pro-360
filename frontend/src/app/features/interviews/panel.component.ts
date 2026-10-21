@@ -36,7 +36,7 @@ interface EstadoPanel { cargando: boolean; resumen: ResumenSesiones | null; erro
           <aside class="form-card"><span class="eyebrow">MI CUENTA</span><h2>{{ auth.usuario()?.nombre_completo }}</h2><p class="account-email">{{ auth.usuario()?.email }}</p><p class="account-status">Cuenta activa · Postulante</p><a class="button secondary" routerLink="/perfil">Mi perfil</a></aside>
         </div>
       }
-      <p class="availability practice-banner">Puedes iniciar y organizar tus sesiones. La captura de video se activará en el siguiente incremento.</p>
+      <p class="availability practice-banner">Puedes grabar y revisar tomas locales en tu sesión. La confirmación y carga privada se activarán en el Incremento 5.</p>
     </section>
   `
 })

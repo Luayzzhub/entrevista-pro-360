@@ -39,7 +39,7 @@ interface EstadoPreguntas { cargando: boolean; preguntas: Pregunta[]; error: str
         </ol>
         <app-iniciar-practica [idPuesto]="estado().preguntas[0].id_puesto" />
       }
-      <p class="availability">Esta vista permite conocer las preguntas. La práctica con grabación se habilitará más adelante.</p>
+      <p class="availability">Inicia una práctica para grabar y revisar una toma local. La confirmación y carga privada se activarán en el Incremento 5.</p>
     </section>
   `
 })

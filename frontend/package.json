@@ -5,6 +5,7 @@
   "scripts": {
     "start": "ng serve --host 127.0.0.1 --proxy-config proxy.conf.json",
     "build": "ng build",
+    "test:media": "node --test tests/media-captura.test.mjs",
     "build:dev": "ng build --configuration development"
   },
   "engines": { "node": "^20.19.0 || ^22.12.0 || ^24.0.0" },
