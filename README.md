@@ -1,6 +1,6 @@
-# Entrevista Pro 360 — Incrementos 1 y 2
+# Entrevista Pro 360 — Incrementos 1 a 3
 
-Base del MVP universitario: backend Spring Boot de cuatro capas, MySQL/Flyway y Angular VIS-1.0. Incluye catálogo, registro, acceso JWT, salida, perfil básico y panel inicial. Grabación, sesiones de práctica, análisis, resultados e historial corresponden a los siguientes incrementos.
+Base del MVP universitario: backend Spring Boot de cuatro capas, MySQL/Flyway y Angular VIS-1.0. Incluye catálogo, registro, acceso JWT, salida, perfil y sesiones de práctica: creación exclusiva por usuario, consulta propia, avance secuencial y cancelación idempotente. Panel, catálogo, preguntas y sesión consultan la API real. La captura de video corresponde al Incremento 4; análisis, resultados e historial con filtros siguen pendientes.
 
 ## Requisitos
 
@@ -12,7 +12,7 @@ Base del MVP universitario: backend Spring Boot de cuatro capas, MySQL/Flyway y 
 | npm | Incluido con Node; usar `npm ci` con el lock entregado |
 | Angular CLI | 21.2.0 local, instalado mediante `npm ci`; no requiere instalación global |
 | MySQL | 8.0+ con una base exclusiva del proyecto y usuario con permisos para ejecutar migraciones |
-| Git | Incremento 1 confirmado en `c626aaf`; Incremento 2 sin commit para revisión |
+| Git | Incrementos 1 (`c626aaf`) y 2 (`e47eeb6`) publicados; Incremento 3 auditado y aprobado por el Orquestador, confirmado en este commit de `main` |
 | FFmpeg y ffprobe | Necesarios en incrementos de multimedia, accesibles en PATH; no intervienen en este catálogo |
 
 Compatibilidad de referencia: [Spring Boot 3.5](https://docs.spring.io/spring-boot/3.5/system-requirements.html) y [Angular](https://angular.dev/reference/versions). Las versiones declaradas y el uso real están en [docs/dependencias.md](docs/dependencias.md).
@@ -65,7 +65,7 @@ $idPuesto = $puestos[0].id_puesto
 Invoke-RestMethod "http://localhost:8080/api/v1/puestos/$idPuesto/preguntas"
 ```
 
-Catálogo, registro y login son públicos. El perfil requiere Bearer JWT y cuenta ACTIVO/POSTULANTE. Consulta los contratos de [catálogo](docs/api-catalogo.md) e [identidad](docs/api-identidad.md).
+Catálogo, registro y login son públicos. Perfil y sesiones requieren Bearer JWT y cuenta ACTIVO/POSTULANTE; las sesiones se consultan/cancelan exclusivamente por su propietario. Consulta los contratos de [catálogo](docs/api-catalogo.md), [identidad](docs/api-identidad.md) y [sesiones](docs/api-sesiones.md).
 
 ## 4. Arranque del frontend
 
@@ -81,6 +81,8 @@ Abre [http://localhost:4200](http://localhost:4200). `proxy.conf.json` reenvía 
 
 Recorrido del Incremento 2: `/registro` → `/login` → `/panel` → `/perfil`. Las contraseñas requieren 12 puntos de código Unicode como mínimo y 72 bytes UTF-8 como máximo; sus espacios se conservan. Confirmación debe coincidir exactamente. Tras registrarte inicia sesión con esas credenciales. En el perfil solo se editan nombre y resumen; el correo es de solo lectura.
 
+Recorrido del Incremento 3: `/panel` → **Nueva práctica** → `/puestos` → **Ver preguntas** o **Iniciar práctica** → `/sesiones/:id`. La pregunta 1 queda disponible; la siguiente solo se habilita cuando la anterior tiene una respuesta persistida en `EVALUADO`. Este incremento no graba ni sube videos. Mientras exista una sesión pendiente, panel/catálogo/preguntas permiten continuarla o finalizarla con confirmación explícita. Cancelar conserva las respuestas y no genera promedio; después se puede crear otra práctica. Dos POST concurrentes para el mismo usuario producen un 201 y un 409 bajo bloqueo pesimista de su fila en MySQL.
+
 Token y usuario se mantienen únicamente en memoria: cerrar sesión, vencer 30 minutos o recargar la aplicación requiere volver a acceder. El cierre local no revoca una copia del JWT antes de su expiración. La cabecera cambia según el estado de autenticación y las rutas privadas están protegidas tanto en Angular como en el backend.
 
 ## 5. Pruebas y compilación
@@ -93,9 +95,9 @@ cd ..\frontend
 npm run build
 ```
 
-`mvn test` utiliza H2 y las mismas migraciones Flyway, sin AWS/OpenAI. Comprueba dominio, capas, JWT, BCrypt, registro, perfil y catálogo. Las dos pruebas específicas de MySQL se omiten en este modo. Integración usa BCrypt de costo 4; otra prueba comprueba costo 12. H2 no certifica todos los tipos de MySQL. Si conservas `TEST_DB_URL` de una ejecución anterior, elimina esa variable antes del pase H2 (`Remove-Item Env:TEST_DB_URL`).
+`mvn test` utiliza H2 y las mismas migraciones Flyway, sin AWS/OpenAI. Comprueba dominio, capas, JWT, BCrypt, registro, perfil, catálogo y sesiones, incluida concurrencia HTTP real. Las dos pruebas específicas de MySQL se omiten en este modo. Integración usa BCrypt de costo 4; otra prueba comprueba costo 12. H2 no certifica todos los tipos de MySQL. Si conservas `TEST_DB_URL` de una ejecución anterior, elimina esa variable antes del pase H2 (`Remove-Item Env:TEST_DB_URL`).
 
-Para verificar contra MySQL, crea **otra base exclusiva de pruebas**, con el mismo charset y usuario autorizado. Las pruebas insertan y actualizan registros en transacciones revertidas; la base debe contener únicamente la semilla inicial. Desde `backend/`:
+Para verificar contra MySQL, crea **otra base exclusiva de pruebas**, con el mismo charset y usuario autorizado. Las pruebas insertan y actualizan registros en transacciones revertidas; la prueba HTTP concurrente confirma una cuenta temporal y elimina sus registros al terminar. La base debe contener únicamente la semilla inicial. Desde `backend/`:
 
 ```powershell
 $env:TEST_DB_URL='jdbc:mysql://127.0.0.1:3306/entrevista_pro_360_test?connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true'
@@ -113,5 +115,7 @@ El JAR queda en `backend/target/entrevista-pro-360-0.1.0-SNAPSHOT.jar`. Carga la
 - [Matriz de RF-01 a RF-20](docs/matriz_evidencias_rf.md).
 - [Verificación del Incremento 1](docs/verificacion_incremento_1.md).
 - [Verificación del Incremento 2](docs/verificacion_incremento_2.md).
+- [Contrato de sesiones](docs/api-sesiones.md).
+- [Verificación del Incremento 3](docs/verificacion_incremento_3.md).
 
-El Incremento 1 está guardado en `c626aaf` con el mensaje aprobado. GitHub CLI no se encuentra instalado/disponible en este equipo; no se publicó ni configuró `origin`. El Incremento 2 queda en el árbol de trabajo, sin commit, para la auditoría. La documentación de diseño original se mantiene fuera del repositorio.
+Los Incrementos 1 (`c626aaf`) y 2 (`e47eeb6`) están en `main` y publicados en [Luayzzhub/entrevista-pro-360](https://github.com/Luayzzhub/entrevista-pro-360). El Incremento 3 fue auditado y aprobado por el Orquestador y se confirma en este commit de `main` con el mensaje `feat: implementar sesiones de entrevista, bloqueo pesimista y navegacion MCK03-MCK04`. Su publicación se realiza mediante `git push origin main` después del commit. Los informes de los incrementos anteriores conservan su estado histórico. La documentación de diseño original se mantiene fuera del repositorio.

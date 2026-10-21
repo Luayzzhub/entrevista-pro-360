@@ -123,6 +123,29 @@ nav a:hover { text-decoration: underline; }
 .account-name { font-size: 14px; font-weight: 700; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .header-inner nav { flex-wrap: wrap; gap: 18px; }
 .nav-register { border: 1px solid var(--primario); padding: 6px 12px; border-radius: 6px; }
+.practice-banner { margin-block: 24px; }
+.practice-banner p + p { margin-top: 6px; }
+aside.practice-banner { padding: 24px; border: 1px solid var(--borde); border-radius: 12px; background: var(--superficie); }
+.practice-banner .button { margin-top: 12px; }
+.pending-practice { border-left: 4px solid var(--primario) !important; }
+.session-actions { display: flex; align-items: start; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.session-actions .button { margin-top: 0; }
+.session-actions app-cancelar-practica { max-width: 100%; }
+.cancel-confirmation { margin: 0; max-width: 620px; }
+.cancel-confirmation h3 { color: var(--aviso-texto); margin-bottom: 8px; }
+.start-practice { width: 100%; margin-top: 12px; justify-content: center; }
+.session-progress { font-weight: 700; margin-block: 12px; }
+.session-score { font-size: 20px; font-weight: 700; color: var(--confirmacion); margin-block: 16px; }
+.session-date { font-size: 14px; color: var(--texto-secundario); margin-top: 8px; }
+.session-page { max-width: 920px; margin: 36px auto; }
+.session-page > h1 { margin: 12px 0 24px; }
+.session-heading h2 { margin: 16px 0 8px; }
+.enabled-question { margin-top: 24px; border-top: 5px solid var(--confirmacion); }
+.enabled-question .question-meta { margin-top: 12px; }
+.enabled-question h3 { margin-top: 16px; }
+.session-list-title { margin-block: 32px 20px; }
+.available-question { border-left: 4px solid var(--confirmacion); }
+.question-card .tag { white-space: normal; margin-bottom: 12px; }
 @media (max-width: 850px) {
   .hero { gap: 30px; padding-top: 40px; }
   .cards { gap: 14px; }

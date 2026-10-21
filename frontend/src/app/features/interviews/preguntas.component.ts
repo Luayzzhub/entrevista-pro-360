@@ -3,17 +3,22 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { catchError, combineLatest, map, of, startWith, Subject, switchMap } from 'rxjs';
 import { CatalogoService, Pregunta } from './catalogo.service';
+import { ContextoPractica } from './contexto-practica';
+import { ContextoPracticaComponent } from './contexto-practica.component';
+import { IniciarPracticaComponent } from './iniciar-practica.component';
 
 interface EstadoPreguntas { cargando: boolean; preguntas: Pregunta[]; error: string | null; }
 
 @Component({
   selector: 'app-preguntas',
-  imports: [RouterLink],
+  imports: [RouterLink, ContextoPracticaComponent, IniciarPracticaComponent],
+  providers: [ContextoPractica],
   template: `
     <section class="question-page" aria-labelledby="titulo-preguntas" [attr.aria-busy]="estado().cargando">
       <a class="text-link back-link" routerLink="/puestos">← Volver a los puestos</a>
       <span class="eyebrow">CONOCE TU PRÁCTICA</span><h1 id="titulo-preguntas">Tres preguntas para preparar tus ideas.</h1>
       <p class="intro">Revisa las competencias y piensa en experiencias concretas. Cada respuesta tendrá un máximo de 60 segundos.</p>
+      <app-contexto-practica />
       @if (estado().cargando) {
         <div class="status-panel" role="status">Cargando las preguntas…</div>
       } @else if (estado().error) {
@@ -32,6 +37,7 @@ interface EstadoPreguntas { cargando: boolean; preguntas: Pregunta[]; error: str
             </li>
           }
         </ol>
+        <app-iniciar-practica [idPuesto]="estado().preguntas[0].id_puesto" />
       }
       <p class="availability">Esta vista permite conocer las preguntas. La práctica con grabación se habilitará más adelante.</p>
     </section>

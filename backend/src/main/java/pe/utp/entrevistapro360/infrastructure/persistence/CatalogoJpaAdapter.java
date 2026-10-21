@@ -25,6 +25,9 @@ public class CatalogoJpaAdapter implements CatalogoRepository {
     @Override public Optional<Puesto> buscarPuestoActivo(int idPuesto) {
         return puestos.findByIdAndActivoTrue(idPuesto).map(PuestoJpaEntity::toDomain);
     }
+    @Override public Optional<Puesto> buscarPuesto(int idPuesto) {
+        return puestos.findById(idPuesto).map(PuestoJpaEntity::toDomain);
+    }
     @Override public List<Pregunta> buscarPreguntasActivas(int idPuesto) {
         return preguntas.findByPuestoIdAndActivoTrueOrderByOrdenAsc(idPuesto).stream().map(PreguntaJpaEntity::toDomain).toList();
     }

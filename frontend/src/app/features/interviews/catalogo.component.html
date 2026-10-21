@@ -13,6 +13,7 @@
   </aside>
 </section>
 
+<app-contexto-practica />
 <section id="catalogo" class="catalogue" aria-labelledby="titulo-puestos" [attr.aria-busy]="estado().cargando">
   <div class="section-heading"><div><span class="eyebrow">ELIGE TU ENFOQUE</span><h2 id="titulo-puestos">¿Para qué puesto quieres prepararte?</h2></div><span class="pill">Catálogo de práctica</span></div>
   @if (estado().cargando) {
@@ -28,6 +29,7 @@
           <div class="card-top"><span class="card-number" aria-hidden="true">0{{ indice + 1 }}</span><span class="tag">{{ puesto.nivel_experiencia }}</span></div>
           <p class="card-area">{{ puesto.area }}</p><h3>{{ puesto.nombre_puesto }}</h3><p class="card-description">{{ puesto.descripcion }}</p>
           <a class="button" [routerLink]="['/puestos', puesto.id_puesto, 'preguntas']" [attr.aria-label]="'Ver preguntas de ' + puesto.nombre_puesto">Ver preguntas <span aria-hidden="true">↗</span></a>
+          <app-iniciar-practica [idPuesto]="puesto.id_puesto" [nombrePuesto]="puesto.nombre_puesto" />
         </article>
       }
     </div>

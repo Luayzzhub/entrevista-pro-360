@@ -18,10 +18,27 @@ import pe.utp.entrevistapro360.application.EmailYaRegistradoException;
 import pe.utp.entrevistapro360.application.CredencialesInvalidasException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import pe.utp.entrevistapro360.application.SesionActivaExistenteException;
+import pe.utp.entrevistapro360.application.SesionNoEncontradaException;
+import pe.utp.entrevistapro360.domain.TransicionSesionInvalidaException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @ExceptionHandler(SesionActivaExistenteException.class)
+    ResponseEntity<ApiError> sesionActiva(SesionActivaExistenteException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiError("SESION_ACTIVA_EXISTENTE", ex.getMessage(),
+                Map.of("id_sesion_activa", ex.idSesionActiva().toString())));
+    }
+    @ExceptionHandler(SesionNoEncontradaException.class)
+    ResponseEntity<ApiError> sesionNoEncontrada(SesionNoEncontradaException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiError.of("SESION_NO_ENCONTRADA", ex.getMessage()));
+    }
+    @ExceptionHandler(TransicionSesionInvalidaException.class)
+    ResponseEntity<ApiError> sesionCompletada(TransicionSesionInvalidaException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiError.of("SESION_YA_COMPLETADA", ex.getMessage()));
+    }
 
     @ExceptionHandler(ValidacionUsuarioException.class)
     ResponseEntity<ApiError> usuarioInvalido(ValidacionUsuarioException ex) {
@@ -61,7 +78,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<ApiError> datosInvalidos(MethodArgumentNotValidException ex) {
         Map<String, String> campos = new LinkedHashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(e -> campos.putIfAbsent(e.getField(), e.getDefaultMessage()));
+        var snakeCase = new com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy();
+        ex.getBindingResult().getFieldErrors().forEach(e -> campos.putIfAbsent(snakeCase.translate(e.getField()), e.getDefaultMessage()));
         return ResponseEntity.badRequest().body(new ApiError("DATOS_INVALIDOS", "Revisa los campos indicados.", campos));
     }
 

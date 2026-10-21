@@ -11,4 +11,5 @@ export class ApiClient {
   private readonly baseUrl = inject(API_BASE_URL);
 
   get<T>(path: string): Observable<T> { return this.http.get<T>(`${this.baseUrl}${path}`); }
+  post<T>(path: string, body: unknown): Observable<T> { return this.http.post<T>(`${this.baseUrl}${path}`, body); }
 }

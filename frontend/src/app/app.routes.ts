@@ -7,6 +7,7 @@ export const routes: Routes = [
   { path: 'registro', title: 'Crear cuenta | Entrevista Pro 360', canActivate: [publicOnlyGuard], loadComponent: () => import('./features/auth/registro.component').then(m => m.RegistroComponent) },
   { path: 'panel', title: 'Mi panel | Entrevista Pro 360', canActivate: [authGuard], loadComponent: () => import('./features/interviews/panel.component').then(m => m.PanelComponent) },
   { path: 'perfil', title: 'Mi perfil | Entrevista Pro 360', canActivate: [authGuard], loadComponent: () => import('./features/profile/perfil.component').then(m => m.PerfilComponent) },
+  { path: 'sesiones/:id', title: 'Práctica de entrevista | Entrevista Pro 360', canActivate: [authGuard], loadComponent: () => import('./features/interviews/sesion.component').then(m => m.SesionComponent) },
   {
     path: 'puestos', title: 'Puestos | Entrevista Pro 360',
     loadComponent: () => import('./features/interviews/catalogo.component').then(m => m.CatalogoComponent)

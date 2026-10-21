@@ -8,5 +8,6 @@ import pe.utp.entrevistapro360.domain.Puesto;
 public interface CatalogoRepository {
     List<Puesto> buscarPuestosActivos();
     Optional<Puesto> buscarPuestoActivo(int idPuesto);
+    Optional<Puesto> buscarPuesto(int idPuesto);
     List<Pregunta> buscarPreguntasActivas(int idPuesto);
 }

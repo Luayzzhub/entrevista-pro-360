@@ -1,0 +1,424 @@
+{
+  "fecha": "2026-10-20",
+  "zona_horaria": "America/Lima",
+  "incremento": 3,
+  "git": {
+    "rama": "main",
+    "base_verificacion": "e47eeb6affc14b00fbcfc81912e304d145d47819",
+    "incremento_1": "c626aaf",
+    "incremento_2": "e47eeb6",
+    "origin": "https://github.com/Luayzzhub/entrevista-pro-360.git",
+    "origin_main_verificado_ls_remote": "e47eeb6affc14b00fbcfc81912e304d145d47819",
+    "incrementos_1_y_2_publicados": true,
+    "incremento_3_commit": "este commit",
+    "auditado_y_aprobado_por_orquestador": true,
+    "fecha_cierre": "2026-10-21",
+    "publicacion_cierre": "git push origin main despues de confirmar; hash y resultado en verificacion del Incremento 4",
+    "indice_vacio_durante_verificacion_previa": true
+  },
+  "h2": {
+    "casos": 73,
+    "ejecutados": 71,
+    "omitidos": 2,
+    "fallos": 0,
+    "errores": 0
+  },
+  "mysql": {
+    "casos": 73,
+    "ejecutados": 73,
+    "omitidos": 0,
+    "fallos": 0,
+    "errores": 0,
+    "servidor": "8.0.44",
+    "suites": [
+      {
+        "suite": "pe.utp.entrevistapro360.architecture.LayerDependenciesTest",
+        "casos": 1,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "dominioYAplicacionNoDependenDeFrameworksNiCapasExternas"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.domain.PuestoPreguntaTest",
+        "casos": 6,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "rechazaPreguntaInactivaODeOtroPuesto",
+          "rechazaCantidadIncompletaYSobrante",
+          "rechazaOrdenDuplicado",
+          "aceptaExactamenteTresPreguntasActivasSinExigirElOrdenDeEntrada",
+          "rechazaPuestoInactivoListaNulaYElementoNulo",
+          "rechazaOrdenFueraDelMvpYDuracionDistintaDeSesenta"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.domain.SesionEntrevistaTest",
+        "casos": 15,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "relojRetrocedidoNoProduceFechaFinalAnteriorAlInicio",
+          "cancelaAmbosEstadosNoTerminalesYConservaIdentidad",
+          "cuentaSoloEvaluadasDeEstaSesion",
+          "cancelacionIdempotenteNoCambiaFechaYCompletadaNoSeCancela",
+          "cualquierEtapaNoEvaluadaBloqueaElAvanceIncluidoFallido",
+          "iniciarValidaCatalogoYTruncaUtcASegundos",
+          "terminalRequiereFechaFinalValidaYPromedioSegunEstado",
+          "evaluadasDesbloqueanSegundaYTercera",
+          "sesionNoTerminalNoAdmitePromedioNiFechaFinal",
+          "rechazaIdentidadEstadoOFechaInicialInvalidos",
+          "validaCatalogoTambienAlConsultarAvance",
+          "sinRespuestasHabilitaPrimeraYOrdenaElBanco",
+          "tresEvaluadasOTerminalNoHabilitanPreguntas",
+          "promedioCompletadoValidaRangoYRedondeaHalfUpAEscalaDos",
+          "iniciarRechazaPuestoNuloInactivoYCatalogoIncompletoODuplicado"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.domain.UsuarioTest",
+        "casos": 11,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "resumenVacioSeNormalizaANullYNoInterpretaHtml",
+          "limitaBytesUtf8ParaCaracteresMultibyteYEmojis",
+          "normalizacionEmailNoDependeDelLocaleDeLaMaquina",
+          "passwordConservaEspaciosExterioresSinNormalizacionSilenciosa",
+          "validacionDeRegistroInformaTodosLosCamposInvalidos",
+          "normalizaNombreYEmail",
+          "validaLimitesDelNombre",
+          "cuentaPuntosDeCodigoEnLugarDeUnidadesUtf16",
+          "actualizarPerfilConservaTodosLosDatosDeIdentidad",
+          "rechazaCorreosInvalidosYLargos",
+          "registroAsignaValoresExclusivosDelServidor"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.infrastructure.config.IdentidadConfigTest",
+        "casos": 3,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "claveLocalAusenteGeneraMaterialAleatorioSinConstanteCompartida",
+          "bcryptUsaCostoDoceFueraDeLaConfiguracionRapidaDeIntegracion",
+          "claveSeValidaEnBytesUtf8InclusoSiHayMenosDeTreintaYDosCaracteres"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.infrastructure.MySqlSchemaIntegrationTest",
+        "casos": 2,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "tiposJsonYAccionesReferencialesSeConservanEnMySql",
+          "ochoTablasSesentaYOchoColumnasEngineYCollationExactos"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.presentation.AuthPerfilIntegrationTest",
+        "casos": 13,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "perfilObtieneAlPropietarioExclusivamenteDelToken",
+          "loginVacioYJsonMalformadoProducen400ConContrato",
+          "correoDuplicadoNormalizadoDevuelve409",
+          "registroInvalidoDevuelveErroresPorCampoYRechazaAsignacionDePrivilegios",
+          "rechazaAusenciaTokenManipuladoVencidoYRolFalsificado",
+          "perfilRechazaCualquierCampoNoPermitidoYDatosFueraDeLimite",
+          "registroPublicoNormalizaAsignaRolEstadoFechasUtcYNuncaExponeHash",
+          "actualizarPerfilPreservaIdentidadYGuardaTextoPlanoYResumenNulo",
+          "colisionRealDeLaClaveUnicaSeTraduceAExcepcionDeNegocio",
+          "loginEmiteHs256ConSubRolYExpiracionExactaDeTreintaMinutos",
+          "loginDesconocidoPasswordIncorrectoYCuentaInactivaDanElMismo401",
+          "tokenEmitidoSeRechazaSiLaCuentaSeBloqueaCambiaRolOSeElimina",
+          "registroPermiteEmojisYRechazaMasDeSetentaYDosBytes"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.presentation.CatalogoIntegrationTest",
+        "casos": 8,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "rutasPrivadasRequierenAutenticacionConErrorJson",
+          "rechazaIdsMalformadosNegativosCeroYDesbordados",
+          "rutasPublicasNoImplementadasYMetodosNoPermitidosConservanErrorEstandar",
+          "puestoInactivoDevuelve404AunqueConservePreguntas",
+          "listaSoloLosTresPuestosActivosSinAutenticacion",
+          "cadaPuestoTieneSusTresPreguntasEnOrdenConStarSoloEnLaSegunda",
+          "puestoInexistenteDevuelve404YContratoExacto",
+          "preguntaInactivaImpideServirUnCatalogoIncompleto"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.presentation.SesionIntegrationTest",
+        "casos": 14,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "idPuestoNuloNoPositivoYCamposExtraDan400",
+          "cancelacionAceptaObjetoVacioRechazaExtraYNoCancelaCompletada",
+          "todasLasRutasDeSesionesSonPrivadas",
+          "resumenSinDatosNoInventaPromedio",
+          "dosPostHttpConcurrentesPersistenUnaSolaSesionCon201Y409",
+          "sesionIniciadaOEnProcesoImpideOtraYDevuelveElIdVigente",
+          "cancelarEsIdempotenteConservaRespuestasYPermiteOtraSesion",
+          "resumenEsPropioOrdenaPorInicioYDesempataUltimaCompletadaPorFin",
+          "detalleUsaRespuestasPersistidasYDesbloqueaSoloTrasEvaluado",
+          "puestoInexistenteOInactivoProduce404",
+          "crearDevuelve201LocationPropietarioFechasUtcYPrimeraPregunta",
+          "idsInvalidosSon400EnConsultaYCancelacion",
+          "sesionAjenaEInexistenteSonIndistinguiblesYNoSePuedenCancelar",
+          "catalogoIncompletoProduce409SinCrearSesion"
+        ]
+      }
+    ]
+  },
+  "concurrencia": {
+    "caso": "dosPostHttpConcurrentesPersistenUnaSolaSesionCon201Y409",
+    "motores": [
+      "H2",
+      "MySQL"
+    ],
+    "transporte": "Dos solicitudes HTTP concurrentes con TestRestTemplate al servidor embebido en puerto aleatorio",
+    "bloqueo": "PESSIMISTIC_WRITE sobre usuarios; transaccion READ_COMMITTED hasta commit",
+    "estados_http": [
+      201,
+      409
+    ],
+    "sesiones_no_terminales_persistidas": 1
+  },
+  "migraciones": {
+    "v1_v2_sin_cambios": true,
+    "nuevas_migraciones": 0,
+    "tablas_negocio": 8,
+    "columnas_negocio": 68,
+    "ddl_auto": "validate",
+    "archivos": [
+      {
+        "archivo": "backend/src/main/resources/db/migration/V1__esquema_inicial.sql",
+        "sha256_arbol_trabajo": "c581ee2254f9b5ffdcfdc5336fc7f54639e920cfb63e6db5d31f289d509cacd6",
+        "sha256_git_head": "c581ee2254f9b5ffdcfdc5336fc7f54639e920cfb63e6db5d31f289d509cacd6",
+        "contenido_sin_cambios": true
+      },
+      {
+        "archivo": "backend/src/main/resources/db/migration/V2__catalogo_semilla.sql",
+        "sha256_arbol_trabajo": "f322e737190317c92f01ac9176c03dba6828d8f7f9675a9f99d8ffeb28be825b",
+        "sha256_git_head": "f322e737190317c92f01ac9176c03dba6828d8f7f9675a9f99d8ffeb28be825b",
+        "contenido_sin_cambios": true
+      }
+    ]
+  },
+  "fechas": {
+    "api": "UTC ISO 8601 con Z, segundos",
+    "base": "DATETIME UTC",
+    "java_time_use_direct_jdbc": true,
+    "jdbc_time_zone": "UTC",
+    "zona_jvm_verificacion": "America/Lima",
+    "comparacion_jdbc_api_utc": "Correcta en H2 y MySQL"
+  },
+  "frontend": {
+    "build": "correcto",
+    "advertencias_presupuesto": 0,
+    "inicial_kb": 284.21,
+    "transferencia_estimada_kb": 77.85,
+    "dependencias_nuevas_proyecto": 0
+  },
+  "jar": {
+    "generado": true,
+    "arranque_con_mysql_verificado": true,
+    "archivo": "backend/target/entrevista-pro-360-0.1.0-SNAPSHOT.jar",
+    "sha256": "fa10ab7344b293b3c846da0bc975b6ca32ace016dc309f00a35a14b409c685f8"
+  },
+  "navegador": {
+    "correcto": true,
+    "herramienta": "Playwright 1.64.1",
+    "navegador": "155.0.8059.85",
+    "motor": "Chrome headless",
+    "backend": "JAR ejecutable + MySQL 8.0.44",
+    "pasos": [
+      "Catálogo y tres preguntas públicos con acceso para practicar, sin crear sesiones anónimas.",
+      "Registro/acceso reales y MCK 03 sin prácticas ni promedio inventado.",
+      "MCK 03 → MCK 04 → POST 201 desde preguntas → sesión con pregunta 1 disponible y 2/3 bloqueadas, sin captura simulada.",
+      "Panel, catálogo y preguntas muestran la misma práctica pendiente; catálogo/preguntas bloquean una nueva creación.",
+      "Confirmación explícita: Seguir practicando no envía cancelación; confirmar devuelve 200 y presenta CANCELADA sin promedio.",
+      "Nueva sesión 201 desde tarjeta de puesto tras cancelar; cancelación confirmada desde MCK 03 y actualización del panel.",
+      "Cancelación confirmada desde MCK 04 libera los botones de inicio; sesión activa comprobada también a 390 px sin desborde horizontal."
+    ],
+    "sesiones_creadas": [
+      43,
+      44,
+      45
+    ],
+    "peticiones_sesiones": [
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones",
+        "estado": 200
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones",
+        "estado": 200
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones",
+        "estado": 200
+      },
+      {
+        "metodo": "POST",
+        "ruta": "/api/v1/sesiones",
+        "estado": 201
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones/43",
+        "estado": 200
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones",
+        "estado": 200
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones",
+        "estado": 200
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones",
+        "estado": 200
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones/43",
+        "estado": 200
+      },
+      {
+        "metodo": "POST",
+        "ruta": "/api/v1/sesiones/43/cancelacion",
+        "estado": 200
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones/43",
+        "estado": 200
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones",
+        "estado": 200
+      },
+      {
+        "metodo": "POST",
+        "ruta": "/api/v1/sesiones",
+        "estado": 201
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones/44",
+        "estado": 200
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones",
+        "estado": 200
+      },
+      {
+        "metodo": "POST",
+        "ruta": "/api/v1/sesiones/44/cancelacion",
+        "estado": 200
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones",
+        "estado": 200
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones",
+        "estado": 200
+      },
+      {
+        "metodo": "POST",
+        "ruta": "/api/v1/sesiones",
+        "estado": 201
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones/45",
+        "estado": 200
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones",
+        "estado": 200
+      },
+      {
+        "metodo": "POST",
+        "ruta": "/api/v1/sesiones/45/cancelacion",
+        "estado": 200
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones",
+        "estado": 200
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones",
+        "estado": 200
+      }
+    ],
+    "errores_javascript": [],
+    "capturas_locales": [
+      "inc3-panel-inicial.png",
+      "inc3-sesion-activa.png",
+      "inc3-sesion-movil.png",
+      "inc3-sesion-cancelada.png"
+    ]
+  },
+  "fuentes_locales": [
+    {
+      "archivo": ".tools/inc3-h2-test.log",
+      "sha256": "ec78edd0c1bd4a34efcf6e229c64e1cfc1f62275d619d141b51f2f169c3ba8b2"
+    },
+    {
+      "archivo": ".tools/inc3-mysql-test.log",
+      "sha256": "a9a885a4e0fd932b2ea1ce7cbcc462062cd026726e57dacb4bcd0b5427262dfb"
+    },
+    {
+      "archivo": ".tools/inc3-package.log",
+      "sha256": "9431da984b168a89dcbc1bb83ccfc01fb8973cd68a0fe37b5af763eba3e783b4"
+    },
+    {
+      "archivo": ".tools/inc3-frontend-build.log",
+      "sha256": "ef9a6123ff3065f74053531cb30b726aafc939f8a8e8cba3691ee10fcf2ddc74"
+    },
+    {
+      "archivo": ".tools/inc3-browser.json",
+      "sha256": "37b6a239a8239dae20c9f9c84d205a8ce42fec0e966d82095b3df3bf3b1e63f7"
+    }
+  ],
+  "limites": [
+    "RF-07..RF-10 corresponden al Incremento 4; no hay captura ni videos simulados.",
+    "Avance 2/3 y COMPLETADA/promedio se verifican con fixtures persistidos solo en tests; el navegador usa sesiones sin respuestas.",
+    "Procesamiento, carga privada, evaluacion, cierre automatico e historial completo siguen pendientes.",
+    "No se espero la expiracion JWT de 1800 segundos en navegador; sus pruebas automatizadas siguen pasando."
+  ]
+}
