@@ -30,6 +30,11 @@ public record SesionEntrevista(Long idSesion, Long idUsuario, Integer idPuesto,
     }
     public boolean esTerminal() { return estadoSesion == EstadoSesion.COMPLETADA || estadoSesion == EstadoSesion.CANCELADA; }
     public boolean admiteRespuestas() { return !esTerminal(); }
+    public SesionEntrevista registrarRespuestaConfirmada() {
+        if (esTerminal()) throw new TransicionSesionInvalidaException();
+        if (estadoSesion == EstadoSesion.EN_PROCESO) return this;
+        return new SesionEntrevista(idSesion, idUsuario, idPuesto, EstadoSesion.EN_PROCESO, null, fechaInicio, null);
+    }
 
     public SesionEntrevista finalizarAnticipadamente(LocalDateTime ahoraUtc) {
         if (estadoSesion == EstadoSesion.CANCELADA) return this;

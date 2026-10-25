@@ -1,4 +1,4 @@
-# Dependencias hasta el Incremento 4
+# Dependencias hasta el Incremento 5
 
 Las versiones del backend provienen de `backend/pom.xml` y del BOM `spring-boot-dependencies:3.5.7` resuelto por Maven. Las del frontend están fijadas sin rangos en `frontend/package.json` y resueltas en `frontend/package-lock.json`. No se atribuye uso funcional a dependencias reservadas.
 
@@ -17,7 +17,9 @@ Las versiones del backend provienen de `backend/pom.xml` y del BOM `spring-boot-
 | `mysql-connector-j` | Infraestructura, runtime | 9.4.0, gestionada por Boot | JDBC hacia MySQL | `application.yml`, datasource y `CatalogoJpaAdapter`; probado con servidor 8.0.44 |
 | `flyway-core` | Infraestructura | 11.7.2, gestionada por Boot | Historial, validación y aplicación de migraciones | `db/migration/V1__esquema_inicial.sql`, `V2__catalogo_semilla.sql`, `application.yml` |
 | `flyway-mysql` | Infraestructura | 11.7.2, gestionada por Boot | Soporte específico del motor MySQL para Flyway | Mismas migraciones al iniciar con MySQL |
-| `software.amazon.awssdk:s3` | Multimedia futura | 2.31.54, explícita en POM | SDK S3 v2 para almacenamiento privado y firma futura | Declarada por solicitud en `pom.xml`; integración **pendiente**, no hay llamadas ni recursos creados |
+| software.amazon.awssdk:s3 | Infraestructura de almacenamiento | 2.31.54, ya declarada | S3Client real, firma, PUT condicional, HEAD/reconciliación y DELETE | AlmacenamientoConfig, S3AlmacenamientoVideoAdapter y pruebas con HTTP local |
+| ffprobe | Infraestructura multimedia | 9.0.2 portable verificado | Contenedor, códecs, pistas y duración real; fallback de paquetes WebM streaming | FfprobeInspectorMultimediaAdapter, BinarioMultimedia |
+| ffmpeg | Fixtures de pruebas | 9.0.2 portable verificado | Generar archivos reales WebM/MP4/válidos e inválidos | MediaFixtures; extracción de audio en aplicación pendiente hasta Incremento 6 |
 | Jackson Databind | Presentación, transitiva de Web | 2.19.2 | Serializar DTO y errores con nombres estables | DTO `ApiError`, `SecurityExceptionHandler`, estrategia `SNAKE_CASE` |
 | `spring-boot-starter-test` | Pruebas | 3.5.7; JUnit Jupiter 5.12.2 | Integración Spring, MockMvc y aserciones | `CatalogoIntegrationTest`, `PuestoPreguntaTest`, `LayerDependenciesTest`, `MySqlSchemaIntegrationTest` |
 | H2 | Pruebas únicamente | 2.3.232, gestionada por Boot | Base efímera en modo MySQL para `mvn test` sin servicios externos | `src/test/resources/application.yml`; usa las migraciones originales |
@@ -54,7 +56,7 @@ Los starters declaran su versión mediante el parent. Las transitivas listadas e
 
 | Librería/Herramienta | Capa/Módulo | Versión declarada | Propósito técnico | Estado/archivo real |
 | --- | --- | --- | --- | --- |
-| FFmpeg / ffprobe | Infraestructura multimedia | Pendiente de instalación/verificación | Extraer WAV e inspeccionar códecs, duración y pistas | Requisito descrito en README; sin invocación en Incremento 1 |
+| Extracción de audio con FFmpeg | Infraestructura futura | Binario instalado, trabajador pendiente | Extraer WAV desde video confirmado | Se implementará en Incremento 6; no se ejecuta en confirmación |
 | STT OpenAI | Infraestructura futura | `gpt-4o-mini-transcribe-2025-12-15`, solicitado | Transcribir audio | `.env.example`, `application.yml`; disponibilidad e integración pendientes |
 | LLM OpenAI | Infraestructura futura | `gpt-5.4-mini-2026-03-17`, solicitado | Evaluación EVAL-1.0 | `.env.example`, `application.yml`; disponibilidad e integración pendientes |
 
@@ -67,3 +69,5 @@ No se añadieron dependencias Maven en el Incremento 2: se activó JOSE, ya decl
 El Incremento 3 no añade dependencias Maven/npm: reutiliza JPA (`@Lock`), Spring Transaction (`@Transactional`, READ_COMMITTED), Hibernate JSON, Web/TestRestTemplate para HTTP real y `java.util.concurrent` para la barrera/solicitudes de la prueba concurrente. `Clock` del JDK sigue inyectado en los casos de uso. Los nuevos consumidores son `GestionarSesionService`, `SesionJpaAdapter`, `SesionController`, `SesionEntrevistaTest` y `SesionIntegrationTest`. Frontend reutiliza RxJS/signals, HttpClient, Router y pipes de Angular. SDK S3 permanece reservado.
 
 El Incremento 4 no añade dependencias Maven/npm al proyecto ni modifica el lock. Usa signals, `DestroyRef`, `viewChild`, DecimalPipe y Web APIs del navegador. Las pruebas puras utilizan el compilador TypeScript ya instalado y el runner de Node. La verificación de navegador usa Chrome instalado y Playwright en `.tools/browser-check` (auxiliar ignorado, separado de las dependencias de la aplicación), con dispositivos emulados por Chromium y grabaciones reales. Las versiones utilizadas y sus resultados están en `evidencias/pruebas-incremento-4.json`. S3, ffprobe y proveedores de IA no se invocan desde la captura local.
+
+El Incremento 5 activa el SDK S3 existente sin añadir dependencias: el cliente usa DefaultCredentialsProvider, región/bucket y endpoint opcional con forcePathStyle. El adaptador emite peticiones HTTP reales firmadas, condicionales y privadas, con tiempos de llamada acotados. ffprobe y ffmpeg portables están en .tools/ffmpeg (ignorados); las pruebas generan medios con ffmpeg y validan con ffprobe real. HttpServer del JDK implementa el endpoint local de las pruebas; no se sustituye S3Client ni el inspector. En Angular se usa HttpClient XHR con eventos UploadProgress y effect con limpieza de sondeo para MCK 08. La verificación local no certifica IAM/políticas de una cuenta AWS de producción.

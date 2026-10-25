@@ -1,0 +1,23 @@
+<section class="session-page" aria-labelledby="titulo-procesamiento">
+  <span class="eyebrow">ESTADO DE TU RESPUESTA</span><h1 id="titulo-procesamiento">Procesamiento de respuesta</h1>
+  @if (cargando() && !respuesta()) { <p role="status" class="status-panel">Consultando el estado de tu respuesta…</p> }
+  @if (error()) { <p role="alert" class="notice error">{{ error() }}</p> }
+  @if (respuesta(); as r) {
+    <article class="form-card"><span class="pill">{{ r.estado_procesamiento }}</span><h2>{{ r.nombre_puesto }}</h2><h3>Pregunta {{ r.orden_pregunta }} de 3</h3><p>{{ r.enunciado_pregunta }}</p><p class="competency"><strong>Competencia:</strong> {{ r.competencia_evaluada }}</p>
+      <dl class="take-metadata"><div><dt>Duración confirmada en servidor</dt><dd>{{ r.duracion_segundos | number:'1.3-3' }} s</dd></div><div><dt>Formato</dt><dd>{{ r.formato }}</dd></div><div><dt>Tamaño confirmado</dt><dd>{{ r.tamano_bytes }} bytes</dd></div><div><dt>Fecha de confirmación</dt><dd>{{ r.fecha_grabacion | date:'dd/MM/yyyy HH:mm:ss':'UTC' }} UTC</dd></div></dl>
+    </article>
+    <section class="form-card processing-stages" aria-label="Hitos de procesamiento"><h2>Avance de tu respuesta</h2>
+      <ol>
+        <li class="stage-done">Video validado y almacenado en privado (SUBIDO)</li>
+        <li [class.stage-current]="r.etapa_actual === 'EXTRAER_AUDIO'" [class.stage-done]="r.ultimo_hito_valido === 'AUDIO_EXTRAIDO' || r.ultimo_hito_valido === 'TRANSCRITO' || r.ultimo_hito_valido === 'EVALUADO'">Extracción de audio @if (r.etapa_actual === 'EXTRAER_AUDIO') { <span class="tag">Próxima etapa</span> }</li>
+        <li [class.stage-current]="r.etapa_actual === 'TRANSCRIBIR'" [class.stage-done]="r.ultimo_hito_valido === 'TRANSCRITO' || r.ultimo_hito_valido === 'EVALUADO'">Transcripción STT</li>
+        <li [class.stage-current]="r.etapa_actual === 'METRICAS' || r.etapa_actual === 'EVALUAR'" [class.stage-done]="r.estado_procesamiento === 'EVALUADO'">Métricas MET-1.0 y evaluación COM-1.0</li>
+      </ol><p>Último hito confirmado: {{ r.ultimo_hito_valido }}.</p>
+      @if (r.estado_procesamiento === 'SUBIDO') { <p class="notice privacy">Tu video ya está validado y almacenado. La extracción y transcripción automáticas se activarán en el Incremento 6; la evaluación, en el Incremento 7. Por ahora tu respuesta permanece en SUBIDO.</p> }
+      <p class="form-help">El análisis continúa en segundo plano aunque salgas de esta pantalla. La siguiente pregunta solo se habilitará cuando esta respuesta alcance el estado EVALUADO.</p>
+      @if (r.estado_procesamiento === 'FALLIDO' && r.error) { <p class="notice error" role="alert">{{ r.error }}</p>@if (r.puede_reintentar) { <p>La opción de reintento manual se activará en el Incremento 6.</p> } }
+      @if (r.estado_procesamiento === 'EVALUADO') { <p class="notice success">La respuesta ya fue evaluada. Puedes consultar la siguiente pregunta en tu sesión.</p> }
+    </section>
+  }
+  <div class="session-actions"><button type="button" class="button secondary" [disabled]="cargando()" (click)="recargar()">Actualizar estado</button><a class="button" [routerLink]="['/sesiones', idSesion()]">Volver a la sesión</a><a class="button secondary" routerLink="/panel">Volver al panel</a></div>
+</section>

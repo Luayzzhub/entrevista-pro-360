@@ -127,6 +127,7 @@ export class GrabacionMediaService {
     this.revocarToma(); this.liberarDispositivos(); this.error.set(null); this.transcurridoMs.set(0);
     this.limiteAlcanzado.set(false); this.camara.set('Pendiente'); this.microfono.set('Pendiente'); this.etapa.set('preparacion');
   }
+  descartarTomaConfirmada(): void { this.revocarToma(); }
 
   private actualizarTiempo(): void {
     if (this.destruido || this.etapa() !== 'grabando') return;

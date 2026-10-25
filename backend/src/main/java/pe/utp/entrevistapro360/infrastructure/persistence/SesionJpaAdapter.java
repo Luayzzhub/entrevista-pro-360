@@ -51,4 +51,7 @@ public class SesionJpaAdapter implements SesionRepository {
     @Override public List<RespuestaVideo> buscarRespuestas(Collection<Long> idsSesion) {
         return idsSesion.isEmpty() ? List.of() : respuestas.findBySesionIdInOrderByIdAsc(idsSesion).stream().map(RespuestaVideoJpaEntity::toDomain).toList();
     }
+    @Override public Optional<RespuestaVideo> buscarRespuesta(long sesion, int pregunta) { return respuestas.findBySesionIdAndPreguntaId(sesion, pregunta).map(RespuestaVideoJpaEntity::toDomain); }
+    @Override public Optional<RespuestaVideo> buscarRespuestaPropia(long usuario, long id) { return respuestas.findPropia(usuario, id).map(RespuestaVideoJpaEntity::toDomain); }
+    @Override @Transactional public RespuestaVideo guardarRespuesta(RespuestaVideo respuesta) { return respuestas.saveAndFlush(RespuestaVideoJpaEntity.nueva(respuesta)).toDomain(); }
 }

@@ -18,7 +18,7 @@ class SesionEntrevistaTest {
                 inicio, estado == COMPLETADA || estado == CANCELADA ? inicio.plusMinutes(1) : null);
     }
     private RespuestaVideo respuesta(int orden, RespuestaVideo.EstadoProcesamiento estado) {
-        return new RespuestaVideo((long) orden, 99L, 10 + orden, "fixture", new BigDecimal("30.000"), "webm", 1000L, estado, inicio, Map.of());
+        return new RespuestaVideo((long) orden, 99L, 10 + orden, "fixture", new BigDecimal("30.000"), "webm", 1000L, estado, inicio, Map.of("origen", "test"));
     }
     @Test void iniciarValidaCatalogoYTruncaUtcASegundos() {
         var s = SesionEntrevista.iniciar(5L, puesto, preguntas, inicio.withNano(123456));
@@ -80,7 +80,7 @@ class SesionEntrevistaTest {
         assertThatThrownBy(() -> sesion(INICIADA).determinarPreguntaHabilitada(preguntas.subList(0, 2), List.of())).isInstanceOf(CatalogoInvalidoException.class);
     }
     @Test void cuentaSoloEvaluadasDeEstaSesion() {
-        var ajena = new RespuestaVideo(4L, 100L, 13, "fixture", BigDecimal.ONE, "webm", 100L, EVALUADO, inicio, Map.of());
+        var ajena = new RespuestaVideo(4L, 100L, 13, "fixture", BigDecimal.ONE, "webm", 100L, EVALUADO, inicio, Map.of("origen", "test"));
         assertThat(sesion(EN_PROCESO).contarRespuestasEvaluadas(List.of(respuesta(1, EVALUADO), respuesta(2, SUBIDO), ajena))).isEqualTo(1);
     }
     @Test void cancelaAmbosEstadosNoTerminalesYConservaIdentidad() {

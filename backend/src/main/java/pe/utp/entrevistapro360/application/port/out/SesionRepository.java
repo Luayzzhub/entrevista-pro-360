@@ -16,4 +16,7 @@ public interface SesionRepository {
     SesionEntrevista actualizar(SesionEntrevista sesion);
     List<SesionEntrevista> listarPropias(long idUsuario);
     List<RespuestaVideo> buscarRespuestas(Collection<Long> idsSesion);
+    Optional<RespuestaVideo> buscarRespuesta(long idSesion, int idPregunta);
+    Optional<RespuestaVideo> buscarRespuestaPropia(long idUsuario, long idRespuesta);
+    RespuestaVideo guardarRespuesta(RespuestaVideo respuesta);
 }

@@ -24,6 +24,28 @@ import pe.utp.entrevistapro360.domain.TransicionSesionInvalidaException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler({org.springframework.web.multipart.support.MissingServletRequestPartException.class, RespuestaController.VideoVacioException.class})
+    ResponseEntity<ApiError> videoFaltante(Exception ex) {
+        return ResponseEntity.badRequest().body(new ApiError("DATOS_INVALIDOS", "Adjunta un video no vacío.", Map.of("video", "El archivo de video es obligatorio y no puede estar vacío.")));
+    }
+    @ExceptionHandler({pe.utp.entrevistapro360.application.ArchivoDemasiadoGrandeException.class, org.springframework.web.multipart.MaxUploadSizeExceededException.class})
+    ResponseEntity<ApiError> videoGrande(Exception ex) { return ResponseEntity.status(413).body(ApiError.of("ARCHIVO_DEMASIADO_GRANDE", "El video debe ocupar menos de 50 MB.")); }
+    @ExceptionHandler(pe.utp.entrevistapro360.application.FormatoMultimediaNoAdmitidoException.class)
+    ResponseEntity<ApiError> formatoVideo(RuntimeException ex) { return ResponseEntity.status(415).body(ApiError.of("FORMATO_NO_ADMITIDO", ex.getMessage())); }
+    @ExceptionHandler(pe.utp.entrevistapro360.application.ArchivoMultimediaNoUtilizableException.class)
+    ResponseEntity<ApiError> contenidoVideo(RuntimeException ex) { return ResponseEntity.unprocessableEntity().body(ApiError.of("ARCHIVO_NO_UTILIZABLE", ex.getMessage())); }
+    @ExceptionHandler(pe.utp.entrevistapro360.application.AlmacenamientoNoDisponibleException.class)
+    ResponseEntity<ApiError> almacenamiento(RuntimeException ex) { return ResponseEntity.status(503).body(ApiError.of("ALMACENAMIENTO_NO_DISPONIBLE", ex.getMessage())); }
+    @ExceptionHandler(pe.utp.entrevistapro360.application.InspectorMultimediaNoDisponibleException.class)
+    ResponseEntity<ApiError> inspector(RuntimeException ex) { return ResponseEntity.status(503).body(ApiError.of("MULTIMEDIA_NO_DISPONIBLE", ex.getMessage())); }
+    @ExceptionHandler(pe.utp.entrevistapro360.application.PreguntaNoEncontradaException.class)
+    ResponseEntity<ApiError> preguntaNoEncontrada(RuntimeException ex) { return ResponseEntity.status(404).body(ApiError.of("PREGUNTA_NO_ENCONTRADA", ex.getMessage())); }
+    @ExceptionHandler(pe.utp.entrevistapro360.application.RespuestaNoEncontradaException.class)
+    ResponseEntity<ApiError> respuestaNoEncontrada(RuntimeException ex) { return ResponseEntity.status(404).body(ApiError.of("RESPUESTA_NO_ENCONTRADA", ex.getMessage())); }
+    @ExceptionHandler(pe.utp.entrevistapro360.application.PreguntaNoHabilitadaException.class)
+    ResponseEntity<ApiError> preguntaNoHabilitada(RuntimeException ex) { return ResponseEntity.status(409).body(ApiError.of("PREGUNTA_NO_HABILITADA", ex.getMessage())); }
+    @ExceptionHandler(pe.utp.entrevistapro360.application.SesionNoAdmiteRespuestasException.class)
+    ResponseEntity<ApiError> sesionCerrada(RuntimeException ex) { return ResponseEntity.status(409).body(ApiError.of("SESION_NO_ADMITE_RESPUESTAS", ex.getMessage())); }
     private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(SesionActivaExistenteException.class)

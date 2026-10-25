@@ -1,0 +1,743 @@
+{
+  "fecha": "2026-10-21",
+  "zona_horaria": "America/Lima",
+  "incremento": 5,
+  "git": {
+    "rama": "main",
+    "base_verificacion": "dd40f77b33745d48ac09afce1ecbb4d437ae4a73",
+    "incremento_4_commit": "dd40f77b33745d48ac09afce1ecbb4d437ae4a73",
+    "incremento_4_auditado_aprobado": true,
+    "mensaje_incremento_4": "feat: implementar permisos de camara y microfono, captura de 60s y revision local MCK05-MCK07",
+    "push_incremento_4": {
+      "exit_code": 0,
+      "salida": "To https://github.com/Luayzzhub/entrevista-pro-360.git\n   214c011..dd40f77  main -> main",
+      "ls_remote_main": "dd40f77b33745d48ac09afce1ecbb4d437ae4a73"
+    },
+    "incremento_5_commit": "este commit",
+    "incremento_5_auditado_aprobado_sin_observaciones": true,
+    "fecha_cierre": "2026-10-25",
+    "publicacion_cierre": "git push origin main y status limpio/sincronizado antes del Incremento 6",
+    "indice_vacio_durante_verificacion_previa": true
+  },
+  "h2": {
+    "casos": 103,
+    "ejecutados": 101,
+    "fallos": 0,
+    "errores": 0,
+    "omitidos": 2
+  },
+  "mysql": {
+    "casos": 103,
+    "ejecutados": 103,
+    "fallos": 0,
+    "errores": 0,
+    "omitidos": 0,
+    "servidor": "8.0.44",
+    "suites": [
+      {
+        "suite": "pe.utp.entrevistapro360.architecture.LayerDependenciesTest",
+        "casos": 1,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "dominioYAplicacionNoDependenDeFrameworksNiCapasExternas"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.domain.PuestoPreguntaTest",
+        "casos": 6,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "rechazaPreguntaInactivaODeOtroPuesto",
+          "rechazaCantidadIncompletaYSobrante",
+          "rechazaOrdenDuplicado",
+          "aceptaExactamenteTresPreguntasActivasSinExigirElOrdenDeEntrada",
+          "rechazaPuestoInactivoListaNulaYElementoNulo",
+          "rechazaOrdenFueraDelMvpYDuracionDistintaDeSesenta"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.domain.RespuestaVideoTest",
+        "casos": 8,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "validaDuracionAntesDeRedondearInclusiveUnoYSesenta",
+          "tamanosEnterosPositivosMenoresDeCincuentaMillones",
+          "fabricaConstruyeProcExactoConNulosIntentosYModelos",
+          "transicionDeSesionPreservaIdentidadEsIdempotenteYRechazaTerminales",
+          "identidadesDebenSerPositivas",
+          "clavePrivadaRechazaUrlsEspaciosRecorridoYLongitud",
+          "soloWebmYMp4SonAdmitidos",
+          "contextoFechaYEstadoSonObligatorios"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.domain.SesionEntrevistaTest",
+        "casos": 15,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "relojRetrocedidoNoProduceFechaFinalAnteriorAlInicio",
+          "cancelaAmbosEstadosNoTerminalesYConservaIdentidad",
+          "cuentaSoloEvaluadasDeEstaSesion",
+          "cancelacionIdempotenteNoCambiaFechaYCompletadaNoSeCancela",
+          "cualquierEtapaNoEvaluadaBloqueaElAvanceIncluidoFallido",
+          "iniciarValidaCatalogoYTruncaUtcASegundos",
+          "terminalRequiereFechaFinalValidaYPromedioSegunEstado",
+          "evaluadasDesbloqueanSegundaYTercera",
+          "sesionNoTerminalNoAdmitePromedioNiFechaFinal",
+          "rechazaIdentidadEstadoOFechaInicialInvalidos",
+          "validaCatalogoTambienAlConsultarAvance",
+          "sinRespuestasHabilitaPrimeraYOrdenaElBanco",
+          "tresEvaluadasOTerminalNoHabilitanPreguntas",
+          "promedioCompletadoValidaRangoYRedondeaHalfUpAEscalaDos",
+          "iniciarRechazaPuestoNuloInactivoYCatalogoIncompletoODuplicado"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.domain.UsuarioTest",
+        "casos": 11,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "resumenVacioSeNormalizaANullYNoInterpretaHtml",
+          "limitaBytesUtf8ParaCaracteresMultibyteYEmojis",
+          "normalizacionEmailNoDependeDelLocaleDeLaMaquina",
+          "passwordConservaEspaciosExterioresSinNormalizacionSilenciosa",
+          "validacionDeRegistroInformaTodosLosCamposInvalidos",
+          "normalizaNombreYEmail",
+          "validaLimitesDelNombre",
+          "cuentaPuntosDeCodigoEnLugarDeUnidadesUtf16",
+          "actualizarPerfilConservaTodosLosDatosDeIdentidad",
+          "rechazaCorreosInvalidosYLargos",
+          "registroAsignaValoresExclusivosDelServidor"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.infrastructure.config.IdentidadConfigTest",
+        "casos": 3,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "claveLocalAusenteGeneraMaterialAleatorioSinConstanteCompartida",
+          "bcryptUsaCostoDoceFueraDeLaConfiguracionRapidaDeIntegracion",
+          "claveSeValidaEnBytesUtf8InclusoSiHayMenosDeTreintaYDosCaracteres"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.infrastructure.media.FfprobeInspectorMultimediaAdapterTest",
+        "casos": 8,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "aceptaMp4RealH264Aac",
+          "webmStreamingSinDuracionDeCabeceraUsaPaquetesReales",
+          "aceptaWebmVp9Opus",
+          "duracionesRealesFueraDelRangoSon422",
+          "codecNoPermitidoYTextoDisfrazadoSon415",
+          "tamanosLimiteYBinarioAusenteTienenErroresTipados",
+          "sinAudioEs422",
+          "aceptaWebmRealVp8Opus"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.infrastructure.MySqlSchemaIntegrationTest",
+        "casos": 2,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "tiposJsonYAccionesReferencialesSeConservanEnMySql",
+          "ochoTablasSesentaYOchoColumnasEngineYCollationExactos"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.infrastructure.storage.S3AlmacenamientoVideoAdapterTest",
+        "casos": 3,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "faltaBucketOFalloHttpSeTraduceA503YSinExcepcionEnDelete",
+          "putCondicionalPrivadoReconciliacionHeadYDeleteReales",
+          "unaTomaDistintaNoSobrescribeNiReutilizaMetadatosIncorrectos"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.presentation.AuthPerfilIntegrationTest",
+        "casos": 13,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "perfilObtieneAlPropietarioExclusivamenteDelToken",
+          "loginVacioYJsonMalformadoProducen400ConContrato",
+          "correoDuplicadoNormalizadoDevuelve409",
+          "registroInvalidoDevuelveErroresPorCampoYRechazaAsignacionDePrivilegios",
+          "rechazaAusenciaTokenManipuladoVencidoYRolFalsificado",
+          "perfilRechazaCualquierCampoNoPermitidoYDatosFueraDeLimite",
+          "registroPublicoNormalizaAsignaRolEstadoFechasUtcYNuncaExponeHash",
+          "actualizarPerfilPreservaIdentidadYGuardaTextoPlanoYResumenNulo",
+          "colisionRealDeLaClaveUnicaSeTraduceAExcepcionDeNegocio",
+          "loginEmiteHs256ConSubRolYExpiracionExactaDeTreintaMinutos",
+          "loginDesconocidoPasswordIncorrectoYCuentaInactivaDanElMismo401",
+          "tokenEmitidoSeRechazaSiLaCuentaSeBloqueaCambiaRolOSeElimina",
+          "registroPermiteEmojisYRechazaMasDeSetentaYDosBytes"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.presentation.CatalogoIntegrationTest",
+        "casos": 8,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "rutasPrivadasRequierenAutenticacionConErrorJson",
+          "rechazaIdsMalformadosNegativosCeroYDesbordados",
+          "rutasPublicasNoImplementadasYMetodosNoPermitidosConservanErrorEstandar",
+          "puestoInactivoDevuelve404AunqueConservePreguntas",
+          "listaSoloLosTresPuestosActivosSinAutenticacion",
+          "cadaPuestoTieneSusTresPreguntasEnOrdenConStarSoloEnLaSegunda",
+          "puestoInexistenteDevuelve404YContratoExacto",
+          "preguntaInactivaImpideServirUnCatalogoIncompleto"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.presentation.ConfirmacionRespuestaIntegrationTest",
+        "casos": 11,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "falsoYCodecInvalidoSon415SinPersistir",
+          "consultaAjenaInexistenteIdsYAutenticacionConservanContrato",
+          "confirmaVideoRealProcExactoYConsultaPropiaSinCamposInternos",
+          "falloDeS3Es503YConservaPreguntaHabilitada",
+          "cancelarMientrasSubeNoRetieneLockYCompensaObjetoNuevo",
+          "reenvioIdempotenteNoReinspeccionaNiLlamaS3InclusoDespuesDeCancelar",
+          "faltaAudioYDuracionesFueraDeRangoSon422SinPersistir",
+          "faltaVideoVacioYTamanosLimiteSon400O413SinPersistir",
+          "ordenPropiedadPreguntaYEstadosTerminalesSeVerificanAntesDeSubir",
+          "dosPutHttpConcurrentesCompartenIdFilaYObjetoSinSobrescritura",
+          "falloRealDeInsercionRevierteSesionYEliminaObjetoRecienCreado"
+        ]
+      },
+      {
+        "suite": "pe.utp.entrevistapro360.presentation.SesionIntegrationTest",
+        "casos": 14,
+        "fallos": 0,
+        "errores": 0,
+        "omitidos": 0,
+        "nombres_casos": [
+          "idPuestoNuloNoPositivoYCamposExtraDan400",
+          "cancelacionAceptaObjetoVacioRechazaExtraYNoCancelaCompletada",
+          "todasLasRutasDeSesionesSonPrivadas",
+          "resumenSinDatosNoInventaPromedio",
+          "dosPostHttpConcurrentesPersistenUnaSolaSesionCon201Y409",
+          "sesionIniciadaOEnProcesoImpideOtraYDevuelveElIdVigente",
+          "cancelarEsIdempotenteConservaRespuestasYPermiteOtraSesion",
+          "resumenEsPropioOrdenaPorInicioYDesempataUltimaCompletadaPorFin",
+          "detalleUsaRespuestasPersistidasYDesbloqueaSoloTrasEvaluado",
+          "puestoInexistenteOInactivoProduce404",
+          "crearDevuelve201LocationPropietarioFechasUtcYPrimeraPregunta",
+          "idsInvalidosSon400EnConsultaYCancelacion",
+          "sesionAjenaEInexistenteSonIndistinguiblesYNoSePuedenCancelar",
+          "catalogoIncompletoProduce409SinCrearSesion"
+        ]
+      }
+    ]
+  },
+  "backend_nuevos_casos": {
+    "dominio_respuesta": 8,
+    "ffprobe_real": 8,
+    "s3_sdk_http_real": 3,
+    "confirmacion_integracion": 11,
+    "total": 30
+  },
+  "ffprobe": {
+    "version": "9.0.2",
+    "binario_portable": ".tools/ffmpeg/ffprobe.exe",
+    "sha256": "f0d36ecbbdd3bcfac3efa078c96c7271c2e68b3810595552ac3b7f17e9a65c52",
+    "fuente_windows": "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip",
+    "fallback_webm_streaming": "maximo pts_time + duration_time de paquetes reales"
+  },
+  "ffmpeg": {
+    "version": "9.0.2",
+    "uso": "Generacion de fixtures reales; no extraccion de audio de respuestas",
+    "sha256": "3256173f3f8bffd7df12227c68adf68025edb1832273a9530688a7bb1ed8edec"
+  },
+  "frontend": {
+    "unitarias_media": {
+      "casos": 6,
+      "correctos": 6,
+      "fallos": 0,
+      "omitidos": 0
+    },
+    "build_produccion_aot": "correcto",
+    "advertencias_presupuesto": 0,
+    "inicial_kb": 287.37,
+    "transferencia_estimada_kb": 78.67,
+    "dependencias_nuevas": 0
+  },
+  "jar": {
+    "generado_y_arrancado_con_mysql_s3_local": true,
+    "sha256": "0f0209ca4c83094e2d784744331a15f7a5ab15af50cafa157965ff215f533335"
+  },
+  "migraciones": {
+    "v1_v2_sin_cambios": true,
+    "tablas_negocio": 8,
+    "columnas_negocio": 68,
+    "ddl_auto": "validate",
+    "archivos": [
+      {
+        "archivo": "backend/src/main/resources/db/migration/V1__esquema_inicial.sql",
+        "sha256": "c581ee2254f9b5ffdcfdc5336fc7f54639e920cfb63e6db5d31f289d509cacd6",
+        "sin_cambios": true
+      },
+      {
+        "archivo": "backend/src/main/resources/db/migration/V2__catalogo_semilla.sql",
+        "sha256": "f322e737190317c92f01ac9176c03dba6828d8f7f9675a9f99d8ffeb28be825b",
+        "sin_cambios": true
+      }
+    ]
+  },
+  "s3": {
+    "sdk": "2.31.54",
+    "pruebas": "S3Client real firmado sobre HTTP local",
+    "put_if_none_match": "*",
+    "acl_publica": false,
+    "reconciliacion": "412/ConditionalRequestConflict -> HEAD, tamano y SHA-256",
+    "compensacion_delete_verificada": true,
+    "cuenta_aws_produccion_verificada": false
+  },
+  "concurrencia": {
+    "dos_put_http": "202 + 202, mismo id, una fila y un objeto",
+    "cancelacion_durante_upload": "cancelacion concluye sin esperar PUT S3; confirmacion 409 y objeto nuevo eliminado",
+    "fallo_insert": "Trigger real temporal: rollback de respuesta/sesion y DELETE de objeto nuevo en H2/MySQL",
+    "triggers_de_prueba_restantes_mysql": 0
+  },
+  "limpieza_temporales": {
+    "ep360_upload_tmp_restantes": 0
+  },
+  "navegador": {
+    "correcto": true,
+    "fecha": "2026-10-21",
+    "casos": [
+      {
+        "nombre": "MCK06 → MCK07: toma Chrome real >1 s, revisión local y confirmar habilitado",
+        "correcto": true,
+        "evidencia": {
+          "id_sesion": 26,
+          "metadatos_locales": "Duración registrada\n2.42 s (límite: 1 a 60 s)\nTamaño del archivo\n125.83 KB · 125833 bytes (límite: < 50 MB)\nFormato\nwebm · video/webm;codecs=vp8,opus"
+        }
+      },
+      {
+        "nombre": "PM09: fallo de red conserva la misma URL y permite reintentar",
+        "correcto": true,
+        "evidencia": {
+          "toma_conservada": true,
+          "respuestas_bd": 0
+        }
+      },
+      {
+        "nombre": "S3 HTTP 503 real: progreso, doble envío bloqueado y toma íntegra recuperable",
+        "correcto": true,
+        "evidencia": {
+          "respuestas_bd": 0,
+          "url_sin_revocar": true
+        }
+      },
+      {
+        "nombre": "Confirmar la misma toma tras 503 devuelve 202 y abre MCK08 con una fila SUBIDO/PROC-1.0",
+        "correcto": true,
+        "evidencia": {
+          "confirmacion": {
+            "id_respuesta": 9,
+            "id_sesion": 26,
+            "id_pregunta": 1,
+            "orden_pregunta": 1,
+            "estado_sesion": "EN_PROCESO",
+            "estado_procesamiento": "SUBIDO",
+            "etapa_actual": "EXTRAER_AUDIO",
+            "ultimo_hito_valido": "SUBIDO",
+            "duracion_segundos": 2.419,
+            "formato": "webm",
+            "tamano_bytes": 125833,
+            "fecha_grabacion": "2026-10-21T07:50:39Z",
+            "ruta_consulta": "/api/v1/respuestas/9"
+          },
+          "fila_mysql": {
+            "bytes": 125833,
+            "estado": "SUBIDO",
+            "formato": "webm",
+            "contexto": {
+              "modelo_llm": "gpt-5.4-mini-2026-03-17",
+              "modelo_stt": "gpt-4o-mini-transcribe-2025-12-15",
+              "ciclo_actual": 1,
+              "etapa_actual": "EXTRAER_AUDIO",
+              "ultimo_error": null,
+              "referencia_audio": null,
+              "version_contexto": "PROC-1.0",
+              "bloqueo_hasta_utc": null,
+              "version_ejecucion": 0,
+              "intentos_por_etapa": {
+                "EVALUAR": {
+                  "ciclo_1": 0,
+                  "ciclo_2": 0
+                },
+                "METRICAS": {
+                  "ciclo_1": 0,
+                  "ciclo_2": 0
+                },
+                "TRANSCRIBIR": {
+                  "ciclo_1": 0,
+                  "ciclo_2": 0
+                },
+                "EXTRAER_AUDIO": {
+                  "ciclo_1": 0,
+                  "ciclo_2": 0
+                }
+              },
+              "ultimo_hito_valido": "SUBIDO",
+              "proximo_intento_utc": null,
+              "reintento_manual_usado": false
+            },
+            "duracion": 2.419,
+            "id_sesion": 26,
+            "id_pregunta": 1,
+            "id_respuesta": 9
+          },
+          "url_local_revocada": true
+        }
+      },
+      {
+        "nombre": "WebM streaming sin duration aceptado por ffprobe; S3 condicional privado y metadatos reales",
+        "correcto": true,
+        "evidencia": {
+          "cabecera_ffprobe": {
+            "programs": [],
+            "stream_groups": [],
+            "streams": [
+              {
+                "codec_name": "vp8",
+                "codec_type": "video"
+              },
+              {
+                "codec_name": "opus",
+                "codec_type": "audio"
+              }
+            ],
+            "format": {
+              "format_name": "matroska,webm"
+            }
+          },
+          "duracion_servidor": 2.419,
+          "bytes_s3": 125833,
+          "acceso_anonimo": 403
+        }
+      },
+      {
+        "nombre": "MCK08: GET propio sin campos internos, sondeo de 3 s, actualización manual y vista móvil",
+        "correcto": true,
+        "evidencia": {
+          "intervalo_sondeo_ms": 3040,
+          "campos_publicos": [
+            "id_respuesta",
+            "id_sesion",
+            "id_pregunta",
+            "orden_pregunta",
+            "enunciado_pregunta",
+            "competencia_evaluada",
+            "aplica_star",
+            "nombre_puesto",
+            "estado_sesion",
+            "estado_procesamiento",
+            "etapa_actual",
+            "ultimo_hito_valido",
+            "duracion_segundos",
+            "formato",
+            "tamano_bytes",
+            "fecha_grabacion",
+            "puede_reintentar",
+            "error"
+          ]
+        }
+      },
+      {
+        "nombre": "PM09: panel EN_PROCESO, pregunta 1 subida, siguientes bloqueadas, reapertura de MCK08 y sondeo detenido al salir",
+        "correcto": true,
+        "evidencia": {
+          "respuestas_bd": 1,
+          "evaluadas": 0
+        }
+      }
+    ],
+    "total_casos": 7,
+    "navegador": "155.0.8059.85",
+    "playwright": "1.64.1",
+    "entorno": "JAR + MySQL 8.0.44 + SDK S3 v2 con HTTP S3 local + ffprobe 9.0.2 reales; Chrome con dispositivos emulados",
+    "errores_javascript": [],
+    "confirmacion": {
+      "id_respuesta": 9,
+      "id_sesion": 26,
+      "id_pregunta": 1,
+      "orden_pregunta": 1,
+      "estado_sesion": "EN_PROCESO",
+      "estado_procesamiento": "SUBIDO",
+      "etapa_actual": "EXTRAER_AUDIO",
+      "ultimo_hito_valido": "SUBIDO",
+      "duracion_segundos": 2.419,
+      "formato": "webm",
+      "tamano_bytes": 125833,
+      "fecha_grabacion": "2026-10-21T07:50:39Z",
+      "ruta_consulta": "/api/v1/respuestas/9"
+    },
+    "fila_mysql": {
+      "bytes": 125833,
+      "estado": "SUBIDO",
+      "formato": "webm",
+      "contexto": {
+        "modelo_llm": "gpt-5.4-mini-2026-03-17",
+        "modelo_stt": "gpt-4o-mini-transcribe-2025-12-15",
+        "ciclo_actual": 1,
+        "etapa_actual": "EXTRAER_AUDIO",
+        "ultimo_error": null,
+        "referencia_audio": null,
+        "version_contexto": "PROC-1.0",
+        "bloqueo_hasta_utc": null,
+        "version_ejecucion": 0,
+        "intentos_por_etapa": {
+          "EVALUAR": {
+            "ciclo_1": 0,
+            "ciclo_2": 0
+          },
+          "METRICAS": {
+            "ciclo_1": 0,
+            "ciclo_2": 0
+          },
+          "TRANSCRIBIR": {
+            "ciclo_1": 0,
+            "ciclo_2": 0
+          },
+          "EXTRAER_AUDIO": {
+            "ciclo_1": 0,
+            "ciclo_2": 0
+          }
+        },
+        "ultimo_hito_valido": "SUBIDO",
+        "proximo_intento_utc": null,
+        "reintento_manual_usado": false
+      },
+      "duracion": 2.419,
+      "id_sesion": 26,
+      "id_pregunta": 1,
+      "id_respuesta": 9
+    },
+    "peticiones_api": [
+      {
+        "metodo": "POST",
+        "ruta": "/api/v1/auth/login",
+        "estado": 200,
+        "instante_ms": 1792569031580
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones",
+        "estado": 200,
+        "instante_ms": 1792569031711
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/puestos",
+        "estado": 200,
+        "instante_ms": 1792569032044
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones",
+        "estado": 200,
+        "instante_ms": 1792569032076
+      },
+      {
+        "metodo": "POST",
+        "ruta": "/api/v1/sesiones",
+        "estado": 201,
+        "instante_ms": 1792569032437
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones/26",
+        "estado": 200,
+        "instante_ms": 1792569032596
+      },
+      {
+        "metodo": "PUT",
+        "ruta": "/api/v1/sesiones/26/preguntas/1/respuesta",
+        "estado": 503,
+        "instante_ms": 1792569037609
+      },
+      {
+        "metodo": "PUT",
+        "ruta": "/api/v1/sesiones/26/preguntas/1/respuesta",
+        "estado": 202,
+        "instante_ms": 1792569039940
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/respuestas/9",
+        "estado": 200,
+        "instante_ms": 1792569040022
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/respuestas/9",
+        "estado": 200,
+        "instante_ms": 1792569043062
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/respuestas/9",
+        "estado": 200,
+        "instante_ms": 1792569043205
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones",
+        "estado": 200,
+        "instante_ms": 1792569043515
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/sesiones/26",
+        "estado": 200,
+        "instante_ms": 1792569047019
+      },
+      {
+        "metodo": "GET",
+        "ruta": "/api/v1/respuestas/9",
+        "estado": 200,
+        "instante_ms": 1792569047107
+      }
+    ],
+    "s3": {
+      "objetos": [
+        {
+          "clave": "/ep360-pruebas-local/usuarios/42/sesiones/26/preguntas/1/respuesta.webm",
+          "bytes": 125833,
+          "sha256": "20c9c9d3b233da783369081feb07b50067ed9b9ad512f952bf8b5a231853d120",
+          "archivo": ".tools/inc5-s3-data/9869a52e64dcd9710758001de7e9367d1f3bac31ee9603991811e5f88e668e32.bin"
+        }
+      ],
+      "peticiones": [
+        {
+          "metodo": "PUT",
+          "clave": "/ep360-pruebas-local/usuarios/42/sesiones/26/preguntas/1/respuesta.webm",
+          "if_none_match": "*",
+          "content_type": "video/webm",
+          "acl": null,
+          "firmada": true
+        },
+        {
+          "metodo": "PUT",
+          "clave": "/ep360-pruebas-local/usuarios/42/sesiones/26/preguntas/1/respuesta.webm",
+          "if_none_match": "*",
+          "content_type": "video/webm",
+          "acl": null,
+          "firmada": true
+        },
+        {
+          "metodo": "PUT",
+          "clave": "/ep360-pruebas-local/usuarios/42/sesiones/26/preguntas/1/respuesta.webm",
+          "if_none_match": "*",
+          "content_type": "video/webm",
+          "acl": null,
+          "firmada": true
+        },
+        {
+          "metodo": "PUT",
+          "clave": "/ep360-pruebas-local/usuarios/42/sesiones/26/preguntas/1/respuesta.webm",
+          "if_none_match": "*",
+          "content_type": "video/webm",
+          "acl": null,
+          "firmada": true
+        },
+        {
+          "metodo": "PUT",
+          "clave": "/ep360-pruebas-local/usuarios/42/sesiones/26/preguntas/1/respuesta.webm",
+          "if_none_match": "*",
+          "content_type": "video/webm",
+          "acl": null,
+          "firmada": true
+        },
+        {
+          "metodo": "HEAD",
+          "clave": "/ep360-pruebas-local/usuarios/42/sesiones/26/preguntas/1/respuesta.webm",
+          "if_none_match": null,
+          "content_type": null,
+          "acl": null,
+          "firmada": true
+        }
+      ]
+    },
+    "capturas_locales": [
+      "inc5-reintento.png",
+      "inc5-procesamiento.png",
+      "inc5-procesamiento-movil.png"
+    ]
+  },
+  "alcance_rf": {
+    "RF-09": "Verificado",
+    "RF-11": "Verificado",
+    "RF-12": "Verificado"
+  },
+  "limites": [
+    "No se aprovisiono ni certifico un bucket AWS de produccion; la verificacion usa endpoint HTTP S3 local con SDK real.",
+    "Compensacion best effort, sin XA: una BD inaccesible o commit incierto impide borrar a ciegas un posible objeto confirmado.",
+    "Reconciliacion de la misma toma por clave estable; una huella distinta se rechaza sin sobrescribir el objeto ganador.",
+    "El caso 413 usa MockMultipartFile con getSize en el borde; no se declara una transferencia HTTP de 50 MB.",
+    "La respuesta queda SUBIDO; trabajador de extraccion/STT/metricas en Incremento 6 y evaluacion en 7."
+  ],
+  "fuentes_locales": [
+    {
+      "archivo": ".tools/inc4-push.log",
+      "sha256": "1d55633aa57c9a0ef263fd7d6f2fc2c900ed0fb1e7e8646d0bb6fded0c564da5"
+    },
+    {
+      "archivo": ".tools/inc5-h2-test.log",
+      "sha256": "3bb245c66a28de509f2a3ee127b71738ec70945f26a64653135d94206cdb73b9"
+    },
+    {
+      "archivo": ".tools/inc5-mysql-test.log",
+      "sha256": "a59a9c2a3b6ee943bcd86ccbe7dde962c6cd8c3cb8706c54f3b991ce1b2edcd5"
+    },
+    {
+      "archivo": ".tools/inc5-package.log",
+      "sha256": "47902a09c581688153a4c8f0cad598353365bb96f08f06ac513ffc603a66db81"
+    },
+    {
+      "archivo": ".tools/inc5-frontend-test.log",
+      "sha256": "5e82a1c93f586e70fd825ae8b4a0031182ee0220fde7e60b0fc9830ef777bee6"
+    },
+    {
+      "archivo": ".tools/inc5-frontend-build.log",
+      "sha256": "35acf42f20f580e09cd39a5ba1293c7fc6017ab0d86d0d4402baedc633f515c8"
+    },
+    {
+      "archivo": ".tools/inc5-browser.log",
+      "sha256": "1a5752ab3e92eea19414f0472cd84124edde88aeb6538cb40a7f08bd42c0d8ec"
+    },
+    {
+      "archivo": ".tools/inc5-browser.json",
+      "sha256": "f1b83eba59b99b9ee6442d0ebb0ce452b3b103dc398c1c379e0e6bc7caac15bc"
+    }
+  ]
+}

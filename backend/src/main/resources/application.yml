@@ -1,6 +1,10 @@
 spring:
   application:
     name: entrevista-pro-360
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 52MB
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -45,6 +49,8 @@ seguridad:
 integraciones:
   aws-region: ${AWS_REGION:us-east-1}
   s3-bucket: ${S3_BUCKET:}
+  s3-endpoint-override: ${S3_ENDPOINT_OVERRIDE:}
+  ffprobe-bin: ${FFPROBE_BIN:ffprobe}
   openai-api-key: ${OPENAI_API_KEY:}
   stt-model: ${STT_MODEL:gpt-4o-mini-transcribe-2025-12-15}
   llm-model: ${LLM_MODEL:gpt-5.4-mini-2026-03-17}

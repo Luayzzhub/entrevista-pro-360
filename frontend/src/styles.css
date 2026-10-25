@@ -164,6 +164,14 @@ app-captura-respuesta { display: block; }
 .recording-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--error); }
 .recording-clock { font-variant-numeric: tabular-nums; font-size: 32px; font-weight: 700; margin-block: 12px; }
 .stop-recording { margin-top: 20px; }
+progress { display: block; width: 100%; margin-block: 12px; accent-color: var(--confirmacion); }
+.processing-stages { margin-top: 24px; }
+.processing-stages h2 { margin-bottom: 20px; }
+.processing-stages ol { padding-left: 24px; }
+.processing-stages li { padding: 12px; margin-bottom: 10px; border-left: 3px solid var(--borde); }
+.processing-stages li.stage-done { border-color: var(--confirmacion); color: var(--confirmacion); }
+.processing-stages li.stage-current { border-color: var(--primario); background: var(--aviso-fondo); }
+.processing-stages .tag { display: inline-block; margin-left: 8px; white-space: normal; }
 @media (max-width: 850px) {
   .hero { gap: 30px; padding-top: 40px; }
   .cards { gap: 14px; }

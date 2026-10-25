@@ -5,7 +5,7 @@
   <h3>{{ pregunta().enunciado }}</h3><p class="competency"><strong>Competencia:</strong> {{ pregunta().competencia_evaluada }}</p>
   @if (pregunta().aplica_star === true) { <aside class="star-note"><strong>Guía STAR</strong>: Situación, Tarea, Acción y Resultado. Organiza un ejemplo concreto y explica tu aporte.</aside> }
   @else { <p class="form-help">Esta pregunta no requiere la estructura STAR.</p> }
-  <aside class="notice privacy media-privacy"><strong>Privacidad y procesamiento de tu respuesta</strong><p>Al confirmar tu respuesta en la siguiente etapa, el video se almacenará de forma privada en AWS S3; a transcripción (STT) se enviará únicamente el audio extraído y al evaluador de IA solo el texto transcrito, sin tu nombre, correo ni identificadores personales.</p><p>En este incremento la toma permanece en tu navegador y todavía no se envía.</p></aside>
+  <aside class="notice privacy media-privacy"><strong>Privacidad y procesamiento de tu respuesta</strong><p>Al confirmar tu respuesta en la siguiente etapa, el video se almacenará de forma privada en AWS S3; a transcripción (STT) se enviará únicamente el audio extraído y al evaluador de IA solo el texto transcrito, sin tu nombre, correo ni identificadores personales.</p><p>La toma permanece en tu navegador hasta que pulses Confirmar respuesta.</p></aside>
 
   @if (media.error(); as error) {
     <div class="notice error" role="alert">@if (media.incompatible()) { <h3>Navegador o dispositivo incompatible</h3> }<p>{{ error }}</p></div>
@@ -41,9 +41,11 @@
       </dl>
       @if (toma.errores.length > 0) {
         <div class="notice error" role="alert"><strong>La toma no es válida.</strong>@for (error of toma.errores; track error) { <p>{{ error }}</p> }<p>Pulsa Volver a grabar para repetir la toma de esta misma pregunta.</p></div>
-      } @else { <p class="notice success">Toma local verificada en el navegador. La confirmación idempotente y carga privada a AWS S3 se activarán en el Incremento 5.</p> }
-      <div class="form-actions"><button type="button" class="button secondary" (click)="media.repetir()">Volver a grabar</button><button type="button" class="button" disabled>Confirmar respuesta</button></div>
-      <p class="form-help">Repetir elimina únicamente esta toma local. No crea respuestas en la base de datos. Al salir o cerrar sesión se descarta la toma del navegador.</p>
+      } @else { <p class="notice success">Toma local verificada. Al confirmar, el servidor validará el archivo y lo almacenará de forma privada.</p> }
+      @if (subiendo()) { <div class="notice privacy" role="status"><strong>Cargando video… {{ porcentajeCarga() }} %</strong><progress [value]="porcentajeCarga()" max="100" aria-label="Progreso de subida de video"></progress><p>Mantén esta pestaña abierta mientras termina la carga. Cerrarla antes de confirmar el almacenamiento puede hacer que se pierda tu toma local.</p></div> }
+      @if (errorCarga()) { <p class="notice error" role="alert">{{ errorCarga() }} @if (requiereNuevaToma()) { Vuelve a grabar para corregir la toma. } @else { Tu toma se conserva. Puedes volver a confirmar o grabar otra. }</p> }
+      <div class="form-actions"><button type="button" class="button secondary" [disabled]="subiendo()" (click)="repetir()">Volver a grabar</button><button type="button" class="button" [disabled]="subiendo() || toma.errores.length > 0 || requiereNuevaToma()" (click)="confirmar()">Confirmar respuesta</button></div>
+      <p class="form-help">Repetir descarta únicamente la toma local antes de confirmarla. Salir antes de terminar la carga también pierde la toma del navegador.</p>
     }
   }
 </article>

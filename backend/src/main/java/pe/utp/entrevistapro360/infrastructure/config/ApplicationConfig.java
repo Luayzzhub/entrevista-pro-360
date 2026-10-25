@@ -12,6 +12,14 @@ import java.time.Clock;
 
 @Configuration
 public class ApplicationConfig {
+    @Bean pe.utp.entrevistapro360.application.port.in.GestionarRespuesta gestionarRespuesta(
+            SesionRepository sesiones, CatalogoRepository catalogo,
+            pe.utp.entrevistapro360.application.port.out.InspectorMultimediaPort inspector,
+            pe.utp.entrevistapro360.application.port.out.AlmacenamientoVideoPort almacenamiento, Clock clock,
+            @org.springframework.beans.factory.annotation.Value("${integraciones.stt-model}") String stt,
+            @org.springframework.beans.factory.annotation.Value("${integraciones.llm-model}") String llm) {
+        return new pe.utp.entrevistapro360.application.GestionarRespuestaService(sesiones, catalogo, inspector, almacenamiento, clock, stt, llm);
+    }
     @Bean
     ConsultarCatalogo consultarCatalogo(CatalogoRepository repository) {
         return new ConsultarCatalogoService(repository);
