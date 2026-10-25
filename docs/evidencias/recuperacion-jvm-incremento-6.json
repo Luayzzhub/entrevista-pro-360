@@ -1,0 +1,77 @@
+{
+  "terminacion_forzada_durante_stt": true,
+  "puts_audio": 1,
+  "jvm_despues": 13148,
+  "lease_expirado_por_sql_para_acelerar": true,
+  "correcto": true,
+  "transcripciones": 1,
+  "mysql": "8.4.13",
+  "contexto_despues": {
+    "modelo_llm": "gpt-5.4-mini-2026-03-17",
+    "modelo_stt": "gpt-4o-mini-transcribe-2025-12-15",
+    "ciclo_actual": 1,
+    "etapa_actual": "EVALUAR",
+    "ultimo_error": null,
+    "referencia_audio": "usuarios/2/sesiones/2/preguntas/1/audio.wav",
+    "version_contexto": "PROC-1.0",
+    "bloqueo_hasta_utc": null,
+    "version_ejecucion": 4,
+    "intentos_por_etapa": {
+      "EVALUAR": {
+        "ciclo_1": 0,
+        "ciclo_2": 0
+      },
+      "METRICAS": {
+        "ciclo_1": 1,
+        "ciclo_2": 0
+      },
+      "TRANSCRIBIR": {
+        "ciclo_1": 2,
+        "ciclo_2": 0
+      },
+      "EXTRAER_AUDIO": {
+        "ciclo_1": 1,
+        "ciclo_2": 0
+      }
+    },
+    "ultimo_hito_valido": "TRANSCRITO",
+    "proximo_intento_utc": null,
+    "reintento_manual_usado": false
+  },
+  "id_respuesta": 2,
+  "fecha_utc": "2026-10-25T19:52:34.7323571Z",
+  "metricas": 1,
+  "jvm_antes": 1872,
+  "contexto_antes": {
+    "modelo_llm": "gpt-5.4-mini-2026-03-17",
+    "modelo_stt": "gpt-4o-mini-transcribe-2025-12-15",
+    "ciclo_actual": 1,
+    "etapa_actual": "TRANSCRIBIR",
+    "ultimo_error": null,
+    "referencia_audio": "usuarios/2/sesiones/2/preguntas/1/audio.wav",
+    "version_contexto": "PROC-1.0",
+    "bloqueo_hasta_utc": "2026-10-25T19:53:46Z",
+    "version_ejecucion": 2,
+    "intentos_por_etapa": {
+      "EVALUAR": {
+        "ciclo_1": 0,
+        "ciclo_2": 0
+      },
+      "METRICAS": {
+        "ciclo_1": 0,
+        "ciclo_2": 0
+      },
+      "TRANSCRIBIR": {
+        "ciclo_1": 1,
+        "ciclo_2": 0
+      },
+      "EXTRAER_AUDIO": {
+        "ciclo_1": 1,
+        "ciclo_2": 0
+      }
+    },
+    "ultimo_hito_valido": "AUDIO_EXTRAIDO",
+    "proximo_intento_utc": null,
+    "reintento_manual_usado": false
+  }
+}

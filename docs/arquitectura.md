@@ -1,6 +1,6 @@
-# Arquitectura — Incrementos 1 a 5
+# Arquitectura — Incrementos 1 a 6
 
-Backend modular Spring Boot 3.5.7/Java 17 y Angular 21.2.0 VIS-1.0. Catálogo, identidad, sesiones, captura/revisión y confirmación idempotente con inspección multimedia y almacenamiento privado. Contratos de respuestas en api-respuestas.md.
+Backend modular Spring Boot 3.5.7/Java 17 y Angular 21.2.0 VIS-1.0. Catálogo, identidad, sesiones, captura, confirmación privada y pipeline durable de extracción WAV, STT y métricas MET-1.0, con reintento único y cancelación D-02. Contratos de respuestas en api-respuestas.md.
 
 ## Cuatro capas
 
@@ -27,7 +27,7 @@ Dominio y aplicación solo importan Java y las capas internas permitidas. `Layer
 
 Se conservan los GET públicos del Incremento 1. El caso de uso busca un puesto activo y valida exactamente tres preguntas activas del mismo puesto, con órdenes 1, 2 y 3. Ausencia/inactividad produce 404; catálogo incompleto, 409. La semilla resuelve IDs por nombre único.
 
-No se modifican V1/V2: ocho tablas y 68 columnas de negocio, InnoDB, `utf8mb4_unicode_ci`, JSON y acciones referenciales. `flyway_schema_history` es una tabla técnica adicional. Hibernate usa `ddl-auto=validate`; Flyway controla el esquema. Están activos cinco mapeos JPA: usuarios, puestos, preguntas, sesiones y respuestas de video. La respuesta de video se confirma y consulta mediante RespuestaController, con inspección/S3 reales y persistencia transaccional. Sus diez columnas incluyen `procesamiento_contexto` como JSON mediante `@JdbcTypeCode(SqlTypes.JSON)`.
+No se modifican V1/V2 ni se añaden V3+: ocho tablas y 68 columnas de negocio, InnoDB, `utf8mb4_unicode_ci`, JSON y acciones referenciales. `flyway_schema_history` es técnica adicional; Hibernate usa `ddl-auto=validate`. Hay siete mapeos JPA activos: usuarios, puestos, preguntas, sesiones, respuestas, transcripciones y métricas. La tabla canónica de evaluación sigue reservada al Incremento 7.
 
 Las operaciones JPA son transaccionales en los adaptadores. Las pruebas MVC atraviesan seguridad, casos de uso y JPA reales, sin mocks del catálogo o identidad. H2 usa las mismas migraciones en modo MySQL; el perfil de pruebas `mysql` repite la integración y comprueba metadatos reales.
 
@@ -115,6 +115,14 @@ CapturaRespuestaComponent usa RespuestaService y HttpClient con eventos de progr
 
 Referencias: [ffprobe](https://ffmpeg.org/ffprobe.html) y [escrituras condicionales S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide/conditional-writes.html). La verificación usa binarios y SDK reales contra S3 HTTP local; no acredita permisos/políticas de una cuenta AWS de producción.
 
-## Alcance siguiente
+## Worker durable: Incremento 6
 
-El Incremento 5 deja la respuesta SUBIDO, etapa EXTRAER_AUDIO, último hito SUBIDO; la siguiente pregunta queda bloqueada. El trabajador Scheduled de extracción, STT y métricas corresponde al Incremento 6, y la evaluación al 7. No se ejecutan FFmpeg para extraer audio, STT ni LLM desde la confirmación. Resultados, cierre automático e historial completo siguen pendientes. SDK S3 y ffprobe tienen uso activo; los modelos externos no se presentan como disponibles/verificados.
+ContextoProcesamiento y CalculadorMetricas residen en dominio puro. ProcesarRespuestasService coordina puertos para repositorio, S3, extracción, STT y heartbeat, sin importar Spring/JPA/HTTP. ProcesamientoJpaAdapter implementa transacciones cortas READ_COMMITTED con orden de locks sesión/respuesta. Claim, versión, intento y lease se confirman antes de ffmpeg/HTTP. El resultado se confirma solo si versión, etapa y lease siguen vigentes; si la sesión terminó se libera únicamente el lease. La consulta de candidatos pagina por lotes acotados y omite EVALUAR incluso si existen muchas respuestas listas.
+
+WorkerRespuestas utiliza @Scheduled con fixedDelay 2000 ms y una invocación secuencial protegida por AtomicBoolean: no acumula trabajos ni procesos multimedia. RenovacionLeaseAdapter usa un ejecutor independiente de un hilo para renovar cada 20000 ms a 90 s desde ahora; cancelar la vigilancia y verificar etapa/lease impiden renovar una ejecución ya finalizada. El planificador se desactiva con integraciones.worker-habilitado=false en pruebas.
+
+FfmpegExtractorAudioAdapter ejecuta argumentos separados y timeout de 60 s; valida PCM s16le mono 16 kHz con muestras. S3AlmacenamientoVideoAdapter añade HEAD/GET privados y PUT idempotente de WAV; los reintentos internos del SDK se limitan a una solicitud para que PROC-1.0 gobierne el número de ejecuciones. OpenAiTranscripcionAdapter usa HttpClient del JDK, multipart con solo cuatro partes contractuales, archivo de nombre neutro audio.wav y sin identidad. Los temporales se eliminan en finally.
+
+El repositorio aplica inserción única de transcripción y upsert de métricas bajo el mismo lock que el avance. confianza_stt permanece NULL. El cálculo MET-1.0 normaliza NFKC y aplica el catálogo exacto; si PPM no cabe en DECIMAL(6,2), se clasifica la entrada como definitiva en lugar de truncar o alterar V1. D-02 cancela con fecha final válida y promedio null. El reintento manual reutiliza la misma exclusión y restaura el último hito en ciclo 2.
+
+GET expone un resumen de métricas y elegibilidad de reintento, sin serializar contexto ni referencias S3. MCK 08 se detiene en TRANSCRITO/EVALUAR y distingue agotamiento recuperable de falla definitiva. La siguiente pregunta sigue bloqueada: evaluación COM-1.0, cierre automático, resultados e historial completo corresponden a incrementos siguientes.

@@ -1,4 +1,4 @@
-# Dependencias hasta el Incremento 5
+# Dependencias hasta el Incremento 6
 
 Las versiones del backend provienen de `backend/pom.xml` y del BOM `spring-boot-dependencies:3.5.7` resuelto por Maven. Las del frontend están fijadas sin rangos en `frontend/package.json` y resueltas en `frontend/package-lock.json`. No se atribuye uso funcional a dependencias reservadas.
 
@@ -11,19 +11,19 @@ Las versiones del backend provienen de `backend/pom.xml` y del BOM `spring-boot-
 | Spring Boot parent / Maven plugin | Composición/build | 3.5.7 | Autoconfiguración y JAR ejecutable | `EntrevistaPro360Application.java`, `pom.xml` |
 | `spring-boot-starter-web` | Presentación | 3.5.7; Spring MVC/Web 6.2.12 | HTTP REST, despacho de solicitudes y JSON | `CatalogoController`, `GlobalExceptionHandler` |
 | `spring-boot-starter-validation` | Presentación | 3.5.7; Hibernate Validator 8.0.3.Final | Validar el ID positivo | `CatalogoController.preguntas` con `@Positive` |
-| `spring-boot-starter-data-jpa` | Infraestructura | 3.5.7; Spring Data JPA 3.5.5; Hibernate ORM 6.6.33.Final | Catálogo, identidad, sesiones, transacciones y bloqueo PESSIMISTIC_WRITE | `CatalogoJpaAdapter`, `UsuarioJpaAdapter`, `SesionJpaAdapter`, cinco entidades/repositorios; `findByIdForUpdate`, `findPropiaForUpdate` |
+| `spring-boot-starter-data-jpa` | Infraestructura | 3.5.7; Spring Data JPA 3.5.5; Hibernate ORM 6.6.33.Final | Catálogo, identidad, sesiones y pipeline, transacciones y PESSIMISTIC_WRITE | Adaptadores de catálogo/usuario/sesión y ProcesamientoJpaAdapter; siete entidades/repositorios, locks de sesión y respuesta |
 | `spring-boot-starter-security` | Infraestructura/presentación | 3.5.7; Spring Security 6.5.6 | Cadena stateless, autenticación JWT y hash BCrypt con costo 12 por defecto | `SecurityConfig`, `JwtAuthenticationFilter`, `BCryptPasswordHasher`, `SecurityExceptionHandler` |
 | `spring-security-oauth2-jose` | Infraestructura / identidad | 6.5.6, gestionada por Boot | Emitir y verificar JWT HS256, issuer y vigencia exacta | `IdentidadConfig` (`NimbusJwtEncoder`, `NimbusJwtDecoder`), `JwtTokenProvider`, `JwtAuthenticationFilter` |
-| `mysql-connector-j` | Infraestructura, runtime | 9.4.0, gestionada por Boot | JDBC hacia MySQL | `application.yml`, datasource y `CatalogoJpaAdapter`; probado con servidor 8.0.44 |
+| `mysql-connector-j` | Infraestructura, runtime | 9.4.0, gestionada por Boot | JDBC hacia MySQL | application.yml, datasource y adaptadores JPA; servidor 8.4.13 verificado en Incremento 6 |
 | `flyway-core` | Infraestructura | 11.7.2, gestionada por Boot | Historial, validación y aplicación de migraciones | `db/migration/V1__esquema_inicial.sql`, `V2__catalogo_semilla.sql`, `application.yml` |
 | `flyway-mysql` | Infraestructura | 11.7.2, gestionada por Boot | Soporte específico del motor MySQL para Flyway | Mismas migraciones al iniciar con MySQL |
 | software.amazon.awssdk:s3 | Infraestructura de almacenamiento | 2.31.54, ya declarada | S3Client real, firma, PUT condicional, HEAD/reconciliación y DELETE | AlmacenamientoConfig, S3AlmacenamientoVideoAdapter y pruebas con HTTP local |
 | ffprobe | Infraestructura multimedia | 9.0.2 portable verificado | Contenedor, códecs, pistas y duración real; fallback de paquetes WebM streaming | FfprobeInspectorMultimediaAdapter, BinarioMultimedia |
-| ffmpeg | Fixtures de pruebas | 9.0.2 portable verificado | Generar archivos reales WebM/MP4/válidos e inválidos | MediaFixtures; extracción de audio en aplicación pendiente hasta Incremento 6 |
+| ffmpeg | Infraestructura multimedia y tests | 9.0.2 portable verificado | Extraer WAV PCM s16le mono 16 kHz y generar fixtures | FfmpegExtractorAudioAdapter, BinarioMultimedia y MediaFixtures |
 | Jackson Databind | Presentación, transitiva de Web | 2.19.2 | Serializar DTO y errores con nombres estables | DTO `ApiError`, `SecurityExceptionHandler`, estrategia `SNAKE_CASE` |
 | `spring-boot-starter-test` | Pruebas | 3.5.7; JUnit Jupiter 5.12.2 | Integración Spring, MockMvc y aserciones | `CatalogoIntegrationTest`, `PuestoPreguntaTest`, `LayerDependenciesTest`, `MySqlSchemaIntegrationTest` |
 | H2 | Pruebas únicamente | 2.3.232, gestionada por Boot | Base efímera en modo MySQL para `mvn test` sin servicios externos | `src/test/resources/application.yml`; usa las migraciones originales |
-| MySQL Server | Persistencia externa | 8.0.44 utilizado | Ejecutar el esquema real, restricciones y catálogo | Perfil `mysql` de pruebas y consulta HTTP del JAR |
+| MySQL Server | Persistencia externa | 8.4.13 utilizado en Incremento 6; 8.0.44 en informes anteriores | Esquema real, restricciones, claims y pipeline | Perfil mysql y JAR con datadir/base aislados |
 
 Los starters declaran su versión mediante el parent. Las transitivas listadas explican el uso efectivo; no se añaden dependencias explícitas redundantes para Jackson, Hibernate o JUnit. La tabla no es un inventario de todas las transitivas.
 
@@ -52,15 +52,17 @@ Los starters declaran su versión mediante el parent. Las transitivas listadas e
 
 `ReactiveFormsModule` está activo en las tres pantallas de formulario. Los validadores de contraseña cuentan puntos de código y bytes UTF-8 sin recortar espacios. No se instala un SDK OpenAI en el frontend ni se envían secretos de proveedores al navegador. El Bearer token propio se conserva únicamente en memoria.
 
-## Herramientas y proveedores pendientes
+## Integraciones activas y evaluación pendiente
 
 | Librería/Herramienta | Capa/Módulo | Versión declarada | Propósito técnico | Estado/archivo real |
 | --- | --- | --- | --- | --- |
-| Extracción de audio con FFmpeg | Infraestructura futura | Binario instalado, trabajador pendiente | Extraer WAV desde video confirmado | Se implementará en Incremento 6; no se ejecuta en confirmación |
-| STT OpenAI | Infraestructura futura | `gpt-4o-mini-transcribe-2025-12-15`, solicitado | Transcribir audio | `.env.example`, `application.yml`; disponibilidad e integración pendientes |
+| Extracción de audio con FFmpeg | Infraestructura activa | 9.0.2 | Extraer WAV desde video confirmado | Worker durable y FfmpegExtractorAudioAdapter; fuera de confirmación |
+| STT OpenAI | Infraestructura activa | gpt-4o-mini-transcribe-2025-12-15 exacto | Transcribir WAV en español por multipart | OpenAiTranscripcionAdapter probado con HTTP local real; cuenta/snapshot de producción sin verificar |
 | LLM OpenAI | Infraestructura futura | `gpt-5.4-mini-2026-03-17`, solicitado | Evaluación EVAL-1.0 | `.env.example`, `application.yml`; disponibilidad e integración pendientes |
 
 ## Consulta de versiones
+
+El Incremento 6 no añade dependencias Maven/npm. Usa HttpClient/BodyPublishers multipart del JDK 17, ProcessBuilder, AudioSystem para validar WAV sin hardware, Normalizer/Pattern/BigDecimal en dominio, ScheduledExecutorService para heartbeat y @Scheduled para trabajo secuencial. Activa dos mapeos JPA existentes en el esquema (transcripciones y metricas_comunicacion). Los fixtures HTTP usan HttpServer del JDK. Playwright sigue aislado en .tools para Chrome headless.
 
 Desde `backend/`, `mvn help:effective-pom` muestra las dependencias resueltas; `mvn dependency:tree` permite ampliar el inventario. Desde `frontend/`, `npm ls --depth=0` compara las dependencias instaladas con el manifiesto. Usa `npm ci` para reproducir el lock. Los requisitos de compatibilidad oficiales están enlazados en README.
 

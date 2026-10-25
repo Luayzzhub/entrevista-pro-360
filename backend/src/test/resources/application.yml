@@ -38,6 +38,7 @@ seguridad:
     secret: clave-exclusiva-de-pruebas-de-al-menos-32-bytes
     permitir-clave-efimera: false
 integraciones:
+  worker-habilitado: false
   stt-model: modelo-stt-test
   llm-model: modelo-llm-test
   ffprobe-bin: ${FFPROBE_BIN:ffprobe}

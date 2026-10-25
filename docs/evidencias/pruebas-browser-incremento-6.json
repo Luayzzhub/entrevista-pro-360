@@ -1,0 +1,346 @@
+{
+  "fecha": "2026-10-25T19:54:41.719Z",
+  "correcto": true,
+  "total_casos": 3,
+  "navegador": "156.0.8078.47",
+  "casos": [
+    {
+      "caso": "exito",
+      "correcto": true,
+      "id_sesion": 1,
+      "id_respuesta": 1,
+      "polling_detenido": true
+    },
+    {
+      "caso": "manual",
+      "correcto": true,
+      "id_sesion": 2,
+      "id_respuesta": 2,
+      "polling_detenido": true
+    },
+    {
+      "caso": "definitivo",
+      "correcto": true,
+      "id_sesion": 3,
+      "id_respuesta": 3,
+      "polling_detenido": true
+    }
+  ],
+  "formatos_wav": [
+    {
+      "codec_name": "pcm_s16le",
+      "sample_rate": "16000",
+      "channels": 1
+    },
+    {
+      "codec_name": "pcm_s16le",
+      "sample_rate": "16000",
+      "channels": 1
+    },
+    {
+      "codec_name": "pcm_s16le",
+      "sample_rate": "16000",
+      "channels": 1
+    }
+  ],
+  "stt": [
+    {
+      "metodo": "POST",
+      "ruta": "/v1/audio/transcriptions",
+      "tipo": "multipart/form-data; boundary=ep360-1916e1ea-dc6c-4a2c-86cd-6295d5f344f4",
+      "campos": [
+        "file",
+        "model",
+        "language",
+        "response_format"
+      ],
+      "modelo": true,
+      "wav": true,
+      "sin_identificadores": true
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/v1/audio/transcriptions",
+      "tipo": "multipart/form-data; boundary=ep360-0b7d67e8-6d99-47bb-b2dc-49e38506c2a2",
+      "campos": [
+        "file",
+        "model",
+        "language",
+        "response_format"
+      ],
+      "modelo": true,
+      "wav": true,
+      "sin_identificadores": true
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/v1/audio/transcriptions",
+      "tipo": "multipart/form-data; boundary=ep360-772fac8a-2fb1-4c8c-8df3-a5a0aecdd28d",
+      "campos": [
+        "file",
+        "model",
+        "language",
+        "response_format"
+      ],
+      "modelo": true,
+      "wav": true,
+      "sin_identificadores": true
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/v1/audio/transcriptions",
+      "tipo": "multipart/form-data; boundary=ep360-7a8bdb08-a25e-4ff3-a166-6528ce3176f6",
+      "campos": [
+        "file",
+        "model",
+        "language",
+        "response_format"
+      ],
+      "modelo": true,
+      "wav": true,
+      "sin_identificadores": true
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/v1/audio/transcriptions",
+      "tipo": "multipart/form-data; boundary=ep360-c9e79ffc-359b-41fa-9484-770ea6cbab98",
+      "campos": [
+        "file",
+        "model",
+        "language",
+        "response_format"
+      ],
+      "modelo": true,
+      "wav": true,
+      "sin_identificadores": true
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/v1/audio/transcriptions",
+      "tipo": "multipart/form-data; boundary=ep360-457384a9-0305-4a8b-88d8-f4117e42167b",
+      "campos": [
+        "file",
+        "model",
+        "language",
+        "response_format"
+      ],
+      "modelo": true,
+      "wav": true,
+      "sin_identificadores": true
+    }
+  ],
+  "peticiones_api": [
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/auth/login",
+      "estado": 200,
+      "ms": 1792958036708,
+      "caso": "exito"
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones",
+      "estado": 200,
+      "ms": 1792958036807,
+      "caso": "exito"
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/puestos",
+      "estado": 200,
+      "ms": 1792958037177,
+      "caso": "exito"
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones",
+      "estado": 200,
+      "ms": 1792958037197,
+      "caso": "exito"
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/sesiones",
+      "estado": 201,
+      "ms": 1792958037495,
+      "caso": "exito"
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/1",
+      "estado": 200,
+      "ms": 1792958037600,
+      "caso": "exito"
+    },
+    {
+      "metodo": "PUT",
+      "ruta": "/api/v1/sesiones/1/preguntas/1/respuesta",
+      "estado": 202,
+      "ms": 1792958042946,
+      "caso": "exito"
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/1",
+      "estado": 200,
+      "ms": 1792958043080,
+      "caso": "exito"
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/1",
+      "estado": 200,
+      "ms": 1792958046134,
+      "caso": "exito"
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/auth/login",
+      "estado": 200,
+      "ms": 1792958052326,
+      "caso": "manual"
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones",
+      "estado": 200,
+      "ms": 1792958052380,
+      "caso": "manual"
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/puestos",
+      "estado": 200,
+      "ms": 1792958052834,
+      "caso": "manual"
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones",
+      "estado": 200,
+      "ms": 1792958052835,
+      "caso": "manual"
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/sesiones",
+      "estado": 201,
+      "ms": 1792958052974,
+      "caso": "manual"
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/2",
+      "estado": 200,
+      "ms": 1792958053040,
+      "caso": "manual"
+    },
+    {
+      "metodo": "PUT",
+      "ruta": "/api/v1/sesiones/2/preguntas/1/respuesta",
+      "estado": 202,
+      "ms": 1792958056152,
+      "caso": "manual"
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/2",
+      "estado": 200,
+      "ms": 1792958056215,
+      "caso": "manual"
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/2",
+      "estado": 200,
+      "ms": 1792958059250,
+      "caso": "manual"
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/respuestas/2/reintento",
+      "estado": 202,
+      "ms": 1792958059868,
+      "caso": "manual"
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/2",
+      "estado": 200,
+      "ms": 1792958059907,
+      "caso": "manual"
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/2",
+      "estado": 200,
+      "ms": 1792958062963,
+      "caso": "manual"
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/auth/login",
+      "estado": 200,
+      "ms": 1792958069415,
+      "caso": "definitivo"
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones",
+      "estado": 200,
+      "ms": 1792958069466,
+      "caso": "definitivo"
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/puestos",
+      "estado": 200,
+      "ms": 1792958069941,
+      "caso": "definitivo"
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones",
+      "estado": 200,
+      "ms": 1792958069962,
+      "caso": "definitivo"
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/sesiones",
+      "estado": 201,
+      "ms": 1792958070113,
+      "caso": "definitivo"
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/3",
+      "estado": 200,
+      "ms": 1792958070175,
+      "caso": "definitivo"
+    },
+    {
+      "metodo": "PUT",
+      "ruta": "/api/v1/sesiones/3/preguntas/1/respuesta",
+      "estado": 202,
+      "ms": 1792958073356,
+      "caso": "definitivo"
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/3",
+      "estado": 200,
+      "ms": 1792958073421,
+      "caso": "definitivo"
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/3",
+      "estado": 200,
+      "ms": 1792958076476,
+      "caso": "definitivo"
+    }
+  ],
+  "errores_javascript": [],
+  "entorno": "JAR Spring + MySQL 8.4.13 + worker programado + ffmpeg/ffprobe reales + S3 y STT HTTP locales + Chrome con dispositivos emulados"
+}

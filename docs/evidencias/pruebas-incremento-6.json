@@ -1,0 +1,266 @@
+{
+  "incremento": 6,
+  "fecha_utc": "2026-10-25T19:55:54.222248+00:00",
+  "resultado": "AUDITADO_APROBADO_SIN_OBSERVACIONES",
+  "auditoria": { "fecha": "2026-10-25", "aprobado": true, "observaciones": [], "cierre": "este commit atomico en origin/main" },
+  "git": {
+    "rama": "main",
+    "base_verificacion": "4d00e56b0f905f1a2b0770453b913538bd9519c8",
+    "incremento_5_auditoria": "APROBADO_SIN_OBSERVACIONES",
+    "incremento_5_publicado": "origin/main",
+    "antes_incremento_6": "## main...origin/main (limpio)",
+    "incremento_6_commit": "este commit",
+    "indice_vacio_durante_verificacion": true,
+    "tools_ignorado": true
+  },
+  "alcance": {
+    "RF-13": "Verificado con HTTP STT local real",
+    "RF-14": "Verificado MET-1.0",
+    "RF-20": "En progreso; etapas 1 a 3 y reintento",
+    "limite_final": "TRANSCRITO / ultimo_hito_valido=TRANSCRITO / etapa_actual=EVALUAR",
+    "LLM_invocado": false,
+    "sesiones_completadas_por_worker": false
+  },
+  "backend": {
+    "h2": {
+      "descubiertas": 132,
+      "ejecutadas": 130,
+      "omitidas": 2,
+      "fallas": 0,
+      "errores": 0,
+      "log_local": ".tools/inc6-h2-full.log"
+    },
+    "mysql84": {
+      "descubiertas": 132,
+      "ejecutadas": 132,
+      "omitidas": 0,
+      "fallas": 0,
+      "errores": 0,
+      "log_local": ".tools/inc6-mysql-test.log"
+    },
+    "suites_mysql": [
+      {
+        "nombre": "pe.utp.entrevistapro360.architecture.LayerDependenciesTest",
+        "pruebas": 1,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.CalculadorMetricasTest",
+        "pruebas": 7,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.ContextoProcesamientoTest",
+        "pruebas": 4,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.PuestoPreguntaTest",
+        "pruebas": 6,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.RespuestaVideoTest",
+        "pruebas": 8,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.SesionEntrevistaTest",
+        "pruebas": 15,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.UsuarioTest",
+        "pruebas": 11,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.config.IdentidadConfigTest",
+        "pruebas": 3,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.media.FfmpegExtractorAudioAdapterTest",
+        "pruebas": 2,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.media.FfprobeInspectorMultimediaAdapterTest",
+        "pruebas": 8,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.MySqlSchemaIntegrationTest",
+        "pruebas": 2,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.storage.S3AlmacenamientoVideoAdapterTest",
+        "pruebas": 3,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.stt.OpenAiTranscripcionAdapterTest",
+        "pruebas": 5,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.AuthPerfilIntegrationTest",
+        "pruebas": 13,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.CatalogoIntegrationTest",
+        "pruebas": 8,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.ConfirmacionRespuestaIntegrationTest",
+        "pruebas": 11,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.PipelineIntegrationTest",
+        "pruebas": 11,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.SesionIntegrationTest",
+        "pruebas": 14,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      }
+    ]
+  },
+  "frontend": {
+    "test_media": {
+      "ejecutadas": 6,
+      "fallas": 0
+    },
+    "build": "correcto, sin advertencias de presupuesto",
+    "chrome": "156.0.8078.47",
+    "casos_reales": [
+      {
+        "caso": "exito",
+        "correcto": true,
+        "id_sesion": 1,
+        "id_respuesta": 1,
+        "polling_detenido": true
+      },
+      {
+        "caso": "manual",
+        "correcto": true,
+        "id_sesion": 2,
+        "id_respuesta": 2,
+        "polling_detenido": true
+      },
+      {
+        "caso": "definitivo",
+        "correcto": true,
+        "id_sesion": 3,
+        "id_respuesta": 3,
+        "polling_detenido": true
+      }
+    ],
+    "errores_javascript": [],
+    "evidencia": "pruebas-browser-incremento-6.json"
+  },
+  "recuperacion_jvm": {
+    "correcto": true,
+    "terminacion_durante_stt": true,
+    "lease_expirado_por_sql_para_acelerar": true,
+    "audio_no_repetido": true,
+    "evidencia": "recuperacion-jvm-incremento-6.json"
+  },
+  "esquema": {
+    "mysql": "8.4.13",
+    "tablas_negocio": 8,
+    "columnas_negocio": 68,
+    "columnas_por_tabla": {
+      "evaluaciones_star": 14,
+      "metricas_comunicacion": 8,
+      "preguntas": 8,
+      "puestos": 6,
+      "respuestas_video": 10,
+      "sesiones_entrevista": 7,
+      "transcripciones": 6,
+      "usuarios": 9
+    },
+    "migraciones": [
+      "V1__esquema_inicial.sql",
+      "V2__catalogo_semilla.sql"
+    ],
+    "migraciones_modificadas": false,
+    "ddl_auto": "validate"
+  },
+  "configuracion": {
+    "worker_predeterminado": true,
+    "intervalo_ms": 2000,
+    "heartbeat_ms": 20000,
+    "lease_segundos": 90,
+    "backoff_segundos": [
+      5,
+      15
+    ],
+    "timeout_ffmpeg_y_stt_segundos": 60,
+    "stt_model": "gpt-4o-mini-transcribe-2025-12-15",
+    "browser_intervalo_ms": 500,
+    "browser_backoff_segundos": [
+      1,
+      1
+    ]
+  },
+  "multimedia": {
+    "ffmpeg": "9.0.2",
+    "ffprobe": "9.0.2",
+    "wav": "pcm_s16le mono 16000 Hz",
+    "ffmpeg_real": true
+  },
+  "artefacto_jar_sha256": "d96b1b67a21058138067f409777141faff523c351495d77052fa812f653e15b3",
+  "limites": [
+    "S3Client y HttpClient reales sobre endpoints HTTP locales; no certifica IAM/bucket AWS ni cuenta/modelo OpenAI de produccion.",
+    "Chrome usa dispositivos emulados, no hardware fisico.",
+    "Flyway 11.7.2 emite recomendacion de actualizacion por MySQL 8.4; migracion y validate pasaron sin modificar dependencias.",
+    "La expiracion temporal en el experimento JVM se acelero por SQL; claim previo, terminacion y reanudacion fueron reales."
+  ],
+  "aislamiento": {
+    "unitarias_integracion": "ep360_incremento6_test; worker programado deshabilitado",
+    "chrome": "ep360_incremento6_browser; worker habilitado",
+    "reinicio_jvm": "ep360_incremento6_restart; bucket ep360-restart-local"
+  }
+}

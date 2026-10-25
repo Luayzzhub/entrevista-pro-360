@@ -45,6 +45,45 @@ public class S3AlmacenamientoVideoAdapter implements AlmacenamientoVideoPort {
         try { s3.deleteObject(DeleteObjectRequest.builder().bucket(bucket).key(clave).build()); }
         catch (RuntimeException ex) { LOG.warn("No se pudo completar la compensación del video privado."); }
     }
+    @Override public boolean existePrivado(String clave) {
+        configurar();
+        try { s3.headObject(HeadObjectRequest.builder().bucket(bucket).key(clave).build()); return true; }
+        catch (S3Exception ex) { if (ex.statusCode()==404) return false; throw clasificar(ex); }
+        catch (RuntimeException ex) { throw clasificar(ex); }
+    }
+    @Override public void descargarPrivado(String clave, Path destino) {
+        configurar();
+        try (var in=s3.getObject(GetObjectRequest.builder().bucket(bucket).key(clave).build());
+                var out=Files.newOutputStream(destino)) {
+            byte[] buffer=new byte[8192]; long total=0; int n;
+            while ((n=in.read(buffer))!=-1) {
+                total+=n;
+                if (total>52_428_800L) { in.abort(); throw new FalloEtapaException("OBJETO_NO_UTILIZABLE",false); }
+                out.write(buffer,0,n);
+            }
+        } catch (IOException ex) { throw new FalloEtapaException("S3_TRANSPORTE",true); }
+        catch (RuntimeException ex) { throw clasificar(ex); }
+    }
+    @Override public void subirAudioPrivado(String clave, Path wav) {
+        configurar();
+        try {
+            s3.putObject(PutObjectRequest.builder().bucket(bucket).key(clave).contentType("audio/wav").build(),RequestBody.fromFile(wav));
+        } catch (RuntimeException ex) { throw clasificar(ex); }
+    }
+    private void configurar() { if (bucket.isBlank()) throw new FalloEtapaException("CONFIGURACION_S3",false); }
+    private FalloEtapaException clasificar(RuntimeException ex) {
+        if (ex instanceof FalloEtapaException fallo) return fallo;
+        if (ex instanceof S3Exception s) {
+            int status=s.statusCode();
+            long retry=0;
+            try { retry=Long.parseLong(s.awsErrorDetails().sdkHttpResponse().firstMatchingHeader("Retry-After").orElse("0")); }
+            catch (RuntimeException ignored) { }
+            return new FalloEtapaException("S3_HTTP_"+status,status==408 || status==429 || status>=500,retry);
+        }
+        // El proveedor de credenciales falla antes de iniciar cualquier solicitud.
+        boolean credenciales=ex.getMessage()!=null && ex.getMessage().toLowerCase(Locale.ROOT).contains("credentials");
+        return new FalloEtapaException(credenciales ? "CONFIGURACION_S3" : "S3_TRANSPORTE",!credenciales);
+    }
     private String sha256(Path archivo) throws IOException, NoSuchAlgorithmException {
         var digest = MessageDigest.getInstance("SHA-256");
         try (InputStream in = Files.newInputStream(archivo)) { byte[] buf = new byte[8192]; int n; while ((n = in.read(buf)) != -1) digest.update(buf, 0, n); }

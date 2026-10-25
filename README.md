@@ -1,6 +1,6 @@
-# Entrevista Pro 360 — Incrementos 1 a 5
+# Entrevista Pro 360 — Incrementos 1 a 6
 
-Base del MVP universitario: Spring Boot de cuatro capas, MySQL/Flyway y Angular VIS-1.0. Incluye identidad, catálogo, sesiones, captura/revisión local y confirmación idempotente de video: ffprobe valida el contenido y S3 recibe una escritura privada condicional. La respuesta queda SUBIDO con contexto PROC-1.0; MCK 08 permite consultar su estado y recuperarlo desde la sesión. Extracción/transcripción/métricas corresponden al Incremento 6 y evaluación al 7.
+MVP universitario con Spring Boot de cuatro capas, MySQL/Flyway y Angular VIS-1.0. Incluye identidad, catálogo, sesiones, captura, confirmación privada y worker durable PROC-1.0: extrae WAV con ffmpeg, transcribe en español por HTTP OpenAI y calcula MET-1.0. MCK 08 muestra el avance y permite un reintento manual. Tras las métricas queda TRANSCRITO/EVALUAR, en espera de la evaluación del Incremento 7.
 
 ## Requisitos
 
@@ -11,10 +11,10 @@ Base del MVP universitario: Spring Boot de cuatro capas, MySQL/Flyway y Angular 
 | Node.js | 20.19+, 22.12+ o 24.x, según compatibilidad de Angular 21 |
 | npm | Incluido con Node; usar `npm ci` con el lock entregado |
 | Angular CLI | 21.2.0 local, instalado mediante `npm ci`; no requiere instalación global |
-| MySQL | 8.0+ con una base exclusiva del proyecto y usuario con permisos para ejecutar migraciones |
-| Git | Incrementos 1 a 4 publicados; Incremento 5 auditado y aprobado sin observaciones, confirmado en este commit de main y publicado al cerrar el incremento |
+| MySQL | 8.4; verificado con 8.4.13 en una base exclusiva y usuario autorizado para migraciones |
+| Git | Incrementos 1 a 5 publicados; Incremento 6 sin commit para auditoría |
 | Navegador y dispositivos | Cámara + micrófono; `getUserMedia` y MediaRecorder con uno de los tres formatos negociados. Usar localhost/loopback o HTTPS |
-| ffprobe / ffmpeg | 9.0.2 portable verificado. ffprobe inspecciona los uploads; ffmpeg genera fixtures de pruebas. Extracción de audio automática pendiente |
+| ffprobe / ffmpeg | 9.0.2 portable verificado: inspección de uploads y extracción WAV PCM s16le, mono, 16 kHz |
 
 Compatibilidad de referencia: [Spring Boot 3.5](https://docs.spring.io/spring-boot/3.5/system-requirements.html) y [Angular](https://angular.dev/reference/versions). Las versiones declaradas y el uso real están en [docs/dependencias.md](docs/dependencias.md).
 
@@ -44,7 +44,7 @@ Spring y Angular no cargan `.env` automáticamente. Este script importa variable
 
 `DB_URL`, `DB_USERNAME` y `DB_PASSWORD` conectan la base. `JWT_SECRET` configura HS256 y debe contener al menos 32 bytes UTF-8. Si queda vacío en local, se genera una clave aleatoria por arranque: reiniciar invalida los tokens previos. Para producción activa `SPRING_PROFILES_ACTIVE=prod` y configura una clave propia; este perfil rechaza claves ausentes/cortas y fija BCrypt en costo 12.
 
-S3 está integrado desde Incremento 5. Configura AWS_REGION y S3_BUCKET con un bucket privado y bloqueo de acceso público; el servidor necesita PutObject, GetObject (HEAD) y DeleteObject para sus claves. El SDK obtiene credenciales del proveedor estándar de AWS (rol, perfil o variables AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY), nunca de Angular. S3_ENDPOINT_OVERRIDE queda vacío para AWS y admite un endpoint S3 de pruebas local con acceso por ruta. La verificación entregada usa HTTP local con SDK real; no se aprovisionó ni se certificó un bucket de producción en AWS. OpenAI permanece pendiente. No publiques .env ni claves.
+Configura AWS_REGION y S3_BUCKET con un bucket privado; el servidor necesita PutObject, GetObject/HEAD y DeleteObject para sus claves. El SDK obtiene credenciales del proveedor estándar AWS, nunca de Angular. S3_ENDPOINT_OVERRIDE queda vacío para AWS y admite un endpoint local con acceso por ruta. Configura OPENAI_API_KEY para STT; OPENAI_BASE_URL vale https://api.openai.com y STT_MODEL conserva gpt-4o-mini-transcribe-2025-12-15. La verificación usa S3 y STT HTTP locales con clientes reales: la cuenta OpenAI, disponibilidad del snapshot e IAM/bucket de producción no fueron certificados. No publiques .env ni claves.
 
 FFPROBE_BIN indica el ejecutable (por defecto ffprobe). En Windows el adaptador encuentra automáticamente .tools/ffmpeg/ffprobe.exe desde la raíz o backend. Si no dispones de binarios, descarga una compilación Windows enlazada desde [FFmpeg](https://ffmpeg.org/download.html) y coloca ffprobe.exe y ffmpeg.exe en esa carpeta ignorada; también puedes usar PATH o una ruta explícita en FFPROBE_BIN. Las pruebas necesitan ffmpeg real para generar sus archivos; FFMPEG_BIN permite seleccionar su ruta. No hay simulación de inspección ni descarga automática al atender una petición.
 
@@ -94,7 +94,7 @@ Recorrido del Incremento 4 dentro de la pregunta habilitada:
 
 En Incremento 5 **Confirmar respuesta se habilita para una toma local válida**. Mientras sube se bloquean confirmar/repetir, se muestra progreso y se pide mantener abierta la pestaña. Un fallo de red o S3 conserva la toma para volver a confirmar; 413/415/422 permiten repetirla. Solo un 202 revoca la toma y navega a /sesiones/:idSesion/respuestas/:idRespuesta (MCK 08).
 
-Grabar/repetir no crea filas; confirmar sí persiste una respuesta SUBIDO y cambia la sesión a EN_PROCESO. MCK 08 muestra los metadatos medidos por ffprobe y consulta el estado cada 3 s; volver al panel/sesión permite reabrirlo. No se habilita la pregunta siguiente hasta EVALUADO. El trabajador de procesamiento todavía no se ejecuta, por lo que este incremento mantiene SUBIDO.
+Grabar/repetir no crea filas; confirmar persiste SUBIDO y cambia la sesión a EN_PROCESO. El worker avanza a AUDIO_EXTRAIDO, TRANSCRITO y METRICAS. MCK 08 consulta cada 3 s y detiene el polling al llegar a TRANSCRITO/EVALUAR, FALLIDO o sesión terminal. Un fallo recuperable agotado permite Reintentar análisis una vez; una falla definitiva cancela la sesión conforme a D-02. La siguiente pregunta continúa bloqueada hasta EVALUADO, que corresponde al Incremento 7.
 
 La negociación prueba, en orden, WebM VP8/Opus, WebM VP9/Opus y MP4 H.264/AAC; ninguna opción disponible bloquea la captura. La duración local mide el intervalo solicitado; el servidor inspecciona las pistas/códecs y la duración real con ffprobe. Acepta WebM streaming sin duración en cabecera leyendo los timestamps de sus paquetes. Exige duración 1..60 s antes de redondear y tamaño estrictamente menor a 50 000 000 bytes.
 
@@ -113,7 +113,7 @@ npm run build
 
 `mvn test` utiliza H2 y las mismas migraciones Flyway, sin AWS/OpenAI. Comprueba dominio, capas, JWT, BCrypt, registro, perfil, catálogo y sesiones, incluida concurrencia HTTP real. Las dos pruebas específicas de MySQL se omiten en este modo. Integración usa BCrypt de costo 4; otra prueba comprueba costo 12. H2 no certifica todos los tipos de MySQL. Si conservas `TEST_DB_URL` de una ejecución anterior, elimina esa variable antes del pase H2 (`Remove-Item Env:TEST_DB_URL`).
 
-La suite de confirmación requiere ffprobe y ffmpeg reales. Genera fixtures propios y usa S3Client real contra HttpServer local efímero, sin necesitar cuenta AWS ni levantar un S3 externo para mvn test. Las pruebas de confirmación limpian sus filas; no uses una base personal.
+Las suites de confirmación y pipeline requieren ffprobe/ffmpeg reales. Generan fixtures y usan S3Client y HttpClient contra servidores HTTP locales efímeros; no necesitan cuentas AWS/OpenAI. Las pruebas limpian sus filas; no uses una base personal. El worker se desactiva en tests y se invoca determinísticamente con Clock controlable para verificar leases, fencing y backoff sin esperas de 90 s.
 
 Para verificar contra MySQL, crea **otra base exclusiva de pruebas**, con el mismo charset y usuario autorizado. Las pruebas de catálogo/identidad usan transacciones revertidas. Las de confirmación y concurrencia usan transacciones reales y eliminan sus registros propios al terminar; la prueba de compensación crea y elimina un trigger de fallo exclusivamente en la base de pruebas. La base debe contener únicamente la semilla inicial. Desde `backend/`:
 
@@ -138,5 +138,8 @@ El JAR queda en `backend/target/entrevista-pro-360-0.1.0-SNAPSHOT.jar`. Carga la
 - [Verificación del Incremento 4](docs/verificacion_incremento_4.md).
 - [Contrato de respuestas](docs/api-respuestas.md).
 - [Verificación del Incremento 5](docs/verificacion_incremento_5.md).
+- [Verificación del Incremento 6](docs/verificacion_incremento_6.md).
 
-Los Incrementos 1 a 4 están publicados en [Luayzzhub/entrevista-pro-360](https://github.com/Luayzzhub/entrevista-pro-360). El Incremento 5 fue auditado y aprobado sin observaciones; se cierra en este commit atómico de main con el mensaje aprobado y se publica mediante git push origin main. El Incremento 6 corresponde al worker durable PROC-1.0, extracción WAV con ffmpeg, transcripción gpt-4o-mini-transcribe-2025-12-15, cálculo determinista MET-1.0 y reintento manual. Los informes previos conservan su alcance histórico. La documentación de diseño original permanece fuera del repositorio.
+Los Incrementos 1 a 5 están publicados en [Luayzzhub/entrevista-pro-360](https://github.com/Luayzzhub/entrevista-pro-360). El Incremento 6 fue auditado y aprobado sin observaciones y se cierra/publica mediante este commit atómico en origin/main. El Incremento 7 corresponde a evaluación estructurada EVAL-1.0/COM-1.0 con gpt-5.4-mini-2026-03-17, reproducción autorizada por URL firmada PA-04, resultado MCK 09 y habilitación de la siguiente pregunta. El cierre automático de sesión corresponde al Incremento 8. Los informes anteriores conservan su alcance histórico; la documentación de diseño original permanece fuera del repositorio.
+
+El worker está habilitado por defecto. Propiedades de integraciones: worker-habilitado=true, worker-intervalo-ms=2000, worker-heartbeat-ms=20000, worker-backoff-1-segundos=5 y worker-backoff-2-segundos=15. FFMPEG_BIN selecciona el ejecutable de extracción, también resuelto desde .tools/ffmpeg. La invocación secuencial evita acumular trabajos ffmpeg; el heartbeat dispone de su propio hilo.

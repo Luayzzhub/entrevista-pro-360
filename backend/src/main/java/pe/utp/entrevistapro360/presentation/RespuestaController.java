@@ -30,5 +30,9 @@ public class RespuestaController {
     public RespuestaEstadoResponse consultar(Authentication auth, @PathVariable @Positive long id) {
         return RespuestaEstadoResponse.from(respuestas.consultarRespuesta((Long) auth.getPrincipal(), id));
     }
+    @PostMapping("/api/v1/respuestas/{id}/reintento")
+    public ResponseEntity<RespuestaEstadoResponse> reintentar(Authentication auth, @PathVariable @Positive long id) {
+        return ResponseEntity.accepted().body(RespuestaEstadoResponse.from(respuestas.reintentarRespuesta((Long) auth.getPrincipal(),id)));
+    }
     public static class VideoVacioException extends RuntimeException { }
 }

@@ -45,8 +45,15 @@ seguridad:
     secret: ${JWT_SECRET:}
     # Sin secreto configurado, IdentidadConfig genera 32 bytes aleatorios por arranque local.
     permitir-clave-efimera: true
-# Proveedores externos todavía pendientes.
+# Pipeline hasta MET-1.0; la evaluación LLM corresponde al Incremento 7.
 integraciones:
+  worker-habilitado: true
+  worker-intervalo-ms: 2000
+  worker-heartbeat-ms: 20000
+  worker-backoff-1-segundos: 5
+  worker-backoff-2-segundos: 15
+  ffmpeg-bin: ${FFMPEG_BIN:ffmpeg}
+  openai-base-url: ${OPENAI_BASE_URL:https://api.openai.com}
   aws-region: ${AWS_REGION:us-east-1}
   s3-bucket: ${S3_BUCKET:}
   s3-endpoint-override: ${S3_ENDPOINT_OVERRIDE:}

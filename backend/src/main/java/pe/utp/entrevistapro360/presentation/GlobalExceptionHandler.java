@@ -24,6 +24,10 @@ import pe.utp.entrevistapro360.domain.TransicionSesionInvalidaException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(pe.utp.entrevistapro360.domain.ReintentoNoDisponibleException.class)
+    ResponseEntity<ApiError> reintento(RuntimeException ex) {
+        return ResponseEntity.status(409).body(ApiError.of("REINTENTO_NO_DISPONIBLE",ex.getMessage()));
+    }
     @ExceptionHandler({org.springframework.web.multipart.support.MissingServletRequestPartException.class, RespuestaController.VideoVacioException.class})
     ResponseEntity<ApiError> videoFaltante(Exception ex) {
         return ResponseEntity.badRequest().body(new ApiError("DATOS_INVALIDOS", "Adjunta un video no vacío.", Map.of("video", "El archivo de video es obligatorio y no puede estar vacío.")));

@@ -7,6 +7,9 @@ import org.springframework.data.repository.query.Param;
 import pe.utp.entrevistapro360.domain.SesionEntrevista.EstadoSesion;
 
 public interface SesionEntrevistaJpaRepository extends JpaRepository<SesionEntrevistaJpaEntity, Long> {
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select s from SesionEntrevistaJpaEntity s where s.id=:id")
+    Optional<SesionEntrevistaJpaEntity> findByIdForUpdate(@Param("id") Long id);
     Optional<SesionEntrevistaJpaEntity> findFirstByUsuarioIdAndEstadoSesionInOrderByFechaInicioDescIdDesc(Long idUsuario, Collection<EstadoSesion> estados);
     Optional<SesionEntrevistaJpaEntity> findByIdAndUsuarioId(Long id, Long usuarioId);
     @Lock(LockModeType.PESSIMISTIC_WRITE)

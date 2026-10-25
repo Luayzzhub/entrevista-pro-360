@@ -44,8 +44,11 @@ public class S3HttpFixture implements AutoCloseable {
                 byte[] contenido = x.getRequestBody().readAllBytes();
                 if (Optional.ofNullable(h.getFirst("Content-Encoding")).orElse("").contains("aws-chunked")) contenido = desfragmentar(contenido);
                 Objeto nuevo = new Objeto(contenido, h.getFirst("Content-Type"), h.getFirst("x-amz-meta-sha256"));
-                if (!"*".equals(h.getFirst("If-None-Match"))) { error(x, 400, "InvalidRequest"); return; }
-                if (objetos.putIfAbsent(clave, nuevo) != null) { error(x, 412, "PreconditionFailed"); return; }
+                if (clave.endsWith("/audio.wav") && "audio/wav".equals(nuevo.tipo())) objetos.put(clave,nuevo);
+                else {
+                    if (!"*".equals(h.getFirst("If-None-Match"))) { error(x, 400, "InvalidRequest"); return; }
+                    if (objetos.putIfAbsent(clave, nuevo) != null) { error(x, 412, "PreconditionFailed"); return; }
+                }
                 despuesDePut.run(); x.getResponseHeaders().set("ETag", "\"objeto-local\""); x.sendResponseHeaders(200, -1);
             } else if (metodo.equals("HEAD")) {
                 Objeto o = objetos.get(clave);
@@ -54,6 +57,11 @@ public class S3HttpFixture implements AutoCloseable {
                 x.getResponseHeaders().set("Content-Type", o.tipo);
                 if (o.sha256 != null) x.getResponseHeaders().set("x-amz-meta-sha256", o.sha256);
                 x.sendResponseHeaders(200, -1);
+            } else if (metodo.equals("GET")) {
+                Objeto o=objetos.get(clave);
+                if (o==null) { error(x,404,"NoSuchKey"); return; }
+                x.getResponseHeaders().set("Content-Type",o.tipo());
+                x.sendResponseHeaders(200,o.contenido().length); x.getResponseBody().write(o.contenido());
             } else if (metodo.equals("DELETE")) { objetos.remove(clave); x.sendResponseHeaders(204, -1); }
             else error(x, 403, "AccessDenied");
         } finally { x.close(); }

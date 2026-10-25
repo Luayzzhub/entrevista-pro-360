@@ -11,7 +11,7 @@
   <artifactId>entrevista-pro-360</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <name>Entrevista Pro 360</name>
-  <description>Incremento 1: catálogo de puestos y preguntas</description>
+  <description>Entrevistas, captura y procesamiento durable hasta STT y métricas MET-1.0</description>
   <properties>
     <java.version>17</java.version>
     <aws-sdk.version>2.31.54</aws-sdk.version>
@@ -26,7 +26,7 @@
     <dependency><groupId>com.mysql</groupId><artifactId>mysql-connector-j</artifactId><scope>runtime</scope></dependency>
     <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId></dependency>
     <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-mysql</artifactId></dependency>
-    <!-- Solicitado como base; no se crean clientes ni recursos S3 en este incremento. -->
+    <!-- Cliente real para video privado y audio del pipeline durable. -->
     <dependency><groupId>software.amazon.awssdk</groupId><artifactId>s3</artifactId><version>${aws-sdk.version}</version></dependency>
     <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-test</artifactId><scope>test</scope></dependency>
     <dependency><groupId>com.h2database</groupId><artifactId>h2</artifactId><scope>test</scope></dependency>

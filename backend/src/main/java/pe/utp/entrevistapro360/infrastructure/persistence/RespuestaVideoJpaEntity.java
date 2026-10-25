@@ -22,6 +22,7 @@ public class RespuestaVideoJpaEntity {
     @Column(name = "fecha_grabacion", nullable = false) private LocalDateTime fechaGrabacion;
     @JdbcTypeCode(SqlTypes.JSON) @Column(name = "procesamiento_contexto", nullable = false, columnDefinition = "JSON") private Map<String, Object> procesamientoContexto;
     protected RespuestaVideoJpaEntity() { }
+    void actualizarProcesamiento(RespuestaVideo r) { estadoProcesamiento=r.estadoProcesamiento();procesamientoContexto=r.procesamientoContexto(); }
     public static RespuestaVideoJpaEntity nueva(RespuestaVideo r) {
         var e = new RespuestaVideoJpaEntity();
         e.sesionId = r.idSesion(); e.preguntaId = r.idPregunta(); e.publicIdCloud = r.publicIdCloud();

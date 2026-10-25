@@ -11,6 +11,7 @@ export interface ConfirmacionRespuesta {
 export interface RespuestaEstado extends Omit<ConfirmacionRespuesta, 'ruta_consulta'> {
   enunciado_pregunta: string; competencia_evaluada: string; aplica_star: boolean; nombre_puesto: string;
   puede_reintentar: boolean; error: string | null;
+  metricas?: { conteo_palabras: number; palabras_por_minuto: number; conteo_muletillas: number; version_metricas: string } | null;
 }
 @Injectable({ providedIn: 'root' })
 export class RespuestaService {
@@ -21,4 +22,5 @@ export class RespuestaService {
     return this.http.put<ConfirmacionRespuesta>(`${this.base}/sesiones/${sesion}/preguntas/${pregunta}/respuesta`, data, { reportProgress: true, observe: 'events' });
   }
   consultarRespuesta(id: number): Observable<RespuestaEstado> { return this.http.get<RespuestaEstado>(`${this.base}/respuestas/${id}`); }
+  reintentarRespuesta(id: number): Observable<RespuestaEstado> { return this.http.post<RespuestaEstado>(`${this.base}/respuestas/${id}/reintento`, {}); }
 }

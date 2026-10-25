@@ -1,4 +1,4 @@
-# API de respuestas — Incremento 5
+# API de respuestas — Incrementos 5 y 6
 
 Todas las rutas requieren Bearer JWT válido y cuenta ACTIVO/POSTULANTE. El propietario procede exclusivamente del principal autenticado. Fechas UTC ISO 8601 con Z y precisión de segundos; JSON snake_case. El archivo se inspecciona por su contenido: nombre, extensión y MIME suministrados por el cliente no deciden su aceptación.
 
@@ -93,9 +93,26 @@ ID Long positivo. **200 OK** para el propietario con RespuestaEstadoResponse y e
 | estado_sesion, estado_procesamiento | Estados reales |
 | etapa_actual, ultimo_hito_valido | Dos hitos públicos del contexto |
 | duracion_segundos, formato, tamano_bytes, fecha_grabacion | Metadatos confirmados por el servidor |
-| puede_reintentar | false en Incremento 5 |
-| error | null normalmente; mensaje genérico comprensible si FALLIDO, sin datos internos del proveedor |
+| puede_reintentar | true solo con sesión EN_PROCESO, respuesta FALLIDO, error recuperable, ciclo 1, manual no usado y lease libre |
+| error | null normalmente; mensaje español que distingue reintento disponible y falla definitiva/CANCELADA |
+| metricas | null hasta METRICAS; luego conteo_palabras, palabras_por_minuto, conteo_muletillas y version_metricas |
 
 Sesión ajena y respuesta inexistente devuelven el mismo **404 RESPUESTA_NO_ENCONTRADA**, mensaje: La respuesta solicitada no existe. ID inválido: 400 PARAMETRO_INVALIDO. La respuesta nunca incluye public_id_cloud, referencia_audio, bloqueo_hasta_utc, version_ejecucion ni procesamiento_contexto.
 
-MCK 08 consulta cada 3 s después de cada respuesta de lectura mientras el estado sea SUBIDO/AUDIO_EXTRAIDO/TRANSCRITO. Al salir o terminar se detiene; ante error de lectura permite Actualizar estado. El trabajador automático se implementará en Incremento 6 y la evaluación en el 7: este incremento deja la respuesta en SUBIDO y la pregunta siguiente bloqueada hasta EVALUADO.
+MCK 08 consulta cada 3 s mientras el estado sea SUBIDO/AUDIO_EXTRAIDO/TRANSCRITO y la sesión siga abierta. Al llegar a TRANSCRITO/EVALUAR detiene el polling y anuncia STT/métricas registradas y evaluación pendiente del Incremento 7. También se detiene ante FALLIDO, sesión terminal o al salir. Un error HTTP de lectura permite Actualizar estado. La pregunta siguiente permanece bloqueada hasta EVALUADO.
+
+## POST /api/v1/respuestas/{id}/reintento
+
+Sin campos de entrada. JWT y propiedad obligatorios; una respuesta ajena o inexistente devuelve 404 RESPUESTA_NO_ENCONTRADA. Bajo locks de sesión y respuesta requiere EN_PROCESO, FALLIDO, error recuperable, ciclo 1, reintento_manual_usado=false y lease nulo o estrictamente anterior a ahora. Si falta cualquier condición: 409 REINTENTO_NO_DISPONIBLE.
+
+Devuelve 202 Accepted con RespuestaEstadoResponse actualizado. Persiste ciclo_actual=2, reintento_manual_usado=true, error/lease nulos y próximo intento ahora UTC. Restaura exactamente el último hito y conserva la etapa fallida. Un segundo reintento manual produce 409. Angular muestra Reintentar análisis y reanuda el seguimiento tras 202.
+
+## Worker durable PROC-1.0
+
+Cada 2 s, configurable y secuencial por JVM, selecciona sesiones abiertas y respuestas SUBIDO/AUDIO_EXTRAIDO/TRANSCRITO con etapa EXTRAER_AUDIO/TRANSCRIBIR/METRICAS; nunca reclama EVALUAR. Solo admite próximo intento <= ahora y lease nulo o < ahora. El claim corto incrementa versión y contador del ciclo antes de operar y fija lease a 90 s. Las escrituras finales y heartbeat (cada 20 s, hilo separado) comprueban versión/etapa/lease bajo lock. Orden de locks: sesión y luego respuesta; ffmpeg y HTTP se ejecutan fuera de transacciones.
+
+EXTRAER_AUDIO descarga video privado a temporal, ejecuta ffmpeg sin shell (60 s) y verifica WAV PCM s16le mono 16000 Hz con muestras. Lo sube como audio/wav a usuarios/{usuario}/sesiones/{sesion}/preguntas/{pregunta}/audio.wav. Un hito de audio/transcripción y HEAD válido evita repetir ffmpeg. TRANSCRIBIR reutiliza una fila existente o envía únicamente file=audio.wav, model del contexto, language=es y response_format=json al endpoint /v1/audio/transcriptions (60 s). No añade identidad del usuario. Guarda texto trim, confianza_stt=NULL, idioma=es y fecha UTC.
+
+METRICAS se calcula en dominio puro: NFKC; tokens Unicode L/Nd con guion o apóstrofo interno; PPM con duración servidor y BigDecimal HALF_UP, escala 2; siete muletillas exactas y prioridad de o sea solo entre espacios. Omite ceros y suma el detalle. Upsert por id_respuesta. Al concluir: TRANSCRITO/EVALUAR, hito TRANSCRITO, error/próximo/lease nulos. No se invoca LLM ni se evalúa/completa sesión.
+
+Cada etapa admite tres ejecuciones por ciclo. Timeout/I/O/408/429/5xx programa max(5 s, Retry-After) tras intento 1 y max(15 s, Retry-After) tras intento 2. Tercera falla del ciclo 1 deja FALLIDO recuperable y sesión EN_PROCESO. Ciclo 2 agotado, credenciales/configuración ausentes, rechazo no transitorio, audio inutilizable, transcripción vacía o sin palabras son definitivos: FALLIDO y CANCELADA en la misma transacción, fecha_fin >= fecha_inicio, promedio null. Un tercer claim caído se agota al expirar sin ejecutar un cuarto intento. Una cancelación durante la operación solo libera lease al finalizar; no persiste su resultado.
