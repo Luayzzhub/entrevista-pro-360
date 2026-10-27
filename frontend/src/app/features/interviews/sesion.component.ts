@@ -31,13 +31,16 @@ interface EstadoVista { cargando: boolean; sesion: SesionDetalle | null; error: 
         <ol class="question-list">
           @for (pregunta of sesion.preguntas; track pregunta.id_pregunta) {
             <li class="question-card" [class.available-question]="pregunta.habilitada"><div class="question-number" aria-hidden="true">0{{ pregunta.orden }}</div><div><span class="tag">{{ estadoPregunta(pregunta, esTerminal(sesion.estado_sesion)) }}</span><h3>{{ pregunta.enunciado }}</h3><p class="competency">{{ pregunta.competencia_evaluada }}</p>@if (pregunta.id_respuesta !== null) {
-              @if (pregunta.estado_procesamiento === 'EVALUADO') { <a class="text-link" [routerLink]="['/sesiones', sesion.id_sesion, 'respuestas', pregunta.id_respuesta, 'resultado']">Ver resultado de tu respuesta</a> }
+              @if (pregunta.estado_procesamiento === 'EVALUADO') {
+                @if (pregunta.puntaje_general !== null) { <p class="question-score">Puntaje: {{ pregunta.puntaje_general | number:'1.2-2' }} / 100</p> }
+                <a class="text-link" [routerLink]="['/sesiones', sesion.id_sesion, 'respuestas', pregunta.id_respuesta, 'resultado']">Ver resultado de tu respuesta</a>
+              }
               @else { <a class="text-link" [routerLink]="['/sesiones', sesion.id_sesion, 'respuestas', pregunta.id_respuesta]">Ver estado del procesamiento</a> }
             }</div></li>
           }
         </ol>
         <div class="session-actions"><a class="button secondary" routerLink="/panel">Volver al panel</a>
-          @if (esTerminal(sesion.estado_sesion)) { <a class="button" routerLink="/puestos">Nueva práctica</a> }
+          @if (esTerminal(sesion.estado_sesion)) { <a class="button" [routerLink]="['/sesiones', sesion.id_sesion, 'resumen']">Ver resumen de sesión</a><a class="button" routerLink="/puestos">Nueva práctica</a> }
           @else { <app-cancelar-practica [idSesion]="sesion.id_sesion" etiqueta="Finalizar práctica anticipadamente" (cancelada)="recargar.next()" /> }
         </div>
       }

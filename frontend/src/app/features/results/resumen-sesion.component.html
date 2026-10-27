@@ -1,0 +1,59 @@
+<section class="session-page" aria-labelledby="titulo-resumen" [attr.aria-busy]="estado().cargando">
+  <span class="eyebrow">TU PRÁCTICA DE ENTREVISTA</span><h1 id="titulo-resumen">Resumen de sesión</h1>
+  @if (estado().cargando) { <p class="status-panel" role="status">Cargando resumen de sesión…</p> }
+  @else if (estado().error) { <div class="notice error" role="alert"><p>{{ estado().error }}</p><button type="button" class="button secondary" (click)="recargar.next()">Volver a intentar</button></div> }
+  @else if (estado().sesion; as sesion) {
+    <header class="form-card" aria-label="Estado de la sesión">
+      <span class="pill">{{ estadoTexto(sesion.estado_sesion) }}</span><h2>{{ sesion.nombre_puesto }}</h2>
+      <p>{{ sesion.area_puesto }} · {{ sesion.nivel_experiencia }}</p>
+      <p>Inicio: {{ sesion.fecha_inicio | date:'dd/MM/yyyy HH:mm:ss':'UTC' }} UTC</p>
+      @if (sesion.fecha_fin) { <p>Fin: {{ sesion.fecha_fin | date:'dd/MM/yyyy HH:mm:ss':'UTC' }} UTC</p> }
+      @if (sesion.estado_sesion === 'COMPLETADA') {
+        <h2>Promedio final</h2><p class="session-score">{{ sesion.puntaje_promedio | number:'1.2-2' }} / 100</p>
+        <p>Promedio de las 3 respuestas evaluadas con la rúbrica COM-1.0.</p>
+      } @else {
+        <p class="session-progress">Incompleta: {{ sesion.respuestas_evaluadas }} de {{ sesion.total_preguntas }} respuestas evaluadas</p>
+        @if (sesion.estado_sesion === 'CANCELADA') {
+          @if (sesion.motivo_cierre) { <p class="notice privacy">{{ sesion.motivo_cierre }}</p> }
+          <p>Se conservan los resultados de las respuestas ya evaluadas.</p>
+        } @else { <a class="button" [routerLink]="['/sesiones', sesion.id_sesion]">Continuar práctica</a> }
+      }
+    </header>
+    <section aria-label="Desglose de las tres preguntas">
+      <h2>Las tres preguntas</h2>
+      <ol class="question-list">
+        @for (pregunta of sesion.preguntas; track pregunta.id_pregunta) {
+          <li class="question-card">
+            <div class="question-number" aria-hidden="true">0{{ pregunta.orden }}</div>
+            <div>
+              <span class="tag">{{ pregunta.aplica_star ? 'Aplica STAR' : 'No aplica STAR' }}</span>
+              <h3>Pregunta {{ pregunta.orden }} de 3</h3><p>{{ pregunta.enunciado }}</p>
+              <p class="competency">{{ pregunta.competencia_evaluada }}</p>
+              <p>{{ estadoRespuesta(pregunta.estado_procesamiento) }}</p>
+              @if (pregunta.id_respuesta !== null) {
+                @if (pregunta.estado_procesamiento === 'EVALUADO') {
+                  @if (pregunta.puntaje_general !== null) { <p class="question-score">{{ pregunta.puntaje_general | number:'1.2-2' }} / 100</p> }
+                  <a class="text-link" [routerLink]="['/sesiones', sesion.id_sesion, 'respuestas', pregunta.id_respuesta, 'resultado']">Ver resultado de tu respuesta</a>
+                } @else {
+                  @if (pregunta.motivo_fallo) { <p class="notice error">{{ pregunta.motivo_fallo }}</p> }
+                  @if (pregunta.puede_reintentar) { <p>Puedes reintentar el análisis desde el estado de tu respuesta.</p> }
+                  <a class="text-link" [routerLink]="['/sesiones', sesion.id_sesion, 'respuestas', pregunta.id_respuesta]">Ver estado del procesamiento</a>
+                }
+              }
+            </div>
+          </li>
+        }
+      </ol>
+    </section>
+    <div class="session-actions">
+      <a class="button secondary" [routerLink]="['/sesiones', sesion.id_sesion]">Ver detalle</a>
+      <a class="button secondary" routerLink="/panel">Volver al panel</a>
+      @if (esTerminal(sesion.estado_sesion)) { <a class="button" routerLink="/puestos">Nueva práctica</a> }
+      @else {
+        <button type="button" class="button" (click)="confirmandoNueva.set(true)">Nueva práctica</button>
+        @if (confirmandoNueva()) { <app-cancelar-practica [idSesion]="sesion.id_sesion" etiqueta="Confirmar cierre para nueva práctica" (cancelada)="cancelada()" /> }
+      }
+    </div>
+  }
+</section>
+

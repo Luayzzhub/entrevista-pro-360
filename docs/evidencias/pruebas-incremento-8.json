@@ -1,0 +1,351 @@
+{
+  "incremento": 8,
+  "fecha_utc": "2026-10-27T05:23:41.776745+00:00",
+  "resultado": "AUDITADO_APROBADO_SIN_OBSERVACIONES",
+  "git": {
+    "rama": "main",
+    "head": "ca798f5d112469ccac07668e53959cb1feaed314",
+    "incremento_7_auditoria": "AUDITADO_APROBADO_SIN_OBSERVACIONES",
+    "mensaje_commit_7": "feat: implementar evaluacion EVAL-1.0 COM-1.0, reproduccion firmada PA-04 y resultado MCK09",
+    "incremento_7_publicado": "origin/main; HEAD y ls-remote coinciden",
+    "antes_incremento_8": "## main...origin/main (limpio)",
+    "incremento_8_sin_commit": false,
+    "cierre_incremento_8": "Commit atomico y push origin main autorizados por el Orquestador",
+    "indice_vacio_en_verificacion": true,
+    "tools_ignorado": true
+  },
+  "RF": {
+    "RF-16": "Verificado: feedback individual y resumen de sesion",
+    "RF-17": "En progreso: detalle/resumen propios, historial integral pendiente"
+  },
+  "dominio": {
+    "metodo": "SesionEntrevista.calcularPromedioGlobal",
+    "capa": "domain pura",
+    "precondiciones": "EN_PROCESO, tres preguntas activas distintas del puesto (orden1/2/3), tres respuestas EVALUADO con transcripcion, MET-1.0 y EVAL-1.0/COM-1.0 validas",
+    "formula": "BigDecimal(sum(puntaje_general)/3), escala2 HALF_UP",
+    "casos": [
+      {
+        "puntajes": [
+          "75.00",
+          "81.25",
+          "87.50"
+        ],
+        "promedio": "81.25"
+      },
+      {
+        "puntajes": [
+          "0.00",
+          "0.00",
+          "6.25"
+        ],
+        "promedio": "2.08"
+      },
+      {
+        "puntajes": [
+          "0.00",
+          "0.00",
+          "0.00"
+        ],
+        "promedio": "0.00"
+      }
+    ],
+    "sin_relleno_con_ceros": true,
+    "terminales_no_recalculadas": true,
+    "fecha_fin": "UTC a segundos, nunca anterior al inicio"
+  },
+  "atomicidad": {
+    "evaluacion_respuesta_y_cierre_mismo_commit": true,
+    "locks": "sesion -> respuesta",
+    "cancelacion_durante_llm_P3": "CANCELADA, sin evaluacion P3 ni promedio",
+    "cancelacion_posterior_a_cierre": "409 SESION_YA_COMPLETADA, conserva promedio y fecha",
+    "fallo_definitivo_P3": "CANCELADA sin promedio, conserva P1/P2",
+    "nueva_sesion_tras_completar": "201",
+    "lecturas_resultados": "por lotes, dentro de la transaccion final"
+  },
+  "api": {
+    "detalle": "GET /api/v1/sesiones/{id}",
+    "campos_previos_conservados": true,
+    "preguntas_nuevos": [
+      "puntaje_general",
+      "version_rubrica",
+      "puede_reintentar",
+      "motivo_fallo"
+    ],
+    "nuevo_sesion": "motivo_cierre",
+    "motivos": "mensajes seguros; definitivo o finalizacion anticipada; sin nuevos campos de BD",
+    "claves_s3_y_contexto_expuestos": false
+  },
+  "backend": {
+    "h2": {
+      "descubiertas": 170,
+      "ejecutadas": 168,
+      "omitidas": 2,
+      "fallas": 0,
+      "errores": 0,
+      "log_local": ".tools/inc8-h2.log"
+    },
+    "mysql84": {
+      "descubiertas": 170,
+      "ejecutadas": 170,
+      "omitidas": 0,
+      "fallas": 0,
+      "errores": 0,
+      "log_local": ".tools/inc8-mysql.log"
+    },
+    "suites_mysql": [
+      {
+        "nombre": "pe.utp.entrevistapro360.architecture.LayerDependenciesTest",
+        "pruebas": 1,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.CalculadorMetricasTest",
+        "pruebas": 7,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.ContextoProcesamientoTest",
+        "pruebas": 4,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.PuestoPreguntaTest",
+        "pruebas": 6,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.RespuestaVideoTest",
+        "pruebas": 8,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.SesionEntrevistaTest",
+        "pruebas": 23,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.UsuarioTest",
+        "pruebas": 11,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.ValidadorEvaluacionTest",
+        "pruebas": 7,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.config.IdentidadConfigTest",
+        "pruebas": 3,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.llm.OpenAiEvaluacionAdapterTest",
+        "pruebas": 5,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.media.FfmpegExtractorAudioAdapterTest",
+        "pruebas": 2,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.media.FfprobeInspectorMultimediaAdapterTest",
+        "pruebas": 8,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.MySqlSchemaIntegrationTest",
+        "pruebas": 2,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.storage.S3AlmacenamientoVideoAdapterTest",
+        "pruebas": 3,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.stt.OpenAiTranscripcionAdapterTest",
+        "pruebas": 5,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.AuthPerfilIntegrationTest",
+        "pruebas": 13,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.CatalogoIntegrationTest",
+        "pruebas": 8,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.ConfirmacionRespuestaIntegrationTest",
+        "pruebas": 11,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.EvaluacionIntegrationTest",
+        "pruebas": 18,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.PipelineIntegrationTest",
+        "pruebas": 11,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.SesionIntegrationTest",
+        "pruebas": 14,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      }
+    ],
+    "pruebas_nuevas": {
+      "dominio": 8,
+      "integracion": 8
+    }
+  },
+  "frontend": {
+    "ruta": "/sesiones/:id/resumen",
+    "authGuard": true,
+    "medios": {
+      "ejecutadas": 6,
+      "fallas": 0
+    },
+    "build": "correcto, sin advertencias de presupuesto",
+    "chrome": "156.0.8078.47",
+    "distribucion_chrome": {
+      "manifest": "https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json",
+      "url": "https://storage.googleapis.com/chrome-for-testing-public/156.0.8078.47/win64/chrome-win64.zip",
+      "version": "156.0.8078.47"
+    },
+    "casos": [
+      {
+        "nombre": "P1 → P2 con STAR → P3: cierre automático COMPLETADA con promedio81.25 y fecha UTC",
+        "correcto": true,
+        "id_sesion": 3,
+        "respuestas": [
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "nombre": "Resumen COMPLETADA desktop/móvil: promedio final81.25, tres puntajes y fechas UTC",
+        "correcto": true
+      },
+      {
+        "nombre": "Los tres enlaces individuales abren MCK09 y vuelven al resumen",
+        "correcto": true
+      },
+      {
+        "nombre": "Detalle COMPLETADA conserva puntajes individuales y enlaza Ver resumen de sesión",
+        "correcto": true
+      },
+      {
+        "nombre": "MCK03: última sesión COMPLETADA, promedio81.25, contador1 y enlace de resumen funcional",
+        "correcto": true
+      },
+      {
+        "nombre": "Después de COMPLETADA se inicia inmediatamente nueva sesión con HTTP201",
+        "correcto": true,
+        "id_sesion": 4
+      },
+      {
+        "nombre": "Resumen CANCELADA conserva1/3, motivo y dos Sin respuesta registrada; no muestra promedio ni ceros de relleno",
+        "correcto": true
+      },
+      {
+        "nombre": "CANCELADA: P1 sigue consultable en MCK09, detalle y resumen enlazados y Nueva práctica disponible",
+        "correcto": true,
+        "id_respuesta": 8
+      }
+    ],
+    "errores_pagina": [],
+    "errores_consola": [],
+    "promedio_real": 81.25,
+    "cancelada": "1/3, motivo disponible, dos Sin respuesta registrada, sin promedio final",
+    "enlaces": "MCK09, detalle, resumen y MCK03 conectados",
+    "evidencia": "pruebas-browser-incremento-8.json"
+  },
+  "esquema": {
+    "mysql": "8.4.13",
+    "tablas": 8,
+    "columnas": 68,
+    "columnas_por_tabla": {
+      "evaluaciones_star": 14,
+      "metricas_comunicacion": 8,
+      "preguntas": 8,
+      "puestos": 6,
+      "respuestas_video": 10,
+      "sesiones_entrevista": 7,
+      "transcripciones": 6,
+      "usuarios": 9
+    },
+    "ddl_auto": "validate",
+    "migraciones": [
+      "V1__esquema_inicial.sql",
+      "V2__catalogo_semilla.sql"
+    ],
+    "V1_V2_modificadas": false,
+    "V3": false
+  },
+  "dependencias": {
+    "pom_modificado": false,
+    "package_json_modificado": false,
+    "lock_modificado": false
+  },
+  "jar_sha256": "02204de26a5078d6c3b8d4161b333e097dd4a166a5d5f3352fc8b2eff0aa838e",
+  "aislamiento": {
+    "maven": "ep360_incremento8_test; planificador deshabilitado, worker determinista",
+    "chrome": "ep360_incremento8_browser; worker500ms/backoff1-1s; produccion2000ms/5-15s"
+  },
+  "limites": [
+    "S3/STT/LLM HTTP locales con clientes, ffmpeg, JAR y MySQL reales; cuentas, IAM y proveedores de produccion no certificados.",
+    "Chrome for Testing portatil en .tools, con medios emulados; no certifica hardware fisico.",
+    "Historial integral y comparacion siguen pendientes; RF-17 no se declara completo.",
+    "motivo_cierre se deriva del error definitivo persistido; sin una nueva columna de motivo historico.",
+    "Flyway11.7.2 conserva su recomendacion de actualizacion por MySQL8.4, aunque migraciones y validate pasaron."
+  ]
+}

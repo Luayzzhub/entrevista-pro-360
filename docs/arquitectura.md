@@ -1,6 +1,6 @@
-# Arquitectura — Incrementos 1 a 7
+# Arquitectura — Incrementos 1 a 8
 
-Backend modular Spring Boot 3.5.7/Java 17 y Angular 21.2.0 VIS-1.0. Catálogo, identidad, sesiones, captura privada y pipeline durable WAV/STT/MET/EVAL, con reintento único, cancelación D-02, resultado individual MCK09 y reproducción PA-04. Contratos en api-respuestas.md.
+Backend modular Spring Boot 3.5.7/Java 17 y Angular 21.2.0 VIS-1.0. Pipeline durable WAV/STT/MET/EVAL con reintento único, cancelación D-02, resultado MCK09/PA-04 y cierre automático de tres respuestas con resumen de sesión. Contratos en api-respuestas.md y api-sesiones.md.
 
 ## Cuatro capas
 
@@ -131,8 +131,20 @@ GET expone transcripción, métricas, evaluación y elegibilidad real de reinten
 
 ValidadorEvaluacion valida Map/Number/String en dominio puro: campos exactos, versiones, booleano STAR, anclas discretas, longitudes y elementos cualitativos. Calcula puntaje_general con BigDecimal y crea areas_mejora con versión, justificaciones y síntesis. El LLM no decide el promedio. EvaluacionLlmPort recibe EntradaEvaluacion de siete campos sin identidad añadida; OpenAiEvaluacionAdapter implementa Responses, store=false, sin herramientas, esquema cerrado, timeout total de 60 s y máximo 2 MB. Instrucciones separan la transcripción de las órdenes del sistema. Refusal, incompleto, JSON/contrato inválido son SALIDA_EVALUACION_INVALIDA recuperable.
 
-EVALUAR exige transcripción y MET-1.0 persistidas. Una evaluación existente válida evita repetir la llamada. Guardar evaluación y EVALUADO/FINALIZADO comparte el lock y transacción final con fencing. El contador/lease/reintento manual conserva la etapa EVALUAR y el hito TRANSCRITO; nunca vuelve a audio/STT/MET. Cancelar durante la llamada solo libera lease. No se calcula promedio global ni se completa la sesión, incluso con tres evaluaciones.
+EVALUAR exige transcripción y MET-1.0 persistidas. Una evaluación existente válida evita repetir la llamada. Evaluación, EVALUADO/FINALIZADO y eventual cierre de sesión comparten lock y transacción final con fencing. El contador/lease/reintento manual conserva EVALUAR y el hito TRANSCRITO; nunca vuelve a audio/STT/MET. Cancelar durante la llamada solo libera lease, sin reabrir ni promediar CANCELADA.
 
 FirmaVideoPort usa AwsS3V4Signer y Aws4PresignerParams del SDK v2 existente como firma S3 equivalente, con signingClockOverride y expiración exacta de 300 s. Primero se comprueban propiedad y HEAD privado; ausencia devuelve VIDEO_NO_DISPONIBLE y fallo de infraestructura 503. El enlace es transitorio, GET y HTTP/HTTPS; el POST lleva Cache-Control: no-store y no escribe en BD. En fixtures se verifica criptográficamente SigV4 y se rechazan firmas alteradas/vencidas. IAM y bucket de producción no se certifican.
 
-MCK09 usa interpolación de texto sin innerHTML, muestra criterios/feedback/STAR y métricas separadas, renueva el video al vencer o ante error posterior a expira_en y conserva el resultado si falta el objeto. Limpia suscripciones y temporizadores al salir. Nueva práctica exige confirmar cancelación antes de /puestos; P3 informa que el cierre global corresponde al Incremento 8.
+MCK09 usa interpolación de texto sin innerHTML, muestra criterios/feedback/STAR y métricas separadas, renueva el video al vencer o ante error posterior a expira_en y conserva el resultado si falta el objeto. Limpia suscripciones/temporizadores al salir. P1/P2 en curso permiten avanzar y cerrar con confirmación; P3 y los estados terminales enlazan el resumen.
+
+## Cierre global y resumen: Incremento 8
+
+ResultadoRespuestaSesion reúne cuatro modelos puros (respuesta, transcripción, métrica y evaluación). SesionEntrevista.calcularPromedioGlobal valida estado EN_PROCESO, tres preguntas activas distintas del puesto con órdenes 1/2/3 y tres respuestas propias distintas EVALUADO con todos sus bloques. Comprueba vínculos por id_respuesta, transcripción no vacía, MET-1.0 y ValidadorEvaluacion.validarGuardada con el STAR de cada pregunta. Si falta o es inválido cualquier bloque, devuelve la sesión original sin promedio. COMPLETADA y CANCELADA son idempotentes y no se recalculan.
+
+La media suma los tres puntaje_general y divide por 3 con BigDecimal HALF_UP, escala 2. Ceros válidos participan; ausencias/fallos no se sustituyen por cero. Fecha final UTC a segundos, nunca anterior al inicio. No se introduce dependencia de framework ni cálculo duplicado en Angular.
+
+ProcesarRespuestasService.finalizar conserva la etapa que finaliza antes de mutar el contexto. Tras guardar evaluación y EVALUADO, lee los tres resultados dentro de la misma transacción READ_COMMITTED y bajo el lock sesión→respuesta. Si el dominio completa, actualizarSesion escribe promedio y fecha antes del commit. La cancelación previa gana conservando CANCELADA; si el cierre gana, cancelar devuelve 409. D-02 en P3 conserva las evaluaciones anteriores.
+
+ProcesamientoRepository añade lectura agrupada de resultados y evaluaciones. El adaptador consulta transcripciones/métricas/evaluaciones por lotes; el panel reutiliza un único mapa de evaluaciones entre sus sesiones. GestionarSesionService construye puntajes/versiones por pregunta, elegibilidad real de reintento y mensajes seguros. motivo_cierre se deriva de errores definitivos persistidos o de finalización anticipada, sin agregar columnas ni exponer el JSON interno.
+
+ResumenSesionComponent es una ruta standalone protegida (/sesiones/:id/resumen), valida el ID y reutiliza GET de detalle propio. COMPLETADA muestra media final y tres puntajes; CANCELADA/abierta muestran progreso, motivo disponible y resultados parciales, sin promedio inventado. Panel y detalle enlazan el resumen. Nueva práctica confirma cierre si sigue abierta y navega directamente a /puestos si es terminal.

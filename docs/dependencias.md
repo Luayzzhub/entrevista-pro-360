@@ -1,4 +1,4 @@
-# Dependencias hasta el Incremento 7
+# Dependencias hasta el Incremento 8
 
 Las versiones del backend provienen de `backend/pom.xml` y del BOM `spring-boot-dependencies:3.5.7` resuelto por Maven. Las del frontend están fijadas sin rangos en `frontend/package.json` y resueltas en `frontend/package-lock.json`. No se atribuye uso funcional a dependencias reservadas.
 
@@ -63,6 +63,8 @@ Los starters declaran su versión mediante el parent. Las transitivas listadas e
 ## Consulta de versiones
 
 El Incremento 7 tampoco añade dependencias Maven/npm. Reutiliza HttpClient/JDK17 y Jackson para Responses con detección de claves duplicadas, límite de 2 MB y timeout total 60 s. Activa EvaluacionJpaEntity, octavo mapeo JPA, sin cambiar el esquema. ValidadorEvaluacion depende solo de Java. La firma GET usa AwsS3V4Signer/Aws4PresignerParams del SDK 2.31.54 existente, con signingClockOverride para respetar Clock (API legacy marcada deprecated por el SDK, funcional y probada). Los fixtures Java/Node verifican HMAC SigV4, expiración y manipulación; eso no acredita IAM de producción. Angular reutiliza Router, HttpClient, signals, RxJS y pipes; el resultado es una ruta standalone diferida.
+
+El Incremento 8 conserva backend/pom.xml, frontend/package.json y su lock sin cambios. Reutiliza BigDecimal/RoundingMode en domain, consultas Spring Data por colecciones en infraestructura y las transacciones/bloqueos ya existentes para cerrar con EVALUAR P3. Angular utiliza Router/authGuard, RxJS/toSignal, DatePipe/DecimalPipe y CancelarPracticaComponent existentes. Se preparó Chrome for Testing 156.0.8078.47 portátil bajo .tools porque la instalación anterior ya no estaba disponible; Playwright auxiliar sigue fuera de las dependencias de aplicación. La descarga se resolvió desde el manifiesto oficial https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json y no modifica el sistema.
 
 El Incremento 6 no añade dependencias Maven/npm. Usa HttpClient/BodyPublishers multipart del JDK 17, ProcessBuilder, AudioSystem para validar WAV sin hardware, Normalizer/Pattern/BigDecimal en dominio, ScheduledExecutorService para heartbeat y @Scheduled para trabajo secuencial. Activa dos mapeos JPA existentes en el esquema (transcripciones y metricas_comunicacion). Los fixtures HTTP usan HttpServer del JDK. Playwright sigue aislado en .tools para Chrome headless.
 

@@ -34,15 +34,17 @@
         <button type="button" class="button secondary" [disabled]="renovando()" (click)="renovarVideo()">{{ renovando() ? 'Renovando enlace…' : 'Renovar enlace de video' }}</button>
       </section>
       @if (r.transcripcion; as t) { <section class="form-card" aria-label="Transcripción de tu respuesta"><h2>Transcripción</h2><p class="safe-text">{{ t.texto_transcrito }}</p><p class="form-help">Idioma: {{ t.idioma }} · {{ t.fecha_transcripcion | date:'dd/MM/yyyy HH:mm:ss':'UTC' }} UTC.</p></section> }
-      @if (r.orden_pregunta === 3) { <p class="notice privacy">El cierre automático y el resumen global de las 3 respuestas se activarán en el Incremento 8. Puedes volver al detalle de la sesión o al panel.</p> }
       <div class="session-actions">
+        @if (r.orden_pregunta === 3 || r.estado_sesion === 'COMPLETADA' || r.estado_sesion === 'CANCELADA') {
+          <a class="button" [routerLink]="['/sesiones', r.id_sesion, 'resumen']">Ver resumen</a>
+        }
         @if (r.orden_pregunta < 3 && r.estado_sesion === 'EN_PROCESO') {
           <a class="button" [routerLink]="['/sesiones', r.id_sesion]">Siguiente pregunta</a>
           <app-cancelar-practica [idSesion]="r.id_sesion" (cancelada)="cancelada($event)" />
           <button class="button secondary" type="button" (click)="nuevaPractica.set(true)">Nueva práctica</button>
           @if (nuevaPractica()) { <app-cancelar-practica [idSesion]="r.id_sesion" etiqueta="Confirmar cierre para nueva práctica" (cancelada)="cancelada($event)" /> }
-        } @else if (r.estado_sesion === 'CANCELADA') { <a class="button" routerLink="/puestos">Nueva práctica</a> }
-        <a class="button secondary" [routerLink]="['/sesiones', r.id_sesion]">Volver a la sesión</a><a class="button secondary" routerLink="/panel">Volver al panel</a>
+        } @else if (r.estado_sesion === 'CANCELADA' || r.estado_sesion === 'COMPLETADA') { <a class="button" routerLink="/puestos">Nueva práctica</a> }
+        <a class="button secondary" [routerLink]="['/sesiones', r.id_sesion]">Ver detalle</a><a class="button secondary" routerLink="/panel">Volver al panel</a>
       </div>
     } @else { <a class="button" [routerLink]="['/sesiones', r.id_sesion, 'respuestas', r.id_respuesta]">Ver estado del procesamiento</a> }
   }

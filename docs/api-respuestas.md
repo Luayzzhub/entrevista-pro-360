@@ -1,4 +1,4 @@
-# API de respuestas — Incrementos 5 a 7
+# API de respuestas — Incrementos 5 a 8
 
 Todas las rutas requieren Bearer JWT válido y cuenta ACTIVO/POSTULANTE. El propietario procede exclusivamente del principal autenticado. Fechas UTC ISO 8601 con Z y precisión de segundos; JSON snake_case. El archivo se inspecciona por su contenido: nombre, extensión y MIME suministrados por el cliente no deciden su aceptación.
 
@@ -129,7 +129,7 @@ El backend calcula (relevancia+claridad+estructura+evidencias)/4 con BigDecimal 
 
 Refusal, status distinto de completed, JSON mal formado, claves duplicadas y violaciones del contrato producen SALIDA_EVALUACION_INVALIDA recuperable, sin insertar ni actualizar evaluación. HTTP408/429/5xx y timeout/red también son recuperables. Configuración/credenciales ausentes y rechazos no transitorios son definitivos. Se conserva TRANSCRITO/EVALUAR durante intentos 1 y 2; al agotar ciclo 1 queda FALLIDO recuperable y el único manual restaura TRANSCRITO/EVALUAR, sin repetir audio/STT/MET. Agotar ciclo 2 cancela conforme a D-02.
 
-Bajo lock sesión→respuesta y fencing se guardan evaluación y EVALUADO/FINALIZADO en la misma transacción. Hito EVALUADO, error/próximo/lease nulos. Cancelar durante la llamada libera lease sin guardar evaluación. No se calcula promedio global ni se cierra sesión. Las tres respuestas evaluadas conservan EN_PROCESO, puntaje_promedio=null y fecha_fin=null hasta Incremento 8.
+Bajo lock sesión→respuesta y fencing se guardan evaluación y EVALUADO/FINALIZADO en la misma transacción. Hito EVALUADO, error/próximo/lease nulos. Cancelar durante la llamada libera lease sin guardar evaluación. En esa misma transacción se consultan los tres resultados y SesionEntrevista.calcularPromedioGlobal verifica todas las precondiciones. Solo tres respuestas válidas de las preguntas activas completan la sesión con promedio y fecha_fin. Si falta algún bloque se conserva EN_PROCESO sin promedio. Una sesión CANCELADA no se reabre.
 
 ## Bloques de resultado en GET /api/v1/respuestas/{id}
 
@@ -172,4 +172,4 @@ Ruta protegida: /sesiones/:idSesion/respuestas/:idRespuesta/resultado. Valida am
 
 MCK09 presenta puesto/pregunta/competencia, puntaje /100 y cuatro justificaciones de peso 25 %, fortaleza, mejora y recomendaciones como texto plano. STAR es cualitativo o muestra STAR no aplica a esta pregunta. MET-1.0 y transcripción aparecen en secciones separadas del puntaje y del video. Al abrir, solicita reproducción; Renovar enlace de video repite POST. Hay renovación al vencer el enlace y ante error del reproductor posterior a expira_en. VIDEO_NO_DISPONIBLE retira el reproductor y conserva los bloques del resultado.
 
-P1/P2 con sesión EN_PROCESO: Siguiente pregunta abre el detalle actualizado; Finalizar anticipadamente pide confirmación; Nueva práctica requiere confirmar la cancelación antes de /puestos. Nunca se ofrece volver a grabar o reemplazar video. P3 ofrece volver a sesión/panel y explica que cierre y resumen global corresponden al Incremento 8.
+P1/P2 con sesión EN_PROCESO: Siguiente pregunta abre el detalle actualizado; Finalizar anticipadamente pide confirmación; Nueva práctica requiere confirmar la cancelación antes de /puestos. Nunca se ofrece volver a grabar o reemplazar video. P3, COMPLETADA o CANCELADA ofrecen Ver resumen hacia /sesiones/:id/resumen. Los estados terminales permiten Nueva práctica directamente; también se ofrecen Ver detalle y Volver al panel.

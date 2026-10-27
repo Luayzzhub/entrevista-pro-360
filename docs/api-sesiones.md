@@ -1,4 +1,4 @@
-# API de sesiones — Incremento 3
+# API de sesiones — Incrementos 3 a 8
 
 Prefijo `/api/v1/sesiones`. Todas las operaciones requieren Bearer JWT válido y cuenta ACTIVO/POSTULANTE. El propietario se obtiene exclusivamente de `Authentication.getPrincipal()` (`Long`); no se acepta `id_usuario` en los DTO de escritura. JSON `snake_case`, fechas UTC ISO 8601 con `Z` y precisión de segundos.
 
@@ -48,16 +48,19 @@ ID entero positivo tipo Long; inválido/no positivo/desbordado: 400 `PARAMETRO_I
 | `respuestas_evaluadas` | Cantidad real cuyo estado es EVALUADO |
 | `pregunta_habilitada` | Pregunta completa del catálogo o null |
 | `preguntas` | Tres objetos `PreguntaSesionResponse`, ordenados 1, 2 y 3 |
+| `motivo_cierre` | null salvo CANCELADA; mensaje seguro que distingue fallo definitivo de finalización anticipada |
 
 `pregunta_habilitada`, cuando existe, contiene exactamente `id_pregunta`, `id_puesto`, `enunciado`, `competencia_evaluada`, `orden`, `tiempo_limite_seg`, `activo` y `aplica_star`.
 
-Cada `PreguntaSesionResponse` contiene `id_pregunta`, `orden`, `enunciado`, `competencia_evaluada`, `tiempo_limite_seg`, `aplica_star`, `habilitada` (boolean), `id_respuesta` (Long/null) y `estado_procesamiento` (SUBIDO/AUDIO_EXTRAIDO/TRANSCRITO/EVALUADO/FALLIDO/null). No se exponen claves S3, contexto JSON de procesamiento ni entidades JPA.
+Cada PreguntaSesionResponse conserva id_pregunta, orden, enunciado, competencia_evaluada, tiempo_limite_seg, aplica_star, habilitada, id_respuesta y estado_procesamiento. Añade puntaje_general y version_rubrica (ambos null sin evaluación), puede_reintentar (elegibilidad real de ContextoProcesamiento) y motivo_fallo (mensaje español seguro solo en FALLIDO). No se exponen claves S3, contexto JSON, códigos crudos de proveedor ni entidades JPA.
 
 ## Regla de avance
 
 Se recorren las tres preguntas en orden. Se habilita la primera sin respuesta solo si todas las anteriores están EVALUADO. Una respuesta SUBIDO/AUDIO_EXTRAIDO/TRANSCRITO/FALLIDO bloquea el avance. Tres respuestas EVALUADO no habilitan una cuarta pregunta. Los estados terminales no habilitan ninguna.
 
-Este incremento lee respuestas reales existentes; todavía no incorpora confirmación de video, procesamiento ni cierre automático de una sesión al completar las evaluaciones. Esas operaciones se integrarán con los incrementos de multimedia/análisis.
+El worker confirma EVALUADO/FINALIZADO y comprueba el cierre en la misma transacción bajo lock sesión→respuesta. Solo EN_PROCESO puede completar y requiere exactamente tres respuestas de las tres preguntas activas distintas (órdenes 1/2/3), todas EVALUADO con transcripción no vacía, MET-1.0 y evaluación válida según ValidadorEvaluacion.validarGuardada. Puntaje promedio = (puntaje_general1+2+3)/3, BigDecimal HALF_UP, escala 2. Ejemplos: 75.00/81.25/87.50→81.25; 0.00/0.00/6.25→2.08; tres ceros válidos→0.00. Con datos incompletos/inválidos no se cierra ni se calcula promedio. No se reemplazan datos faltantes con ceros.
+
+COMPLETADA recibe fecha_fin UTC a segundos, ajustada al inicio si el reloj resulta anterior. Es idempotente y conserva promedio/fin. CANCELADA nunca puede completarse. Si el usuario cancela mientras EVALUAR P3 sigue en el proveedor, se libera lease sin publicar evaluación P3 ni promedio. Si el worker completa primero, la cancelación posterior devuelve 409 SESION_YA_COMPLETADA. La falla definitiva en cualquier etapa de P3 cancela conservando P1/P2.
 
 ## POST /api/v1/sesiones/{id}/cancelacion
 
@@ -68,6 +71,8 @@ Sin cuerpo, o JSON vacío `{}`. Propiedades desconocidas: 400 `CAMPOS_NO_PERMITI
 - COMPLETADA → 409 `SESION_YA_COMPLETADA`, mensaje `La sesión ya fue completada y no puede cancelarse.`.
 
 Éxito: **200 OK** con `SesionDetalleResponse` actualizado. Tras cancelar puede crearse otra práctica. No se borran los resultados existentes.
+
+motivo_cierre se deriva de las respuestas persistidas, sin añadir columnas: cuando hay un FALLIDO con ultimo_error.recuperable=false, informa una falla definitiva; en la finalización anticipada informa que la sesión fue finalizada por el postulante. Una sesión cancelada tras un fallo recuperable continúa siendo una finalización anticipada. El JSON de error interno nunca se serializa.
 
 ## GET /api/v1/sesiones
 
@@ -87,3 +92,5 @@ El ejemplo es el contrato para un usuario sin sesiones. En usuarios con datos:
 Cada `SesionResumenResponse` contiene exactamente `id_sesion`, `id_puesto`, `nombre_puesto`, `area_puesto`, `nivel_experiencia`, `estado_sesion`, `puntaje_promedio`, `fecha_inicio`, `fecha_fin`, `total_preguntas`, `respuestas_confirmadas`, `respuestas_evaluadas` y `orden_pregunta_habilitada` (1..3/null).
 
 Los puestos se resuelven también para sesiones existentes aunque el puesto esté inactivo. No se consulta ni revela información de sesiones de otros usuarios. La pantalla de historial completo y sus filtros pertenecen a un incremento posterior.
+
+Tras el commit de COMPLETADA, POST /api/v1/sesiones permite crear inmediatamente otra práctica. GET /api/v1/sesiones refleja la última completada con su promedio y el contador actualizado. El Resumen de sesión de Angular (/sesiones/:id/resumen, authGuard) reutiliza GET /api/v1/sesiones/{id}; no calcula promedios en el navegador. Las evaluaciones se consultan por lote para detalle/panel, evitando una consulta por pregunta.

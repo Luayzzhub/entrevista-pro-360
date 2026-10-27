@@ -9,6 +9,84 @@ import static pe.utp.entrevistapro360.domain.SesionEntrevista.EstadoSesion.*;
 import static pe.utp.entrevistapro360.domain.RespuestaVideo.EstadoProcesamiento.*;
 
 class SesionEntrevistaTest {
+
+    private ResultadoRespuestaSesion procesada(int orden,int... puntos) {
+        var r=respuesta(orden,EVALUADO);
+        var t=new Transcripcion((long)orden,r.idRespuesta(),"Esta respuesta explica una evidencia",null,"es",inicio);
+        var m=CalculadorMetricas.calcular(r.idRespuesta(),t.textoTranscrito(),r.duracionSegundos(),inicio);
+        var salida=pe.utp.entrevistapro360.support.EvaluacionFixtures.salida(preguntas.get(orden-1).aplicaStar());
+        @SuppressWarnings("unchecked") var criterios=(Map<String,Object>)salida.get("criterios");
+        for(int i=0;i<4;i++) {
+            @SuppressWarnings("unchecked") var c=(Map<String,Object>)criterios.get(ValidadorEvaluacion.CRITERIOS.get(i));
+            c.put("puntaje",puntos[i]);
+        }
+        return new ResultadoRespuestaSesion(r,t,m,ValidadorEvaluacion.validar(r.idRespuesta(),salida,preguntas.get(orden-1).aplicaStar(),inicio));
+    }
+    private List<ResultadoRespuestaSesion> tresResultados() {
+        return List.of(procesada(1,75,100,50,75),procesada(2,75,100,75,75),procesada(3,75,100,75,100));
+    }
+    @Test void calcularPromedioGlobalCompletaConTresValidasYPromedioExacto() {
+        var cierre=sesion(EN_PROCESO).calcularPromedioGlobal(preguntas,tresResultados(),inicio.plusMinutes(5).withNano(987654321));
+        assertThat(cierre.estadoSesion()).isEqualTo(COMPLETADA);
+        assertThat(cierre.puntajePromedio()).isEqualTo(new BigDecimal("81.25"));
+        assertThat(cierre.fechaFin()).isEqualTo(inicio.plusMinutes(5));
+        assertThat(cierre.determinarPreguntaHabilitada(preguntas,tresResultados().stream().map(ResultadoRespuestaSesion::respuesta).toList())).isEmpty();
+    }
+    @Test void calcularPromedioGlobalHalfUpNoConfundeCerosRealesConAusencias() {
+        var redondeo=List.of(procesada(1,0,0,0,0),procesada(2,0,0,0,0),procesada(3,0,0,0,25));
+        assertThat(sesion(EN_PROCESO).calcularPromedioGlobal(preguntas,redondeo,inicio).puntajePromedio()).isEqualTo(new BigDecimal("2.08"));
+        var ceros=List.of(procesada(1,0,0,0,0),procesada(2,0,0,0,0),procesada(3,0,0,0,0));
+        assertThat(sesion(EN_PROCESO).calcularPromedioGlobal(preguntas,ceros,inicio).puntajePromedio()).isEqualTo(new BigDecimal("0.00"));
+    }
+    @Test void calcularPromedioGlobalNoRellenaConCerosNiCierraConMenosDeTres() {
+        var s=sesion(EN_PROCESO);
+        for(int n=0;n<3;n++) {
+            var sinCerrar=s.calcularPromedioGlobal(preguntas,tresResultados().subList(0,n),inicio);
+            assertThat(sinCerrar).isSameAs(s);assertThat(sinCerrar.puntajePromedio()).isNull();assertThat(sinCerrar.fechaFin()).isNull();
+        }
+    }
+    @Test void calcularPromedioGlobalRechazaPreguntaRespuestaRepetidaYDatosDeOtraSesion() {
+        var s=sesion(EN_PROCESO);var datos=tresResultados();
+        assertThat(s.calcularPromedioGlobal(preguntas,List.of(datos.get(0),datos.get(0),datos.get(2)),inicio)).isSameAs(s);
+        assertThat(s.calcularPromedioGlobal(List.of(preguntas.get(0),preguntas.get(0),preguntas.get(2)),datos,inicio)).isSameAs(s);
+        var r=datos.get(2).respuesta();
+        var ajena=new RespuestaVideo(r.idRespuesta(),100L,r.idPregunta(),r.publicIdCloud(),r.duracionSegundos(),r.formato(),r.tamanoBytes(),r.estadoProcesamiento(),inicio,r.procesamientoContexto());
+        var otra=new ResultadoRespuestaSesion(ajena,datos.get(2).transcripcion(),datos.get(2).metrica(),datos.get(2).evaluacion());
+        assertThat(s.calcularPromedioGlobal(preguntas,List.of(datos.get(0),datos.get(1),otra),inicio)).isSameAs(s);
+    }
+    @Test void calcularPromedioGlobalNoCierraSinBloquesPersistidosOConVersionInvalida() {
+        var s=sesion(EN_PROCESO);var datos=tresResultados();var r=datos.get(2);
+        var metrica=r.metrica();
+        var vieja=new MetricaComunicacion(metrica.idMetrica(),metrica.idRespuesta(),metrica.conteoPalabras(),metrica.palabrasPorMinuto(),metrica.conteoMuletillas(),metrica.detalleMuletillas(),"MET-OTRA",inicio);
+        var vacia=new Transcripcion(3L,r.respuesta().idRespuesta(),"  ",null,"es",inicio);
+        var e=r.evaluacion();
+        var invalida=new EvaluacionSTAR(e.idEvaluacion(),e.idRespuesta(),new BigDecimal("99.00"),e.puntajeRelevancia(),e.puntajeClaridad(),e.puntajeEstructura(),e.puntajeEvidencias(),e.aplicaStar(),e.detalleStar(),e.versionRubrica(),e.fortalezaPrincipal(),e.areasMejora(),e.recomendaciones(),e.fechaEvaluacion());
+        var casos=List.of(new ResultadoRespuestaSesion(r.respuesta(),null,r.metrica(),e),new ResultadoRespuestaSesion(r.respuesta(),vacia,r.metrica(),e),
+                new ResultadoRespuestaSesion(r.respuesta(),r.transcripcion(),null,e),new ResultadoRespuestaSesion(r.respuesta(),r.transcripcion(),vieja,e),
+                new ResultadoRespuestaSesion(r.respuesta(),r.transcripcion(),r.metrica(),null),new ResultadoRespuestaSesion(r.respuesta(),r.transcripcion(),r.metrica(),invalida));
+        for(var caso:casos)assertThat(s.calcularPromedioGlobal(preguntas,List.of(datos.get(0),datos.get(1),caso),inicio)).isSameAs(s);
+    }
+    @Test void calcularPromedioGlobalRechazaRespuestaSinEvaluarYBancoInactivo() {
+        var s=sesion(EN_PROCESO);var datos=tresResultados();var d=datos.get(2);
+        var pendiente=new ResultadoRespuestaSesion(respuesta(3,TRANSCRITO),d.transcripcion(),d.metrica(),d.evaluacion());
+        assertThat(s.calcularPromedioGlobal(preguntas,List.of(datos.get(0),datos.get(1),pendiente),inicio)).isSameAs(s);
+        var p=preguntas.get(2);
+        var inactiva=new Pregunta(p.idPregunta(),p.idPuesto(),p.enunciado(),p.competenciaEvaluada(),p.orden(),p.tiempoLimiteSeg(),false,p.aplicaStar());
+        assertThat(s.calcularPromedioGlobal(List.of(preguntas.get(0),preguntas.get(1),inactiva),datos,inicio)).isSameAs(s);
+    }
+    @Test void calcularPromedioGlobalRespetaCanceladaCompletadaEIniciada() {
+        for(var estado:List.of(CANCELADA,COMPLETADA,INICIADA)) {
+            var s=sesion(estado);assertThat(s.calcularPromedioGlobal(preguntas,tresResultados(),inicio.plusHours(1))).isSameAs(s);
+        }
+        var cancelada=sesion(CANCELADA);
+        assertThat(cancelada.calcularPromedioGlobal(preguntas,tresResultados(),inicio).puntajePromedio()).isNull();
+        var completada=sesion(EN_PROCESO).calcularPromedioGlobal(preguntas,tresResultados(),inicio);
+        assertThatThrownBy(()->completada.finalizarAnticipadamente(inicio)).isInstanceOf(TransicionSesionInvalidaException.class);
+    }
+    @Test void calcularPromedioGlobalNoRetrocedeFechaInicio() {
+        var cierre=sesion(EN_PROCESO).calcularPromedioGlobal(preguntas,tresResultados(),inicio.minusDays(1));
+        assertThat(cierre.fechaFin()).isEqualTo(inicio);
+    }
     private final LocalDateTime inicio = LocalDateTime.of(2026, 10, 20, 15, 0);
     private final Puesto puesto = new Puesto(7, "Soporte", "TI", "Descripción", "Inicial", true);
     private final List<Pregunta> preguntas = List.of(pregunta(1), pregunta(2), pregunta(3));

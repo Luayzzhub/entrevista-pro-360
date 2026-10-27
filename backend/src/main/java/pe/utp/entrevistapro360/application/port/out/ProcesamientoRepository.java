@@ -15,4 +15,6 @@ public interface ProcesamientoRepository {
     void guardarMetrica(MetricaComunicacion metrica);
     Optional<EvaluacionSTAR> buscarEvaluacion(long respuesta);
     void guardarEvaluacion(EvaluacionSTAR evaluacion);
+    List<ResultadoRespuestaSesion> buscarResultadosSesion(long sesion);
+    Map<Long,EvaluacionSTAR> buscarEvaluaciones(Collection<Long> respuestas);
 }

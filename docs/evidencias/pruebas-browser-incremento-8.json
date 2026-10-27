@@ -1,0 +1,444 @@
+{
+  "correcto": true,
+  "fecha_utc": "2026-10-27T05:11:56.045Z",
+  "navegador": "156.0.8078.47",
+  "total_casos": 8,
+  "casos": [
+    {
+      "nombre": "P1 → P2 con STAR → P3: cierre automático COMPLETADA con promedio81.25 y fecha UTC",
+      "correcto": true,
+      "id_sesion": 3,
+      "respuestas": [
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "nombre": "Resumen COMPLETADA desktop/móvil: promedio final81.25, tres puntajes y fechas UTC",
+      "correcto": true
+    },
+    {
+      "nombre": "Los tres enlaces individuales abren MCK09 y vuelven al resumen",
+      "correcto": true
+    },
+    {
+      "nombre": "Detalle COMPLETADA conserva puntajes individuales y enlaza Ver resumen de sesión",
+      "correcto": true
+    },
+    {
+      "nombre": "MCK03: última sesión COMPLETADA, promedio81.25, contador1 y enlace de resumen funcional",
+      "correcto": true
+    },
+    {
+      "nombre": "Después de COMPLETADA se inicia inmediatamente nueva sesión con HTTP201",
+      "correcto": true,
+      "id_sesion": 4
+    },
+    {
+      "nombre": "Resumen CANCELADA conserva1/3, motivo y dos Sin respuesta registrada; no muestra promedio ni ceros de relleno",
+      "correcto": true
+    },
+    {
+      "nombre": "CANCELADA: P1 sigue consultable en MCK09, detalle y resumen enlazados y Nueva práctica disponible",
+      "correcto": true,
+      "id_respuesta": 8
+    }
+  ],
+  "sesion_completada": {
+    "id_sesion": 3,
+    "id_usuario": 2,
+    "id_puesto": 1,
+    "nombre_puesto": "Practicante de Desarrollo TI",
+    "area_puesto": "Tecnología de la información",
+    "nivel_experiencia": "Practicante",
+    "estado_sesion": "COMPLETADA",
+    "puntaje_promedio": 81.25,
+    "fecha_inicio": "2026-10-27T05:11:25Z",
+    "fecha_fin": "2026-10-27T05:11:45Z",
+    "total_preguntas": 3,
+    "respuestas_confirmadas": 3,
+    "respuestas_evaluadas": 3,
+    "pregunta_habilitada": null,
+    "preguntas": [
+      {
+        "id_pregunta": 1,
+        "orden": 1,
+        "enunciado": "Preséntate brevemente y explica qué conocimientos o proyectos de tu formación puedes aportar como practicante de desarrollo.",
+        "competencia_evaluada": "Presentación y pertinencia profesional",
+        "tiempo_limite_seg": 60,
+        "aplica_star": false,
+        "habilitada": false,
+        "id_respuesta": 5,
+        "estado_procesamiento": "EVALUADO",
+        "puntaje_general": 75,
+        "version_rubrica": "COM-1.0",
+        "puede_reintentar": false,
+        "motivo_fallo": null
+      },
+      {
+        "id_pregunta": 2,
+        "orden": 2,
+        "enunciado": "Describe un problema que hayas encontrado en un proyecto académico o personal de software. Explica tu responsabilidad, qué hiciste y cuál fue el resultado o aprendizaje.",
+        "competencia_evaluada": "Resolución de problemas y responsabilidad",
+        "tiempo_limite_seg": 60,
+        "aplica_star": true,
+        "habilitada": false,
+        "id_respuesta": 6,
+        "estado_procesamiento": "EVALUADO",
+        "puntaje_general": 81.25,
+        "version_rubrica": "COM-1.0",
+        "puede_reintentar": false,
+        "motivo_fallo": null
+      },
+      {
+        "id_pregunta": 3,
+        "orden": 3,
+        "enunciado": "Si una funcionalidad deja de funcionar después de un cambio, ¿cómo investigarías la causa y comprobarías que tu corrección funciona?",
+        "competencia_evaluada": "Razonamiento técnico y verificación",
+        "tiempo_limite_seg": 60,
+        "aplica_star": false,
+        "habilitada": false,
+        "id_respuesta": 7,
+        "estado_procesamiento": "EVALUADO",
+        "puntaje_general": 87.5,
+        "version_rubrica": "COM-1.0",
+        "puede_reintentar": false,
+        "motivo_fallo": null
+      }
+    ],
+    "motivo_cierre": null
+  },
+  "sesion_cancelada": 4,
+  "errores_javascript": [],
+  "errores_consola": [],
+  "peticiones_api": [
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/auth/login",
+      "estado": 200,
+      "ms": 1793077885305
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones",
+      "estado": 200,
+      "ms": 1793077885360
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/puestos",
+      "estado": 200,
+      "ms": 1793077885796
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones",
+      "estado": 200,
+      "ms": 1793077885798
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/sesiones",
+      "estado": 201,
+      "ms": 1793077885902
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/3",
+      "estado": 200,
+      "ms": 1793077885964
+    },
+    {
+      "metodo": "PUT",
+      "ruta": "/api/v1/sesiones/3/preguntas/1/respuesta",
+      "estado": 202,
+      "ms": 1793077889906
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/5",
+      "estado": 200,
+      "ms": 1793077889989
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/5",
+      "estado": 200,
+      "ms": 1793077893038
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/5",
+      "estado": 200,
+      "ms": 1793077893455
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/respuestas/5/reproduccion",
+      "estado": 200,
+      "ms": 1793077893495
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/3",
+      "estado": 200,
+      "ms": 1793077893620
+    },
+    {
+      "metodo": "PUT",
+      "ruta": "/api/v1/sesiones/3/preguntas/2/respuesta",
+      "estado": 202,
+      "ms": 1793077896494
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/6",
+      "estado": 200,
+      "ms": 1793077896535
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/6",
+      "estado": 200,
+      "ms": 1793077899591
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/6",
+      "estado": 200,
+      "ms": 1793077900021
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/respuestas/6/reproduccion",
+      "estado": 200,
+      "ms": 1793077900063
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/3",
+      "estado": 200,
+      "ms": 1793077900180
+    },
+    {
+      "metodo": "PUT",
+      "ruta": "/api/v1/sesiones/3/preguntas/3/respuesta",
+      "estado": 202,
+      "ms": 1793077903081
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/7",
+      "estado": 200,
+      "ms": 1793077903121
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/7",
+      "estado": 200,
+      "ms": 1793077906161
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/7",
+      "estado": 200,
+      "ms": 1793077906569
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/respuestas/7/reproduccion",
+      "estado": 200,
+      "ms": 1793077906604
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/3",
+      "estado": 200,
+      "ms": 1793077906794
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/5",
+      "estado": 200,
+      "ms": 1793077907172
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/respuestas/5/reproduccion",
+      "estado": 200,
+      "ms": 1793077907200
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/3",
+      "estado": 200,
+      "ms": 1793077907287
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/6",
+      "estado": 200,
+      "ms": 1793077907401
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/respuestas/6/reproduccion",
+      "estado": 200,
+      "ms": 1793077907426
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/3",
+      "estado": 200,
+      "ms": 1793077907493
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/7",
+      "estado": 200,
+      "ms": 1793077907593
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/respuestas/7/reproduccion",
+      "estado": 200,
+      "ms": 1793077907624
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/3",
+      "estado": 200,
+      "ms": 1793077907710
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/3",
+      "estado": 200,
+      "ms": 1793077907806
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/3",
+      "estado": 200,
+      "ms": 1793077907895
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones",
+      "estado": 200,
+      "ms": 1793077907995
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/3",
+      "estado": 200,
+      "ms": 1793077908108
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones",
+      "estado": 200,
+      "ms": 1793077908193
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/puestos",
+      "estado": 200,
+      "ms": 1793077908309
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones",
+      "estado": 200,
+      "ms": 1793077908331
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/sesiones",
+      "estado": 201,
+      "ms": 1793077908408
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/4",
+      "estado": 200,
+      "ms": 1793077908434
+    },
+    {
+      "metodo": "PUT",
+      "ruta": "/api/v1/sesiones/4/preguntas/1/respuesta",
+      "estado": 202,
+      "ms": 1793077911302
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/8",
+      "estado": 200,
+      "ms": 1793077911343
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/8",
+      "estado": 200,
+      "ms": 1793077914398
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/8",
+      "estado": 200,
+      "ms": 1793077914899
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/respuestas/8/reproduccion",
+      "estado": 200,
+      "ms": 1793077914962
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/sesiones/4/cancelacion",
+      "estado": 200,
+      "ms": 1793077915195
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/4",
+      "estado": 200,
+      "ms": 1793077915283
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/8",
+      "estado": 200,
+      "ms": 1793077915695
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/respuestas/8/reproduccion",
+      "estado": 200,
+      "ms": 1793077915730
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/4",
+      "estado": 200,
+      "ms": 1793077915820
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/4",
+      "estado": 200,
+      "ms": 1793077915915
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/4",
+      "estado": 200,
+      "ms": 1793077916008
+    }
+  ],
+  "llamadas_llm": 4,
+  "llamadas_stt": 4,
+  "entorno": "JAR y Angular reales; MySQL8.4.13, ffmpeg y HTTP S3/STT/LLM locales; Chrome con dispositivos emulados"
+}

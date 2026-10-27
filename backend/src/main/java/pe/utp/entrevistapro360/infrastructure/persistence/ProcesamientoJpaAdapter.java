@@ -51,4 +51,18 @@ public class ProcesamientoJpaAdapter implements ProcesamientoRepository {
     @Override @Transactional public void guardarEvaluacion(EvaluacionSTAR e) {
         if(evaluaciones.findByRespuestaId(e.idRespuesta()).isEmpty()) evaluaciones.saveAndFlush(EvaluacionJpaEntity.nueva(e));
     }
+    @Override public Map<Long,EvaluacionSTAR> buscarEvaluaciones(Collection<Long> ids) {
+        if(ids.isEmpty())return Map.of();
+        return evaluaciones.findByRespuestaIdIn(ids).stream().map(EvaluacionJpaEntity::toDomain)
+                .collect(java.util.stream.Collectors.toMap(EvaluacionSTAR::idRespuesta,e->e));
+    }
+    @Override public List<ResultadoRespuestaSesion> buscarResultadosSesion(long sesion) {
+        var rs=respuestas.findBySesionIdInOrderByIdAsc(List.of(sesion)).stream().map(RespuestaVideoJpaEntity::toDomain).toList();
+        var ids=rs.stream().map(RespuestaVideo::idRespuesta).toList();
+        if(ids.isEmpty())return List.of();
+        var ts=transcripciones.findByRespuestaIdIn(ids).stream().map(TranscripcionJpaEntity::toDomain).collect(java.util.stream.Collectors.toMap(Transcripcion::idRespuesta,t->t));
+        var ms=metricas.findByRespuestaIdIn(ids).stream().map(MetricaJpaEntity::toDomain).collect(java.util.stream.Collectors.toMap(MetricaComunicacion::idRespuesta,m->m));
+        var es=buscarEvaluaciones(ids);
+        return rs.stream().map(r->new ResultadoRespuestaSesion(r,ts.get(r.idRespuesta()),ms.get(r.idRespuesta()),es.get(r.idRespuesta()))).toList();
+    }
 }

@@ -9,6 +9,7 @@ export const routes: Routes = [
   { path: 'perfil', title: 'Mi perfil | Entrevista Pro 360', canActivate: [authGuard], loadComponent: () => import('./features/profile/perfil.component').then(m => m.PerfilComponent) },
   { path: 'sesiones/:idSesion/respuestas/:idRespuesta/resultado', title: 'Resultado de tu respuesta | Entrevista Pro 360', canActivate: [authGuard], loadComponent: () => import('./features/results/resultado-respuesta.component').then(m => m.ResultadoRespuestaComponent) },
   { path: 'sesiones/:idSesion/respuestas/:idRespuesta', title: 'Procesamiento de respuesta | Entrevista Pro 360', canActivate: [authGuard], loadComponent: () => import('./features/interviews/procesamiento-respuesta.component').then(m => m.ProcesamientoRespuestaComponent) },
+  { path: 'sesiones/:id/resumen', title: 'Resumen de sesión | Entrevista Pro 360', canActivate: [authGuard], loadComponent: () => import('./features/results/resumen-sesion.component').then(m => m.ResumenSesionComponent) },
   { path: 'sesiones/:id', title: 'Práctica de entrevista | Entrevista Pro 360', canActivate: [authGuard], loadComponent: () => import('./features/interviews/sesion.component').then(m => m.SesionComponent) },
   {
     path: 'puestos', title: 'Puestos | Entrevista Pro 360',

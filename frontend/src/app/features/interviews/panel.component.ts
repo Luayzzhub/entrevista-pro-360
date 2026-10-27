@@ -30,13 +30,13 @@ interface EstadoPanel { cargando: boolean; resumen: ResumenSesiones | null; erro
           </article>
           <article class="form-card"><span class="eyebrow">ÚLTIMA SESIÓN COMPLETADA</span>
             @if (resumen.ultima_sesion_completada; as ultima) {
-              <h2>{{ ultima.nombre_puesto }}</h2><p class="session-score">Promedio: {{ ultima.puntaje_promedio | number:'1.2-2' }} / 100</p><p>Sesiones completadas: {{ resumen.total_sesiones_completadas }}</p><a class="button secondary" [routerLink]="['/sesiones', ultima.id_sesion]">Ver sesión</a>
+              <h2>{{ ultima.nombre_puesto }}</h2><p class="session-score">Promedio: {{ ultima.puntaje_promedio | number:'1.2-2' }} / 100</p><p>Sesiones completadas: {{ resumen.total_sesiones_completadas }}</p><div class="session-actions"><a class="button" [routerLink]="['/sesiones', ultima.id_sesion, 'resumen']">Ver resumen</a><a class="button secondary" [routerLink]="['/sesiones', ultima.id_sesion]">Ver sesión</a></div>
             } @else { <h2>Aún no tienes sesiones completadas</h2><p>Sesiones completadas: {{ resumen.total_sesiones_completadas }}</p> }
           </article>
           <aside class="form-card"><span class="eyebrow">MI CUENTA</span><h2>{{ auth.usuario()?.nombre_completo }}</h2><p class="account-email">{{ auth.usuario()?.email }}</p><p class="account-status">Cuenta activa · Postulante</p><a class="button secondary" routerLink="/perfil">Mi perfil</a></aside>
         </div>
       }
-      <p class="availability practice-banner">Puedes grabar, revisar y confirmar tu video de forma privada. El análisis se integrará en los siguientes incrementos.</p>
+      <p class="availability practice-banner">Graba, revisa y confirma tu video de forma privada. Recibe una evaluación COM-1.0 por respuesta y consulta el resumen al completar las 3 preguntas.</p>
     </section>
   `
 })

@@ -12,8 +12,9 @@ public final class GestionarSesionService implements GestionarSesion {
     private final SesionRepository sesiones;
     private final CatalogoRepository catalogo;
     private final Clock clock;
-    public GestionarSesionService(SesionRepository sesiones, CatalogoRepository catalogo, Clock clock) {
-        this.sesiones = sesiones; this.catalogo = catalogo; this.clock = clock;
+    private final ProcesamientoRepository procesamiento;
+    public GestionarSesionService(SesionRepository sesiones, CatalogoRepository catalogo, Clock clock,ProcesamientoRepository procesamiento) {
+        this.sesiones = sesiones; this.catalogo = catalogo; this.clock = clock;this.procesamiento=procesamiento;
     }
     @Override public VistaSesion iniciarSesion(long idUsuario, int idPuesto) {
         return sesiones.conUsuarioBloqueado(idUsuario, () -> {
@@ -36,14 +37,16 @@ public final class GestionarSesionService implements GestionarSesion {
     @Override public ResumenSesionesUsuario consultarResumenUsuario(long idUsuario) {
         return sesiones.enLectura(() -> {
             List<SesionEntrevista> propias = sesiones.listarPropias(idUsuario);
-            var respuestas = sesiones.buscarRespuestas(propias.stream().map(SesionEntrevista::idSesion).toList()).stream()
+            var todasLasRespuestas=sesiones.buscarRespuestas(propias.stream().map(SesionEntrevista::idSesion).toList());
+            var evaluaciones=procesamiento.buscarEvaluaciones(todasLasRespuestas.stream().map(RespuestaVideo::idRespuesta).toList());
+            var respuestas = todasLasRespuestas.stream()
                     .collect(Collectors.groupingBy(RespuestaVideo::idSesion));
             Map<Integer, Puesto> puestos = new HashMap<>();
             Map<Integer, List<Pregunta>> preguntas = new HashMap<>();
             List<ResumenSesionItem> items = propias.stream().map(s -> {
                 Puesto puesto = puestos.computeIfAbsent(s.idPuesto(), this::buscarPuesto);
                 List<Pregunta> banco = preguntas.computeIfAbsent(s.idPuesto(), catalogo::buscarPreguntasActivas);
-                VistaSesion vista = ensamblar(s, puesto, banco, respuestas.getOrDefault(s.idSesion(), List.of()));
+                VistaSesion vista = ensamblar(s, puesto, banco, respuestas.getOrDefault(s.idSesion(), List.of()),evaluaciones);
                 return new ResumenSesionItem(s, puesto, vista.respuestasConfirmadas(), vista.respuestasEvaluadas(),
                         vista.preguntaHabilitada() == null ? null : vista.preguntaHabilitada().orden());
             }).toList();
@@ -58,10 +61,30 @@ public final class GestionarSesionService implements GestionarSesion {
         return ensamblar(sesion, buscarPuesto(sesion.idPuesto()), catalogo.buscarPreguntasActivas(sesion.idPuesto()), sesiones.buscarRespuestas(List.of(sesion.idSesion())));
     }
     private VistaSesion ensamblar(SesionEntrevista sesion, Puesto puesto, List<Pregunta> preguntas, List<RespuestaVideo> respuestas) {
+        return ensamblar(sesion,puesto,preguntas,respuestas,procesamiento.buscarEvaluaciones(respuestas.stream().map(RespuestaVideo::idRespuesta).toList()));
+    }
+    private VistaSesion ensamblar(SesionEntrevista sesion, Puesto puesto, List<Pregunta> preguntas, List<RespuestaVideo> respuestas,Map<Long,EvaluacionSTAR> evaluaciones) {
         Pregunta habilitada = sesion.determinarPreguntaHabilitada(preguntas, respuestas).orElse(null);
         var porPregunta = respuestas.stream().collect(Collectors.toMap(RespuestaVideo::idPregunta, r -> r));
         var estados = preguntas.stream().sorted(Comparator.comparingInt(Pregunta::orden))
-                .map(p -> new EstadoPreguntaSesion(p, porPregunta.get(p.idPregunta()), habilitada != null && habilitada.idPregunta().equals(p.idPregunta()))).toList();
-        return new VistaSesion(sesion, puesto, estados, habilitada, respuestas.size(), sesion.contarRespuestasEvaluadas(respuestas));
+                .map(p -> {
+                    var r=porPregunta.get(p.idPregunta());
+                    boolean reintento=r!=null && ContextoProcesamiento.compatible(r)
+                            && new ContextoProcesamiento(r).puedeReintentar(sesion,LocalDateTime.now(clock).withNano(0));
+                    String fallo=r==null || r.estadoProcesamiento()!=RespuestaVideo.EstadoProcesamiento.FALLIDO ? null
+                            : reintento ? "Se agotaron los intentos automáticos. Puedes reintentar el análisis una vez."
+                            : falloDefinitivo(r) ? "Ocurrió una falla no recuperable. La sesión fue cancelada."
+                            : "No se pudo completar el análisis de esta respuesta.";
+                    return new EstadoPreguntaSesion(p,r,habilitada!=null && habilitada.idPregunta().equals(p.idPregunta()),
+                            r==null?null:evaluaciones.get(r.idRespuesta()),reintento,fallo);
+                }).toList();
+        String motivo=sesion.estadoSesion()!=SesionEntrevista.EstadoSesion.CANCELADA ? null
+                : respuestas.stream().anyMatch(this::falloDefinitivo) ? "La sesión se canceló por una falla definitiva al procesar una respuesta."
+                : "La sesión fue finalizada anticipadamente por el postulante.";
+        return new VistaSesion(sesion, puesto, estados, habilitada, respuestas.size(), sesion.contarRespuestasEvaluadas(respuestas),motivo);
+    }
+    private boolean falloDefinitivo(RespuestaVideo r) {
+        return r.estadoProcesamiento()==RespuestaVideo.EstadoProcesamiento.FALLIDO
+                && r.procesamientoContexto().get("ultimo_error") instanceof Map<?,?> error && Boolean.FALSE.equals(error.get("recuperable"));
     }
 }

@@ -151,7 +151,8 @@ public final class ProcesarRespuestasService {
             if (!vigente(trabajo,c)) return null;
             if (datos.sesion().esTerminal()) { repo.actualizar(c.liberar()); return null; }
             RespuestaVideo actualizada;
-            switch (c.etapa()) {
+            var etapaFinalizada=c.etapa();
+            switch (etapaFinalizada) {
                 case EXTRAER_AUDIO -> actualizada=c.audioExtraido(resultado.audio());
                 case TRANSCRIBIR -> {
                     if (repo.buscarTranscripcion(datos.respuesta().idRespuesta()).isEmpty())
@@ -162,7 +163,13 @@ public final class ProcesarRespuestasService {
                 case EVALUAR -> { repo.guardarEvaluacion(resultado.evaluacion()); actualizada=c.evaluado(); }
                 default -> { return null; }
             }
-            repo.actualizar(actualizada); return null;
+            repo.actualizar(actualizada);
+            if(etapaFinalizada==ContextoProcesamiento.Etapa.EVALUAR) {
+                var cierre=datos.sesion().calcularPromedioGlobal(catalogo.buscarPreguntasActivas(datos.sesion().idPuesto()),
+                        repo.buscarResultadosSesion(datos.sesion().idSesion()),ahora());
+                if(cierre!=datos.sesion()) repo.actualizarSesion(cierre);
+            }
+            return null;
         });
     }
     private void fallar(TrabajoReclamado trabajo, FalloEtapaException error) {

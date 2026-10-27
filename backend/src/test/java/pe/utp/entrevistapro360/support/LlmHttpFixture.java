@@ -12,6 +12,7 @@ public class LlmHttpFixture implements AutoCloseable {
     public volatile String modo="correcto",retryAfter="0";
     public volatile Runnable alRecibir=()->{};
     public volatile String sttEndpoint;
+    public volatile java.util.function.Function<Boolean,Map<String,Object>> generarSalida=EvaluacionFixtures::salida;
     private final HttpServer server;
     private final ObjectMapper json=new ObjectMapper();
     public LlmHttpFixture(){
@@ -35,7 +36,7 @@ public class LlmHttpFixture implements AutoCloseable {
                     peticiones.add(new Peticion(x.getRequestMethod(),x.getRequestURI().getPath(),x.getRequestHeaders().getFirst("Authorization"),payload));
                     alRecibir.run();
                     boolean aplica=json.readTree(payload.path("input").asText()).path("aplica_star").asBoolean();
-                    String salida=modo.equals("json_invalido")?"{":json.writeValueAsString(EvaluacionFixtures.salida(aplica));
+                    String salida=modo.equals("json_invalido")?"{":json.writeValueAsString(generarSalida.apply(aplica));
                     if(modo.equals("grande"))salida="x".repeat(2_000_001);
                     Object contenido=modo.equals("refusal")?Map.of("type","refusal","refusal","No puedo evaluar"):Map.of("type","output_text","text",salida);
                     byte[] body=json.writeValueAsBytes(Map.of("status",modo.equals("incompleto")?"incomplete":"completed","output",List.of(Map.of("type","message","content",List.of(contenido)))));
@@ -49,7 +50,7 @@ public class LlmHttpFixture implements AutoCloseable {
         }catch(IOException ex){throw new IllegalStateException(ex);}
     }
     public String endpoint(){return "http://127.0.0.1:"+server.getAddress().getPort();}
-    public void limpiar(){estado=200;demoraCuerpo=0;modo="correcto";retryAfter="0";peticiones.clear();alRecibir=()->{};}
+    public void limpiar(){estado=200;demoraCuerpo=0;modo="correcto";retryAfter="0";peticiones.clear();alRecibir=()->{};generarSalida=EvaluacionFixtures::salida;}
     public void close(){server.stop(0);}
 }
 

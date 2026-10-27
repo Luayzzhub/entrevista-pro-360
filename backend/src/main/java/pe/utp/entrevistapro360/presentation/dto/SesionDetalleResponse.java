@@ -10,13 +10,13 @@ public record SesionDetalleResponse(Long idSesion, Long idUsuario, Integer idPue
                                    String nivelExperiencia, EstadoSesion estadoSesion, BigDecimal puntajePromedio,
                                    OffsetDateTime fechaInicio, OffsetDateTime fechaFin, int totalPreguntas,
                                    int respuestasConfirmadas, int respuestasEvaluadas, PreguntaResponse preguntaHabilitada,
-                                   List<PreguntaSesionResponse> preguntas) {
+                                   List<PreguntaSesionResponse> preguntas,String motivoCierre) {
     public static SesionDetalleResponse from(VistaSesion v) {
         var s = v.sesion(); var p = v.puesto();
         return new SesionDetalleResponse(s.idSesion(), s.idUsuario(), p.idPuesto(), p.nombrePuesto(), p.area(), p.nivelExperiencia(),
                 s.estadoSesion(), s.puntajePromedio(), s.fechaInicio().atOffset(ZoneOffset.UTC),
                 s.fechaFin() == null ? null : s.fechaFin().atOffset(ZoneOffset.UTC), v.preguntas().size(), v.respuestasConfirmadas(),
                 v.respuestasEvaluadas(), v.preguntaHabilitada() == null ? null : PreguntaResponse.from(v.preguntaHabilitada()),
-                v.preguntas().stream().map(PreguntaSesionResponse::from).toList());
+                v.preguntas().stream().map(PreguntaSesionResponse::from).toList(),v.motivoCierre());
     }
 }

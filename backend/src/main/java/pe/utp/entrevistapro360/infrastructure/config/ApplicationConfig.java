@@ -25,7 +25,8 @@ public class ApplicationConfig {
     ConsultarCatalogo consultarCatalogo(CatalogoRepository repository) {
         return new ConsultarCatalogoService(repository);
     }
-    @Bean GestionarSesion gestionarSesion(SesionRepository sesiones, CatalogoRepository catalogo, Clock clock) {
-        return new GestionarSesionService(sesiones, catalogo, clock);
+    @Bean GestionarSesion gestionarSesion(SesionRepository sesiones, CatalogoRepository catalogo, Clock clock,
+            pe.utp.entrevistapro360.application.port.out.ProcesamientoRepository procesamiento) {
+        return new GestionarSesionService(sesiones, catalogo, clock,procesamiento);
     }
 }

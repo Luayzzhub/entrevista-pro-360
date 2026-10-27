@@ -4,6 +4,6 @@ import java.util.List;
 import pe.utp.entrevistapro360.domain.*;
 
 public record VistaSesion(SesionEntrevista sesion, Puesto puesto, List<EstadoPreguntaSesion> preguntas,
-                          Pregunta preguntaHabilitada, int respuestasConfirmadas, int respuestasEvaluadas) {
+                          Pregunta preguntaHabilitada, int respuestasConfirmadas, int respuestasEvaluadas,String motivoCierre) {
     public VistaSesion { preguntas = List.copyOf(preguntas); }
 }

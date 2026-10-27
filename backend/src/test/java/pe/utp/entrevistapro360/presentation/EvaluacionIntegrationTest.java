@@ -89,6 +89,117 @@ class EvaluacionIntegrationTest {
     ResultActions manual() throws Exception { return mvc.perform(post("/api/v1/respuestas/{id}/reintento",id).header("Authorization",auth())); }
     void agotarStt() { STT.estado=503; for(int i=0;i<3;i++) { assertThat(worker.procesarSiguiente()).isTrue(); reloj.avanzar(16); } }
 
+
+    void puntajes(int... puntos) {
+        LLM.generarSalida=aplica->{
+            var s=EvaluacionFixtures.salida(aplica);
+            @SuppressWarnings("unchecked") var criterios=(Map<String,Object>)s.get("criterios");
+            for(int i=0;i<4;i++) {
+                @SuppressWarnings("unchecked") var c=(Map<String,Object>)criterios.get(ValidadorEvaluacion.CRITERIOS.get(i));
+                c.put("puntaje",puntos[i]);
+            }
+            return s;
+        };
+    }
+    List<Long> primerasDosCompletas()throws Exception {
+        puntajes(75,100,50,75);evaluar();long primera=id;
+        id=subirPregunta(2);puntajes(75,100,75,75);evaluar();long segunda=id;
+        id=subirPregunta(3);return List.of(primera,segunda);
+    }
+    ResultActions detalleSesion()throws Exception {return mvc.perform(get("/api/v1/sesiones/{id}",sesion).header("Authorization",auth()));}
+    @Test void promedio8125CierreAtomicoFechaUtc409CancelacionNuevaPracticaYPanel()throws Exception {
+        primerasDosCompletas();puntajes(75,100,75,100);evaluar();
+        var cierre=detalleSesion().andExpect(status().isOk()).andExpect(jsonPath("$.estado_sesion").value("COMPLETADA"))
+                .andExpect(jsonPath("$.puntaje_promedio").value(81.25)).andExpect(jsonPath("$.preguntas[0].puntaje_general").value(75.00))
+                .andExpect(jsonPath("$.preguntas[1].puntaje_general").value(81.25)).andExpect(jsonPath("$.preguntas[2].puntaje_general").value(87.50))
+                .andExpect(jsonPath("$.preguntas[2].version_rubrica").value("COM-1.0"))
+                .andExpect(jsonPath("$.preguntas[2].puede_reintentar").value(false))
+                .andExpect(jsonPath("$.pregunta_habilitada").doesNotExist()).andReturn().getResponse().getContentAsString();
+        var nodo=json.readTree(cierre);String fecha=nodo.get("fecha_fin").asText();
+        assertThat(fecha).endsWith("Z");assertThat(Instant.parse(fecha)).isEqualTo(reloj.instant());
+        assertThat(jdbc.queryForObject("SELECT puntaje_promedio FROM sesiones_entrevista WHERE id_sesion=?",java.math.BigDecimal.class,sesion)).isEqualTo(new java.math.BigDecimal("81.25"));
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM sesiones_entrevista WHERE id_sesion=? AND fecha_fin>=fecha_inicio",Integer.class,sesion)).isEqualTo(1);
+        mvc.perform(post("/api/v1/sesiones/{id}/cancelacion",sesion).header("Authorization",auth()))
+                .andExpect(status().isConflict()).andExpect(jsonPath("$.codigo").value("SESION_YA_COMPLETADA"));
+        detalleSesion().andExpect(jsonPath("$.puntaje_promedio").value(81.25)).andExpect(jsonPath("$.fecha_fin").value(fecha));
+        mvc.perform(get("/api/v1/sesiones").header("Authorization",auth())).andExpect(status().isOk())
+                .andExpect(jsonPath("$.ultima_sesion_completada.id_sesion").value(sesion))
+                .andExpect(jsonPath("$.ultima_sesion_completada.puntaje_promedio").value(81.25))
+                .andExpect(jsonPath("$.total_sesiones_completadas").value(1));
+        int puesto=jdbc.queryForObject("SELECT id_puesto FROM sesiones_entrevista WHERE id_sesion=?",Integer.class,sesion);
+        mvc.perform(post("/api/v1/sesiones").header("Authorization",auth()).contentType(MediaType.APPLICATION_JSON)
+                .content(json.writeValueAsString(Map.of("id_puesto",puesto)))).andExpect(status().isCreated());
+    }
+    @Test void promedioRedondeado208ConCerosReales()throws Exception {
+        puntajes(0,0,0,0);evaluar();id=subirPregunta(2);evaluar();id=subirPregunta(3);puntajes(0,0,0,25);evaluar();
+        detalleSesion().andExpect(jsonPath("$.estado_sesion").value("COMPLETADA")).andExpect(jsonPath("$.puntaje_promedio").value(2.08));
+        assertThat(jdbc.queryForObject("SELECT puntaje_promedio FROM sesiones_entrevista WHERE id_sesion=?",java.math.BigDecimal.class,sesion)).isEqualTo(new java.math.BigDecimal("2.08"));
+    }
+    @Test void promedioCeroConTresEvaluacionesValidasCierra()throws Exception {
+        puntajes(0,0,0,0);evaluar();id=subirPregunta(2);evaluar();id=subirPregunta(3);evaluar();
+        detalleSesion().andExpect(jsonPath("$.estado_sesion").value("COMPLETADA")).andExpect(jsonPath("$.puntaje_promedio").value(0.00));
+    }
+    @Test void p3Definitiva401ConservaDosEvaluacionesYPublicaMotivoSeguro()throws Exception {
+        var anteriores=primerasDosCompletas();primerasTres();LLM.estado=401;worker.procesarSiguiente();
+        assertThat(repo.buscarEvaluacion(anteriores.get(0))).isPresent();assertThat(repo.buscarEvaluacion(anteriores.get(1))).isPresent();
+        assertThat(repo.buscarEvaluacion(id)).isEmpty();
+        var body=detalleSesion().andExpect(jsonPath("$.estado_sesion").value("CANCELADA"))
+                .andExpect(jsonPath("$.puntaje_promedio").doesNotExist()).andExpect(jsonPath("$.fecha_fin").exists())
+                .andExpect(jsonPath("$.respuestas_evaluadas").value(2))
+                .andExpect(jsonPath("$.motivo_cierre").value("La sesión se canceló por una falla definitiva al procesar una respuesta."))
+                .andExpect(jsonPath("$.preguntas[2].motivo_fallo").exists()).andExpect(jsonPath("$.preguntas[2].puede_reintentar").value(false))
+                .andReturn().getResponse().getContentAsString();
+        assertThat(body).doesNotContain("LLM_HTTP_401","public_id_cloud","referencia_audio","procesamiento_contexto");
+    }
+    @Test void p3AgotamientoManualCancelaYConservaP1P2()throws Exception {
+        var anteriores=primerasDosCompletas();primerasTres();LLM.estado=503;fallarLlm();
+        detalleSesion().andExpect(jsonPath("$.estado_sesion").value("EN_PROCESO")).andExpect(jsonPath("$.puntaje_promedio").doesNotExist())
+                .andExpect(jsonPath("$.fecha_fin").doesNotExist()).andExpect(jsonPath("$.motivo_cierre").doesNotExist())
+                .andExpect(jsonPath("$.preguntas[2].puede_reintentar").value(true));
+        manual().andExpect(status().isAccepted());fallarLlm();
+        detalleSesion().andExpect(jsonPath("$.estado_sesion").value("CANCELADA")).andExpect(jsonPath("$.puntaje_promedio").doesNotExist())
+                .andExpect(jsonPath("$.respuestas_evaluadas").value(2));
+        for(long previa:anteriores)assertThat(repo.buscarEvaluacion(previa)).isPresent();
+    }
+    @Test void cancelacionConcurrenteDuranteLlmP3GanaSinPublicarTerceraNiPromedio()throws Exception {
+        primerasDosCompletas();primerasTres();
+        var trabajo=worker.reclamarSiguiente().orElseThrow();
+        var iniciada=new java.util.concurrent.CountDownLatch(1);var liberar=new java.util.concurrent.CountDownLatch(1);
+        LLM.alRecibir=()->{
+            iniciada.countDown();
+            try{if(!liberar.await(15,java.util.concurrent.TimeUnit.SECONDS))throw new IllegalStateException("La prueba no liberó LLM.");}
+            catch(InterruptedException ex){Thread.currentThread().interrupt();throw new IllegalStateException(ex);}
+        };
+        var pool=java.util.concurrent.Executors.newSingleThreadExecutor();
+        try{
+            var futuro=pool.submit(()->worker.ejecutar(trabajo));
+            assertThat(iniciada.await(10,java.util.concurrent.TimeUnit.SECONDS)).isTrue();
+            mvc.perform(post("/api/v1/sesiones/{id}/cancelacion",sesion).header("Authorization",auth())).andExpect(status().isOk());
+            liberar.countDown();futuro.get(10,java.util.concurrent.TimeUnit.SECONDS);
+        }finally{liberar.countDown();pool.shutdownNow();LLM.alRecibir=()->{};}
+        assertThat(repo.buscarEvaluacion(id)).isEmpty();assertThat(contexto().tieneLease()).isFalse();
+        detalleSesion().andExpect(jsonPath("$.estado_sesion").value("CANCELADA")).andExpect(jsonPath("$.puntaje_promedio").doesNotExist())
+                .andExpect(jsonPath("$.respuestas_evaluadas").value(2)).andExpect(jsonPath("$.motivo_cierre").value("La sesión fue finalizada anticipadamente por el postulante."));
+    }
+    @Test void noCierraSiFaltaUnaTranscripcionAunqueLasTresRespuestasSeanEvaluadas()throws Exception {
+        var anteriores=primerasDosCompletas();
+        jdbc.update("DELETE FROM transcripciones WHERE id_respuesta=?",anteriores.get(0));
+        evaluar();
+        assertThat(repo.buscarEvaluacion(id)).isPresent();
+        detalleSesion().andExpect(jsonPath("$.estado_sesion").value("EN_PROCESO")).andExpect(jsonPath("$.puntaje_promedio").doesNotExist())
+                .andExpect(jsonPath("$.fecha_fin").doesNotExist()).andExpect(jsonPath("$.respuestas_evaluadas").value(3));
+    }
+    @Test void resumenCanceladoVoluntarioTrasUnaRespuestaNoInventaPuntajes()throws Exception {
+        evaluar();
+        mvc.perform(post("/api/v1/sesiones/{id}/cancelacion",sesion).header("Authorization",auth())).andExpect(status().isOk());
+        var r=detalleSesion().andExpect(jsonPath("$.respuestas_evaluadas").value(1)).andExpect(jsonPath("$.puntaje_promedio").doesNotExist())
+                .andExpect(jsonPath("$.preguntas[0].puntaje_general").value(75.00))
+                .andExpect(jsonPath("$.preguntas[1].puntaje_general").doesNotExist()).andExpect(jsonPath("$.preguntas[1].id_respuesta").doesNotExist())
+                .andExpect(jsonPath("$.preguntas[2].version_rubrica").doesNotExist()).andExpect(jsonPath("$.preguntas[2].motivo_fallo").doesNotExist())
+                .andExpect(jsonPath("$.motivo_cierre").value("La sesión fue finalizada anticipadamente por el postulante."))
+                .andReturn().getResponse().getContentAsString();
+        assertThat(r).doesNotContain("public_id_cloud","referencia_audio","procesamiento_contexto");
+    }
     void primerasTres(){for(int i=0;i<3;i++)assertThat(worker.procesarSiguiente()).isTrue();assertThat(contexto().etapa()).isEqualTo(ContextoProcesamiento.Etapa.EVALUAR);}
     void evaluar(){primerasTres();assertThat(worker.procesarSiguiente()).isTrue();}
     void fallarLlm(){for(int i=0;i<3;i++){assertThat(worker.procesarSiguiente()).isTrue();reloj.avanzar(16);}}
@@ -99,7 +210,7 @@ class EvaluacionIntegrationTest {
                 .andExpect(status().isAccepted()).andReturn().getResponse();
         return json.readTree(r.getContentAsString()).get("id_respuesta").asLong();
     }
-    @Test void cuatroEtapasP1NoStarP2StarYTercceraNoCompletaSesion()throws Exception{
+    @Test void cuatroEtapasP1NoStarP2StarYTercceraCompletaSesion()throws Exception{
         evaluar();
         assertThat(contexto().etapa()).isEqualTo(ContextoProcesamiento.Etapa.FINALIZADO);
         assertThat(respuesta().estadoProcesamiento()).isEqualTo(RespuestaVideo.EstadoProcesamiento.EVALUADO);
@@ -119,8 +230,8 @@ class EvaluacionIntegrationTest {
         mvc.perform(get("/api/v1/sesiones/{id}",sesion).header("Authorization",auth())).andExpect(jsonPath("$.pregunta_habilitada.orden").value(3));
         id=subirPregunta(3);evaluar();
         mvc.perform(get("/api/v1/sesiones/{id}",sesion).header("Authorization",auth()))
-            .andExpect(jsonPath("$.estado_sesion").value("EN_PROCESO")).andExpect(jsonPath("$.puntaje_promedio").doesNotExist())
-            .andExpect(jsonPath("$.fecha_fin").doesNotExist()).andExpect(jsonPath("$.respuestas_evaluadas").value(3))
+            .andExpect(jsonPath("$.estado_sesion").value("COMPLETADA")).andExpect(jsonPath("$.puntaje_promedio").value(75.00))
+            .andExpect(jsonPath("$.fecha_fin").exists()).andExpect(jsonPath("$.respuestas_evaluadas").value(3))
             .andExpect(jsonPath("$.pregunta_habilitada").doesNotExist());
         assertThat(LLM.peticiones).hasSize(3);assertThat(STT.peticiones).hasSize(3);
     }

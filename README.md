@@ -1,6 +1,6 @@
-# Entrevista Pro 360 — Incrementos 1 a 7
+# Entrevista Pro 360 — Incrementos 1 a 8
 
-MVP universitario con Spring Boot de cuatro capas, MySQL/Flyway y Angular VIS-1.0. El worker durable PROC-1.0 extrae WAV, transcribe, calcula MET-1.0 y evalúa EVAL-1.0/COM-1.0. MCK 08 sigue el avance y permite un reintento manual; MCK 09 muestra resultado, transcripción y reproducción privada por URL firmada de 300 s. EVALUADO/FINALIZADO habilita la siguiente pregunta. Tras la tercera evaluación la sesión sigue EN_PROCESO sin promedio: el cierre corresponde al Incremento 8.
+MVP universitario con Spring Boot de cuatro capas, MySQL/Flyway y Angular VIS-1.0. El worker PROC-1.0 extrae WAV, transcribe, calcula MET-1.0 y evalúa EVAL-1.0/COM-1.0. MCK08 sigue el avance; MCK09 muestra resultado y video privado por URL firmada. Al validar las tres respuestas, cierra atómicamente la sesión a COMPLETADA con promedio global. El Resumen de sesión muestra el desglose y conserva los resultados de sesiones canceladas sin inventar promedio ni ceros.
 
 ## Requisitos
 
@@ -12,7 +12,7 @@ MVP universitario con Spring Boot de cuatro capas, MySQL/Flyway y Angular VIS-1.
 | npm | Incluido con Node; usar `npm ci` con el lock entregado |
 | Angular CLI | 21.2.0 local, instalado mediante `npm ci`; no requiere instalación global |
 | MySQL | 8.4; verificado con 8.4.13 en una base exclusiva y usuario autorizado para migraciones |
-| Git | Incrementos 1 a 6 publicados; Incremento 7 sin commit ni staging para auditoría |
+| Git | Incrementos 1 a 7 publicados; Incremento 8 sin commit ni staging para auditoría |
 | Navegador y dispositivos | Cámara + micrófono; `getUserMedia` y MediaRecorder con uno de los tres formatos negociados. Usar localhost/loopback o HTTPS |
 | ffprobe / ffmpeg | 9.0.2 portable verificado: inspección de uploads y extracción WAV PCM s16le, mono, 16 kHz |
 
@@ -96,7 +96,9 @@ En Incremento 5 **Confirmar respuesta se habilita para una toma local válida**.
 
 Grabar/repetir no crea filas; confirmar persiste SUBIDO y cambia la sesión a EN_PROCESO. El worker procesa audio, STT, METRICAS y EVALUAR. MCK 08 consulta cada 3 s, también durante EVALUAR, hasta EVALUADO/FINALIZADO, FALLIDO o sesión terminal. Un fallo recuperable agotado permite Reintentar análisis una vez desde la etapa fallida; una falla definitiva cancela la sesión conforme a D-02. EVALUADO permite abrir MCK 09 y habilita la siguiente pregunta.
 
-MCK 09 presenta puntaje backend, cuatro criterios de peso 25 %, feedback plano seguro, STAR cualitativo cuando aplica y métricas descriptivas separadas del puntaje. El video usa un enlace temporal renovable; si falta, se conservan transcripción y resultado. Siguiente pregunta abre el detalle de sesión. Nueva práctica exige confirmar la cancelación de la sesión vigente. No se reemplazan videos confirmados. La tercera respuesta evaluada mantiene EN_PROCESO, promedio y fecha final nulos; se informa el límite del Incremento 8.
+MCK09 presenta puntaje backend, cuatro criterios de peso 25 %, feedback plano seguro, STAR cualitativo y métricas descriptivas separadas del puntaje. El video usa un enlace temporal renovable; si falta, se conservan transcripción y resultado. P1/P2 habilitan Siguiente pregunta. P3 y las sesiones terminales ofrecen Ver resumen. Nueva práctica exige confirmar la cancelación si la sesión sigue abierta; una sesión completada permite comenzar otra inmediatamente. No se reemplazan videos confirmados.
+
+El Resumen de sesión está en /sesiones/:id/resumen y consulta la misma API privada de detalle. COMPLETADA muestra Promedio final y las tres puntuaciones. CANCELADA y las sesiones abiertas muestran el progreso real, los resultados disponibles y los elementos sin respuesta, sin promedio final. El cierre requiere tres preguntas activas distintas (órdenes 1/2/3), respuestas EVALUADO y transcripción/MET-1.0/EVAL-1.0 válidas. El promedio usa BigDecimal HALF_UP a dos decimales, sin rellenar respuestas ausentes. Cancelar durante la tercera evaluación conserva CANCELADA; cancelar después de COMPLETADA devuelve 409.
 
 La negociación prueba, en orden, WebM VP8/Opus, WebM VP9/Opus y MP4 H.264/AAC; ninguna opción disponible bloquea la captura. La duración local mide el intervalo solicitado; el servidor inspecciona las pistas/códecs y la duración real con ffprobe. Acepta WebM streaming sin duración en cabecera leyendo los timestamps de sus paquetes. Exige duración 1..60 s antes de redondear y tamaño estrictamente menor a 50 000 000 bytes.
 
@@ -142,7 +144,8 @@ El JAR queda en `backend/target/entrevista-pro-360-0.1.0-SNAPSHOT.jar`. Carga la
 - [Verificación del Incremento 5](docs/verificacion_incremento_5.md).
 - [Verificación del Incremento 6](docs/verificacion_incremento_6.md).
 - [Verificación del Incremento 7](docs/verificacion_incremento_7.md).
+- [Verificación del Incremento 8](docs/verificacion_incremento_8.md).
 
-Los Incrementos 1 a 6 están publicados en [Luayzzhub/entrevista-pro-360](https://github.com/Luayzzhub/entrevista-pro-360). El Incremento 6 fue aprobado sin observaciones y publicado en main como f702fc4d03ff6e580e9cc92466c96a68798800db; el árbol quedó limpio y sincronizado antes de iniciar el 7. El Incremento 7 fue AUDITADO Y APROBADO SIN OBSERVACIONES y queda cerrado y publicado mediante este commit atómico en main. El cierre automático de sesión corresponde al Incremento 8. Los informes anteriores conservan su alcance histórico; la documentación de diseño original permanece fuera del repositorio.
+Los Incrementos 1 a 7 están publicados en [Luayzzhub/entrevista-pro-360](https://github.com/Luayzzhub/entrevista-pro-360). El Incremento 7 fue AUDITADO Y APROBADO SIN OBSERVACIONES y publicado como ca798f5d112469ccac07668e53959cb1feaed314. HEAD y remoto coincidieron y el árbol quedó limpio antes de iniciar el 8. El Incremento 8 queda SIN COMMIT ni staging para auditoría. Los informes anteriores conservan su alcance histórico; la documentación de diseño original permanece fuera del repositorio.
 
 El worker está habilitado por defecto. Propiedades de integraciones: worker-habilitado=true, worker-intervalo-ms=2000, worker-heartbeat-ms=20000, worker-backoff-1-segundos=5 y worker-backoff-2-segundos=15. FFMPEG_BIN selecciona el ejecutable de extracción, también resuelto desde .tools/ffmpeg. La invocación secuencial evita acumular trabajos ffmpeg; el heartbeat dispone de su propio hilo.

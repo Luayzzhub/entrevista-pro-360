@@ -63,5 +63,29 @@ public record SesionEntrevista(Long idSesion, Long idUsuario, Integer idPuesto,
                 && r.estadoProcesamiento() == RespuestaVideo.EstadoProcesamiento.EVALUADO).count();
     }
 
+    public SesionEntrevista calcularPromedioGlobal(List<Pregunta> preguntas,List<ResultadoRespuestaSesion> resultados,LocalDateTime ahoraUtc) {
+        if(estadoSesion!=EstadoSesion.EN_PROCESO || idSesion==null || preguntas==null || preguntas.size()!=3 || resultados==null || resultados.size()!=3) return this;
+        if(preguntas.stream().anyMatch(p->p==null || !p.activo() || !idPuesto.equals(p.idPuesto()))
+                || preguntas.stream().map(Pregunta::idPregunta).distinct().count()!=3
+                || !preguntas.stream().map(Pregunta::orden).sorted().toList().equals(List.of(1,2,3))) return this;
+        Map<Integer,ResultadoRespuestaSesion> porPregunta=new HashMap<>();
+        Set<Long> identidades=new HashSet<>();
+        for(var resultado:resultados) {
+            if(resultado==null || resultado.respuesta()==null || resultado.respuesta().idRespuesta()==null
+                    || !identidades.add(resultado.respuesta().idRespuesta())
+                    || porPregunta.put(resultado.respuesta().idPregunta(),resultado)!=null) return this;
+        }
+        BigDecimal suma=BigDecimal.ZERO;
+        for(var pregunta:preguntas) {
+            var resultado=porPregunta.get(pregunta.idPregunta());
+            if(resultado==null || !resultado.esValidoPara(pregunta,idSesion)) return this;
+            suma=suma.add(resultado.evaluacion().puntajeGeneral());
+        }
+        BigDecimal promedio=suma.divide(BigDecimal.valueOf(3),2,RoundingMode.HALF_UP);
+        LocalDateTime fin=Objects.requireNonNull(ahoraUtc).withNano(0);
+        if(fin.isBefore(fechaInicio)) fin=fechaInicio;
+        return new SesionEntrevista(idSesion,idUsuario,idPuesto,EstadoSesion.COMPLETADA,promedio,fechaInicio,fin);
+    }
+
     public enum EstadoSesion { INICIADA, EN_PROCESO, COMPLETADA, CANCELADA }
 }
