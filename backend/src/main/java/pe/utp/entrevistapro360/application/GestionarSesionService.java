@@ -34,9 +34,10 @@ public final class GestionarSesionService implements GestionarSesion {
             return vista(cancelada == sesion ? sesion : sesiones.actualizar(cancelada));
         });
     }
-    @Override public ResumenSesionesUsuario consultarResumenUsuario(long idUsuario) {
+    @Override public ResumenSesionesUsuario consultarResumenUsuario(long idUsuario, FiltroHistorial filtro) {
         return sesiones.enLectura(() -> {
-            List<SesionEntrevista> propias = sesiones.listarPropias(idUsuario);
+            List<SesionEntrevista> propias = sesiones.listarPropias(idUsuario).stream()
+                    .sorted(Comparator.comparing(SesionEntrevista::fechaInicio).thenComparing(SesionEntrevista::idSesion).reversed()).toList();
             var todasLasRespuestas=sesiones.buscarRespuestas(propias.stream().map(SesionEntrevista::idSesion).toList());
             var evaluaciones=procesamiento.buscarEvaluaciones(todasLasRespuestas.stream().map(RespuestaVideo::idRespuesta).toList());
             var respuestas = todasLasRespuestas.stream()
@@ -48,12 +49,26 @@ public final class GestionarSesionService implements GestionarSesion {
                 List<Pregunta> banco = preguntas.computeIfAbsent(s.idPuesto(), catalogo::buscarPreguntasActivas);
                 VistaSesion vista = ensamblar(s, puesto, banco, respuestas.getOrDefault(s.idSesion(), List.of()),evaluaciones);
                 return new ResumenSesionItem(s, puesto, vista.respuestasConfirmadas(), vista.respuestasEvaluadas(),
-                        vista.preguntaHabilitada() == null ? null : vista.preguntaHabilitada().orden());
+                        vista.preguntaHabilitada() == null ? null : vista.preguntaHabilitada().orden(),
+                        new RegistroHistorial(s, respuestas.getOrDefault(s.idSesion(), List.of()), evaluaciones).esComparable() ? "COM-1.0" : null,
+                        vista.motivoCierre());
             }).toList();
             var completadas = items.stream().filter(i -> i.sesion().estadoSesion() == SesionEntrevista.EstadoSesion.COMPLETADA).toList();
             var ultima = completadas.stream().max(Comparator.comparing((ResumenSesionItem i) -> i.sesion().fechaFin())
                     .thenComparing(i -> i.sesion().idSesion())).orElse(null);
-            return new ResumenSesionesUsuario(items.stream().filter(i -> !i.sesion().esTerminal()).findFirst().orElse(null), ultima, completadas.size(), items);
+            var filtradas = propias.stream().map(s -> new RegistroHistorial(s, respuestas.getOrDefault(s.idSesion(), List.of()), evaluaciones))
+                    .filter(filtro::incluye).toList();
+            var idsFiltrados = filtradas.stream().map(r -> r.sesion().idSesion()).collect(Collectors.toSet());
+            var listaFiltrada = items.stream().filter(i -> idsFiltrados.contains(i.sesion().idSesion())).toList();
+            int total = listaFiltrada.size();
+            long offset = (long) filtro.page() * filtro.size();
+            var pagina = offset >= total ? List.<ResumenSesionItem>of() : listaFiltrada.subList((int) offset, (int) Math.min(offset + filtro.size(), total));
+            var comparacion = CalculadoraEvolucionHistorial.calcular(filtro.idPuesto(), filtro.versionRubrica(), filtradas);
+            String nombre = filtro.idPuesto() == null ? null : catalogo.buscarPuesto(filtro.idPuesto()).map(Puesto::nombrePuesto).orElse(null);
+            return new ResumenSesionesUsuario(items.stream().filter(i -> !i.sesion().esTerminal()).findFirst().orElse(null), ultima, completadas.size(), pagina,
+                    filtro.page(), filtro.size(), total, total == 0 ? 0 : (total + filtro.size() - 1) / filtro.size(),
+                    filtro.versionRubrica() == null ? null : "El filtro de rúbrica incluye únicamente sesiones completas", comparacion, nombre,
+                    puestos.values().stream().sorted(Comparator.comparing(Puesto::nombrePuesto).thenComparing(Puesto::idPuesto)).toList());
         });
     }
     private Puesto buscarPuesto(int idPuesto) { return catalogo.buscarPuesto(idPuesto).orElseThrow(PuestoNoEncontradoException::new); }

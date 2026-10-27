@@ -36,6 +36,7 @@ interface EstadoPanel { cargando: boolean; resumen: ResumenSesiones | null; erro
           <aside class="form-card"><span class="eyebrow">MI CUENTA</span><h2>{{ auth.usuario()?.nombre_completo }}</h2><p class="account-email">{{ auth.usuario()?.email }}</p><p class="account-status">Cuenta activa · Postulante</p><a class="button secondary" routerLink="/perfil">Mi perfil</a></aside>
         </div>
       }
+      <a class="button secondary practice-banner" routerLink="/historial">Historial de sesiones</a>
       <p class="availability practice-banner">Graba, revisa y confirma tu video de forma privada. Recibe una evaluación COM-1.0 por respuesta y consulta el resumen al completar las 3 preguntas.</p>
     </section>
   `

@@ -1,6 +1,8 @@
-# Entrevista Pro 360 — Incrementos 1 a 8
+# Entrevista Pro 360 — Incrementos 1 a 9
 
 MVP universitario con Spring Boot de cuatro capas, MySQL/Flyway y Angular VIS-1.0. El worker PROC-1.0 extrae WAV, transcribe, calcula MET-1.0 y evalúa EVAL-1.0/COM-1.0. MCK08 sigue el avance; MCK09 muestra resultado y video privado por URL firmada. Al validar las tres respuestas, cierra atómicamente la sesión a COMPLETADA con promedio global. El Resumen de sesión muestra el desglose y conserva los resultados de sesiones canceladas sin inventar promedio ni ceros.
+
+MCK10 (`/historial`) permite consultar sesiones propias con filtros D-10 y paginación. La comparación PM-17 requiere puesto y COM-1.0, usa todas las sesiones completas filtradas antes de paginar y muestra indicadores, gráfico SVG y tabla cronológica. **20/20 RF implementados y comprobados localmente**, con auditoría del Incremento 9 pendiente; proveedores de producción sin certificar.
 
 ## Requisitos
 
@@ -12,7 +14,7 @@ MVP universitario con Spring Boot de cuatro capas, MySQL/Flyway y Angular VIS-1.
 | npm | Incluido con Node; usar `npm ci` con el lock entregado |
 | Angular CLI | 21.2.0 local, instalado mediante `npm ci`; no requiere instalación global |
 | MySQL | 8.4; verificado con 8.4.13 en una base exclusiva y usuario autorizado para migraciones |
-| Git | Incrementos 1 a 7 publicados; Incremento 8 sin commit ni staging para auditoría |
+| Git | Incrementos 1 a 8 publicados; Incremento 9 sin commit ni staging para auditoría |
 | Navegador y dispositivos | Cámara + micrófono; `getUserMedia` y MediaRecorder con uno de los tres formatos negociados. Usar localhost/loopback o HTTPS |
 | ffprobe / ffmpeg | 9.0.2 portable verificado: inspección de uploads y extracción WAV PCM s16le, mono, 16 kHz |
 
@@ -145,7 +147,8 @@ El JAR queda en `backend/target/entrevista-pro-360-0.1.0-SNAPSHOT.jar`. Carga la
 - [Verificación del Incremento 6](docs/verificacion_incremento_6.md).
 - [Verificación del Incremento 7](docs/verificacion_incremento_7.md).
 - [Verificación del Incremento 8](docs/verificacion_incremento_8.md).
+- [Verificación del Incremento 9](docs/verificacion_incremento_9.md).
 
-Los Incrementos 1 a 7 están publicados en [Luayzzhub/entrevista-pro-360](https://github.com/Luayzzhub/entrevista-pro-360). El Incremento 7 fue AUDITADO Y APROBADO SIN OBSERVACIONES y publicado como ca798f5d112469ccac07668e53959cb1feaed314. HEAD y remoto coincidieron y el árbol quedó limpio antes de iniciar el 8. El Incremento 8 queda SIN COMMIT ni staging para auditoría. Los informes anteriores conservan su alcance histórico; la documentación de diseño original permanece fuera del repositorio.
+Los Incrementos 1 a 8 están publicados en [Luayzzhub/entrevista-pro-360](https://github.com/Luayzzhub/entrevista-pro-360). El Incremento 8 fue AUDITADO Y APROBADO SIN OBSERVACIONES y publicado como a05ca28d539eadb8af1b5a2c1b27e050fdc6fef3. HEAD y remoto coincidieron y el árbol quedó limpio antes de iniciar el 9. El Incremento 9 queda SIN COMMIT ni staging para auditoría. Los informes anteriores conservan su alcance histórico; la documentación de diseño original permanece fuera del repositorio.
 
 El worker está habilitado por defecto. Propiedades de integraciones: worker-habilitado=true, worker-intervalo-ms=2000, worker-heartbeat-ms=20000, worker-backoff-1-segundos=5 y worker-backoff-2-segundos=15. FFMPEG_BIN selecciona el ejecutable de extracción, también resuelto desde .tools/ffmpeg. La invocación secuencial evita acumular trabajos ffmpeg; el heartbeat dispone de su propio hilo.

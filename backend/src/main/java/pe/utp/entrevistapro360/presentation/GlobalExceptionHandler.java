@@ -24,6 +24,10 @@ import pe.utp.entrevistapro360.domain.TransicionSesionInvalidaException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(pe.utp.entrevistapro360.domain.FiltroHistorialInvalidoException.class)
+    ResponseEntity<ApiError> filtroInvalido(pe.utp.entrevistapro360.domain.FiltroHistorialInvalidoException ex) {
+        return ResponseEntity.badRequest().body(new ApiError("DATOS_INVALIDOS", ex.getMessage(), ex.campos()));
+    }
     @ExceptionHandler(pe.utp.entrevistapro360.application.VideoNoDisponibleException.class)
     ResponseEntity<ApiError> videoNoDisponible(RuntimeException ex) { return ResponseEntity.status(404).body(ApiError.of("VIDEO_NO_DISPONIBLE",ex.getMessage())); }
     @ExceptionHandler(pe.utp.entrevistapro360.domain.ReintentoNoDisponibleException.class)
@@ -113,6 +117,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({HandlerMethodValidationException.class, MethodArgumentTypeMismatchException.class})
     ResponseEntity<ApiError> parametroInvalido(Exception ex) {
+        if (ex instanceof MethodArgumentTypeMismatchException parametro && !"id".equals(parametro.getName())) {
+            return ResponseEntity.badRequest().body(new ApiError("PARAMETRO_INVALIDO",
+                    "Revisa el formato del parámetro " + parametro.getName() + ".",
+                    Map.of(parametro.getName(), "Envía un valor del tipo y formato admitidos.")));
+        }
         return ResponseEntity.badRequest().body(new ApiError("PARAMETRO_INVALIDO",
                 "El identificador debe ser un número entero positivo.", Map.of("id", "Debe ser un entero positivo.")));
     }

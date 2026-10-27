@@ -1,4 +1,4 @@
-# API de sesiones — Incrementos 3 a 8
+# API de sesiones — Incrementos 3 a 9
 
 Prefijo `/api/v1/sesiones`. Todas las operaciones requieren Bearer JWT válido y cuenta ACTIVO/POSTULANTE. El propietario se obtiene exclusivamente de `Authentication.getPrincipal()` (`Long`); no se acepta `id_usuario` en los DTO de escritura. JSON `snake_case`, fechas UTC ISO 8601 con `Z` y precisión de segundos.
 
@@ -74,23 +74,45 @@ Sin cuerpo, o JSON vacío `{}`. Propiedades desconocidas: 400 `CAMPOS_NO_PERMITI
 
 motivo_cierre se deriva de las respuestas persistidas, sin añadir columnas: cuando hay un FALLIDO con ultimo_error.recuperable=false, informa una falla definitiva; en la finalización anticipada informa que la sesión fue finalizada por el postulante. Una sesión cancelada tras un fallo recuperable continúa siendo una finalización anticipada. El JSON de error interno nunca se serializa.
 
-## GET /api/v1/sesiones
+## GET /api/v1/sesiones — Historial D-10 / PM-17 (Incremento 9)
 
-**200 OK** con `ResumenSesionesResponse` del propietario:
+**200 OK**, exclusivamente sesiones del propietario JWT. Conserva los campos del panel MCK03: `sesion_pendiente`, `ultima_sesion_completada` y `total_sesiones_completadas` se calculan sobre **todas** sus sesiones, independientemente de los filtros y la página.
 
-```json
-{"sesion_pendiente":null,"ultima_sesion_completada":null,"total_sesiones_completadas":0,"items":[]}
-```
+| Parámetro opcional | Regla |
+| --- | --- |
+| id_puesto | Integer >=1; ausente: Todos |
+| fecha_desde / fecha_hasta | LocalDate ISO YYYY-MM-DD; ausentes: sin límite |
+| estado | INICIADA, EN_PROCESO, COMPLETADA o CANCELADA; ausente: Todos |
+| version_rubrica | Solo COM-1.0; ausente: Todas |
+| page | Entero >=0, predeterminado0 |
+| size | Entero1..50, predeterminado10 |
 
-El ejemplo es el contrato para un usuario sin sesiones. En usuarios con datos:
+Tipos, fechas y enums inválidos:400 PARAMETRO_INVALIDO; rangos y rúbrica desconocida:400 DATOS_INVALIDOS. Fecha desde posterior a hasta: mensaje exacto **La fecha inicial no puede ser posterior a la fecha final.**, con errores_campo.fecha_desde y fecha_hasta. No se aceptan fechas finales fuera del rango representable.
 
-- `sesion_pendiente`: INICIADA/EN_PROCESO actual o null.
-- `ultima_sesion_completada`: COMPLETADA con mayor `fecha_fin`, desempate `id_sesion DESC`, o null.
-- `total_sesiones_completadas`: cantidad real de COMPLETADA del usuario.
-- `items`: todas sus sesiones, `fecha_inicio DESC, id_sesion DESC`, sin paginación en este incremento.
+Las fechas filtran **fecha_inicio**: desde a las00:00 en America/Lima convertido a UTC (inclusivo), hasta al inicio del día siguiente en Lima convertido a UTC (exclusivo). Por ejemplo hasta2026-10-16 incluye2026-10-17T04:30:00Z y excluye2026-10-17T05:00:00Z.
 
-Cada `SesionResumenResponse` contiene exactamente `id_sesion`, `id_puesto`, `nombre_puesto`, `area_puesto`, `nivel_experiencia`, `estado_sesion`, `puntaje_promedio`, `fecha_inicio`, `fecha_fin`, `total_preguntas`, `respuestas_confirmadas`, `respuestas_evaluadas` y `orden_pregunta_habilitada` (1..3/null).
+D-10: COM-1.0 requiere COMPLETADA, promedio/fin persistidos y exactamente tres respuestas distintas EVALUADO de esa sesión y sus tres evaluaciones COM-1.0 asociadas. No deriva rúbrica del catálogo actual ni de una columna de sesión. Estados incompatibles intersectan con cero filas. Se publica aviso_filtro_rubrica = **El filtro de rúbrica incluye únicamente sesiones completas**; sin filtro: null.
 
-Los puestos se resuelven también para sesiones existentes aunque el puesto esté inactivo. No se consulta ni revela información de sesiones de otros usuarios. La pantalla de historial completo y sus filtros pertenecen a un incremento posterior.
+La lista se ordena fecha_inicio DESC, id_sesion DESC, y después se pagina:
 
-Tras el commit de COMPLETADA, POST /api/v1/sesiones permite crear inmediatamente otra práctica. GET /api/v1/sesiones refleja la última completada con su promedio y el contador actualizado. El Resumen de sesión de Angular (/sesiones/:id/resumen, authGuard) reutiliza GET /api/v1/sesiones/{id}; no calcula promedios en el navegador. Las evaluaciones se consultan por lote para detalle/panel, evitando una consulta por pregunta.
+- pagina: page solicitado; tamano_pagina: size solicitado.
+- total_items_filtrados: filas antes de paginar; total_paginas: techo(total/size), o0.
+- items: sublista de esa página; página fuera del conjunto devuelve[] (también para Integer.MAX_VALUE, sin desbordar offset).
+- Cada item conserva los13 campos anteriores y añade version_rubrica (COM-1.0 si cumple D-10; null en otro caso) y motivo_cierre (mensaje seguro de cancelación, o null).
+- puestos_historial: lista adicional de id_puesto/nombre_puesto de las sesiones propias, incluidos puestos inactivos, antes de filtrar/paginar. Angular la une al catálogo para mantener las opciones históricas.
+
+### comparacion
+
+Objeto siempre presente con habilitada, id_puesto, nombre_puesto, version_rubrica, total_sesiones_comparadas, promedio_conjunto, mejor_puntaje, cambio_vs_primera, cambio_vs_anterior y serie.
+
+Habilitada solo con puesto concreto y COM-1.0. Deshabilitada: total0, serie[] y los cuatro indicadores decimales null. Habilitada con cero completas: mismo vacío, sin inventar0.00. Con una: media y mejor reales; cambios null.
+
+Se calcula sobre **todo el conjunto filtrado antes de paginar**. Orden fecha_fin ASC, id_sesion ASC. Media aritmética de promedios persistidos, BigDecimal divide(n,2,HALF_UP); mejor máximo, cambios último−primero y último−penúltimo a escala2 HALF_UP. Caso PM-17 [87.50,75.00,79.17,83.33]: total4, media81.25, mejor87.50, cambios−4.17 y+4.16.
+
+Cada punto contiene id_sesion, fecha_inicio y fecha_fin OffsetDateTime UTC ISO8601, puntaje_promedio escala2, version_rubrica COM-1.0. No publica claves S3, contexto de procesamiento ni datos de otro usuario.
+
+Respuestas y evaluaciones se leen en lotes findBySesionIdInOrderByIdAsc / findByRespuestaIdIn. Los puestos y preguntas se resuelven una vez por puesto distinto, reutilizando mapas; no hay lecturas por fila/pregunta de historial. El cálculo y los filtros son Java puro; la transacción de lectura mantiene un conjunto coherente.
+
+### MCK10
+
+/historial protegido con authGuard. Enlaces desde cabecera, panel, resumen y MCK09. Filtros etiquetados, aplicar/limpiar, estados vacíos y error reintentable. Fechas de filas UTC rotuladas Inicio/Fin; Sin promedio en no completas. Indicadores del backend, gráfico SVG accesible y tabla cronológica de fecha_fin ascendente; sesiones por inicio descendente, controles anterior/siguiente y total filtrado. Un punto no inventa variación; cero puntos muestra Sin datos. Navega al resumen, detalle, continuación y resultados individuales con video firmado renovable.

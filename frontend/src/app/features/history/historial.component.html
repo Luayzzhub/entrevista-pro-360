@@ -1,0 +1,107 @@
+<section class="history-page" aria-labelledby="titulo-historial" [attr.aria-busy]="estado().cargando">
+  <header><span class="eyebrow">TUS PRÁCTICAS</span><h1 id="titulo-historial">Historial de sesiones</h1>
+    <p>Consulta tus resultados y compara sesiones completas del mismo puesto y rúbrica.</p></header>
+  <form class="form-card history-filters" (ngSubmit)="aplicar()" aria-label="Filtros del historial">
+    <div class="field"><label for="f-puesto">Puesto</label><select id="f-puesto" name="puesto" [(ngModel)]="puesto">
+      <option value="">Todos</option>@for (p of puestos(); track p.id_puesto) { <option [value]="p.id_puesto">{{ p.nombre_puesto }}</option> }
+    </select></div>
+    <div class="field"><label for="f-desde">Fecha desde</label><input id="f-desde" name="desde" type="date" [(ngModel)]="desde" aria-describedby="zona-fechas"></div>
+    <div class="field"><label for="f-hasta">Fecha hasta</label><input id="f-hasta" name="hasta" type="date" [(ngModel)]="hasta" aria-describedby="zona-fechas"></div>
+    <div class="field"><label for="f-estado">Estado</label><select id="f-estado" name="estado" [(ngModel)]="estadoFiltro">
+      <option value="">Todos</option><option value="INICIADA">Sesión iniciada</option><option value="EN_PROCESO">En proceso</option>
+      <option value="COMPLETADA">Completada</option><option value="CANCELADA">Cancelada</option>
+    </select></div>
+    <div class="field"><label for="f-rubrica">Versión de rúbrica</label><select id="f-rubrica" name="rubrica" [(ngModel)]="rubrica">
+      <option value="">Todas</option><option value="COM-1.0">COM-1.0</option>
+    </select></div>
+    <div class="field"><label for="f-size">Sesiones por página</label><select id="f-size" name="size" [(ngModel)]="tamano">
+      <option [ngValue]="2">2</option><option [ngValue]="10">10</option><option [ngValue]="20">20</option><option [ngValue]="50">50</option>
+    </select></div>
+    <p id="zona-fechas" class="filter-wide">Las fechas del filtro corresponden a America/Lima (UTC−05:00).</p>
+    @if (errorFormulario()) { <p class="notice error filter-wide" role="alert">{{ errorFormulario() }}</p> }
+    @if (errorCatalogo()) { <p class="notice filter-wide">No se pudo cargar el catálogo. Puedes consultar los puestos de tu historial.</p> }
+    @if (rubrica === 'COM-1.0') { <p class="notice privacy filter-wide">El filtro de rúbrica incluye únicamente sesiones completas</p> }
+    <div class="session-actions filter-wide"><button class="button" type="submit" [disabled]="estado().cargando">Aplicar filtros</button>
+      <button class="button secondary" type="button" (click)="limpiar()">Limpiar filtros</button></div>
+  </form>
+  @if (estado().cargando) { <p class="status-panel" role="status">Cargando historial…</p> }
+  @else if (estado().error) { <div class="notice error" role="alert"><p>{{ estado().error }}</p><button class="button secondary" type="button" (click)="reintentar()">Volver a intentar</button></div> }
+  @else if (estado().resumen; as r) {
+    @if (r.aviso_filtro_rubrica && rubrica !== 'COM-1.0') { <p class="notice privacy">{{ r.aviso_filtro_rubrica }}</p> }
+    <section class="form-card" aria-labelledby="titulo-evolucion">
+      <h2 id="titulo-evolucion">Comparación y evolución</h2>
+      @if (!r.comparacion.habilitada) {
+        <p class="notice privacy">Selecciona un puesto y la rúbrica COM-1.0 y aplica los filtros para habilitar el gráfico y los indicadores comparables.</p>
+      } @else {
+        <p>{{ r.comparacion.nombre_puesto }} · {{ r.comparacion.version_rubrica }} · Todas las sesiones del conjunto filtrado, antes de paginar.</p>
+        <div class="history-metrics">
+          <div><h3>Sesiones comparadas</h3><p>{{ r.comparacion.total_sesiones_comparadas }}</p></div>
+          <div><h3>Promedio del conjunto</h3><p data-testid="promedio">{{ r.comparacion.promedio_conjunto === null ? 'Sin datos' : (r.comparacion.promedio_conjunto | number:'1.2-2') + ' / 100' }}</p></div>
+          <div><h3>Mejor puntaje</h3><p data-testid="mejor">{{ r.comparacion.mejor_puntaje === null ? 'Sin datos' : (r.comparacion.mejor_puntaje | number:'1.2-2') + ' / 100' }}</p></div>
+          <div><h3>Cambio vs. primera sesión</h3><p data-testid="primera">{{ conSigno(r.comparacion.cambio_vs_primera) }}</p></div>
+          <div><h3>Cambio vs. sesión anterior</h3><p data-testid="anterior">{{ conSigno(r.comparacion.cambio_vs_anterior) }}</p></div>
+        </div>
+        @if (r.comparacion.total_sesiones_comparadas === 0) {
+          <p class="notice privacy">Aún no hay sesiones completadas para ese puesto y rúbrica en el rango seleccionado. Sin datos.</p>
+        } @else {
+          @if (r.comparacion.total_sesiones_comparadas === 1) { <p class="notice privacy">Sin variación disponible (se requieren al menos 2 sesiones completas)</p> }
+          <p>Fecha de fin (ascendente) · Puntaje de 0 a 100</p>
+          <div class="chart-scroll">
+            <svg viewBox="0 0 700 285" role="img" aria-label="Evolución de puntajes por fecha de fin ascendente. Datos completos en la tabla cronológica siguiente.">
+              <title>Evolución de sesiones completas COM-1.0</title>
+              <line x1="45" y1="40" x2="45" y2="220" stroke="currentColor"/><line x1="45" y1="220" x2="665" y2="220" stroke="currentColor"/>
+              <text x="6" y="45">100</text><text x="25" y="225">0</text>
+              <polyline [attr.points]="linea()" fill="none" stroke="#176B62" stroke-width="3"/>
+              @for (p of puntos(); track p.id_sesion) {
+                <g><title>Fin: {{ p.fecha_fin | date:'dd/MM/yyyy HH:mm:ss':'UTC' }} UTC; puntaje {{ p.puntaje_promedio | number:'1.2-2' }}</title>
+                  <circle [attr.cx]="p.x" [attr.cy]="p.y" r="5" fill="#176B62"/>
+                  <text [attr.x]="p.x" [attr.y]="p.y - 12" text-anchor="middle">{{ p.puntaje_promedio | number:'1.2-2' }}</text>
+                  <text [attr.transform]="'translate(' + p.x + ',240) rotate(20)'" text-anchor="middle">{{ p.fecha_fin | date:'dd/MM/yy':'UTC' }}</text>
+                </g>
+              }
+            </svg>
+          </div>
+          <div class="table-scroll"><table><caption>Serie cronológica · Fecha de fin (ascendente)</caption>
+            <thead><tr><th scope="col">Sesión</th><th scope="col">Inicio (UTC)</th><th scope="col">Fin (UTC)</th><th scope="col">Puntaje</th></tr></thead>
+            <tbody>@for (p of r.comparacion.serie; track p.id_sesion) { <tr><td><a [routerLink]="['/sesiones', p.id_sesion, 'resumen']">Sesión {{ p.id_sesion }}</a></td>
+              <td>{{ p.fecha_inicio | date:'dd/MM/yyyy HH:mm:ss':'UTC' }} UTC</td><td>{{ p.fecha_fin | date:'dd/MM/yyyy HH:mm:ss':'UTC' }} UTC</td><td>{{ p.puntaje_promedio | number:'1.2-2' }} / 100</td></tr> }</tbody>
+          </table></div>
+        }
+      }
+    </section>
+    <section aria-labelledby="titulo-listado" aria-live="polite">
+      <h2 id="titulo-listado">Tus sesiones</h2><p>Fecha de inicio (descendente) · {{ r.total_items_filtrados }} sesiones filtradas</p>
+      @if (r.items.length === 0) {
+        <p class="status-panel" role="status">@if (incompatible()) { No existen coincidencias: el filtro de rúbrica incluye únicamente sesiones completas y el estado seleccionado es incompatible. }
+          @else { No hay sesiones que coincidan con estos filtros. }</p>
+      }
+      <div class="history-list">
+        @for (s of r.items; track s.id_sesion) {
+          <article class="form-card history-session" [attr.aria-label]="'Sesión ' + s.id_sesion">
+            <span class="pill">{{ estadoTexto(s.estado_sesion) }}</span><h3>{{ s.nombre_puesto }}</h3>
+            <p>{{ s.area_puesto }} · {{ s.nivel_experiencia }}</p>
+            <p>Inicio: {{ s.fecha_inicio | date:'dd/MM/yyyy HH:mm:ss':'UTC' }} UTC</p>
+            <p>Fin: @if (s.fecha_fin) { {{ s.fecha_fin | date:'dd/MM/yyyy HH:mm:ss':'UTC' }} UTC } @else { En curso }</p>
+            <p>{{ s.respuestas_evaluadas }} de 3 respuestas evaluadas · {{ s.respuestas_confirmadas }} confirmadas</p>
+            <p>Rúbrica: {{ s.version_rubrica ?? '—' }}</p>
+            <p class="history-score">Promedio final: @if (s.estado_sesion === 'COMPLETADA' && s.puntaje_promedio !== null) { {{ s.puntaje_promedio | number:'1.2-2' }} / 100 } @else { Sin promedio }</p>
+            @if (s.motivo_cierre) { <p class="notice privacy">{{ s.motivo_cierre }}</p> }
+            <div class="session-actions">
+              @if (s.estado_sesion === 'COMPLETADA' || s.estado_sesion === 'CANCELADA') {
+                <a class="button" [routerLink]="['/sesiones', s.id_sesion, 'resumen']">Ver resumen</a><a class="button secondary" [routerLink]="['/sesiones', s.id_sesion]">Ver detalle</a>
+              } @else {
+                <a class="button" [routerLink]="['/sesiones', s.id_sesion]">Continuar práctica</a><a class="button secondary" [routerLink]="['/sesiones', s.id_sesion, 'resumen']">Ver resumen</a>
+              }
+            </div>
+          </article>
+        }
+      </div>
+      <nav class="history-pagination" aria-label="Paginación del historial">
+        <button class="button secondary" type="button" (click)="pagina(-1)" [disabled]="r.pagina === 0">Página anterior</button>
+        <span>Página {{ r.total_paginas === 0 ? 0 : r.pagina + 1 }} de {{ r.total_paginas }}</span>
+        <button class="button secondary" type="button" (click)="pagina(1)" [disabled]="r.pagina + 1 >= r.total_paginas">Página siguiente</button>
+      </nav>
+    </section>
+    <a class="text-link" routerLink="/panel">Volver al panel</a>
+  }
+</section>

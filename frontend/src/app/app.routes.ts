@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard, publicOnlyGuard } from './core/auth.guards';
 
 export const routes: Routes = [
+  { path: 'historial', title: 'Historial de sesiones | Entrevista Pro 360', canActivate: [authGuard], loadComponent: () => import('./features/history/historial.component').then(m => m.HistorialComponent) },
   { path: '', pathMatch: 'full', redirectTo: 'puestos' },
   { path: 'login', title: 'Iniciar sesión | Entrevista Pro 360', canActivate: [publicOnlyGuard], loadComponent: () => import('./features/auth/login.component').then(m => m.LoginComponent) },
   { path: 'registro', title: 'Crear cuenta | Entrevista Pro 360', canActivate: [publicOnlyGuard], loadComponent: () => import('./features/auth/registro.component').then(m => m.RegistroComponent) },

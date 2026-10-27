@@ -45,6 +45,7 @@
           @if (nuevaPractica()) { <app-cancelar-practica [idSesion]="r.id_sesion" etiqueta="Confirmar cierre para nueva práctica" (cancelada)="cancelada($event)" /> }
         } @else if (r.estado_sesion === 'CANCELADA' || r.estado_sesion === 'COMPLETADA') { <a class="button" routerLink="/puestos">Nueva práctica</a> }
         <a class="button secondary" [routerLink]="['/sesiones', r.id_sesion]">Ver detalle</a><a class="button secondary" routerLink="/panel">Volver al panel</a>
+        <a class="button secondary" routerLink="/historial">Historial</a>
       </div>
     } @else { <a class="button" [routerLink]="['/sesiones', r.id_sesion, 'respuestas', r.id_respuesta]">Ver estado del procesamiento</a> }
   }

@@ -1,6 +1,6 @@
-# Seguimiento funcional — Incrementos 1 a 8
+# Seguimiento funcional — Incrementos 1 a 9
 
-Fecha: 27/10/2026 (America/Lima). Fuente: contratos de los Incrementos 1 a 8. **Verificado** identifica funciones implementadas y comprobadas en el alcance descrito; **En progreso**, cobertura parcial; **Pendiente**, funcionalidad sin construir. Los proveedores HTTP locales no certifican cuentas ni servicios de producción.
+Fecha: 27/10/2026 (America/Lima). Fuente: contratos de los Incrementos 1 a 9. **Verificado** identifica funciones implementadas y comprobadas en el alcance descrito; **En progreso**, cobertura parcial; **Pendiente**, funcionalidad sin construir. Los proveedores HTTP locales no certifican cuentas ni servicios de producción.
 
 | RF | Función | Estado actual | Evidencia real de este incremento | Pendiente para aceptación completa |
 | --- | --- | --- | --- | --- |
@@ -20,18 +20,18 @@ Fecha: 27/10/2026 (America/Lima). Fuente: contratos de los Incrementos 1 a 8. **
 | RF-14 | Métricas MET-1.0 | Verificado | CalculadorMetricas puro, NFKC, Unicode, HALF_UP, siete muletillas y locución sin puntuación; upsert único, resumen público; pruebas de dominio e integración | Sin pendiente en MET-1.0 dentro del alcance implementado |
 | RF-15 | Evaluación EVAL-1.0/COM-1.0 | Verificado | Responses HTTP real, snapshot exacto, JSON Schema estricto; validación pura, cuatro anclas/pesos y puntaje backend; persistencia en 14 columnas; STAR condicional; H2/MySQL/Chrome | Validar credenciales/modelo en cuenta OpenAI de producción |
 | RF-16 | Feedback y resumen | Verificado | MCK09 individual y Resumen de sesión: cierre atómico, media BigDecimal exacta de tres evaluaciones válidas, desglose y fechas UTC; CANCELADA sin promedio, resultados previos conservados; H2/MySQL/Chrome | Sin pendiente en feedback y resumen del alcance implementado |
-| RF-17 | Consulta propia | En progreso | Detalle/resumen autenticados con puntajes, estado y motivo seguro; enlaces MCK08/09; reproducción PA-04 de resultado propio preservada | Historial integral, filtros y navegación histórica del RF-18 |
-| RF-18 | Historial | Pendiente | Resumen de sesiones propias para el panel; carpeta `features/history` | Pantalla de historial, filtros, paginación y aceptación integral |
-| RF-19 | Comparación | Pendiente | Contrato documental conservado | Comparación de sesiones completas del mismo puesto/rúbrica |
+| RF-17 | Consulta propia | Verificado | Historial, detalle/resumen/resultados propios, aislamiento JWT en tabla/serie; navegación MCK03→MCK10→resumen→MCK09 y video SigV4 renovable; H2/MySQL/Chrome | Sin pendiente dentro del alcance local; Incremento 9 auditado y aprobado sin observaciones |
+| RF-18 | Historial | Verificado | MCK10 conectado, cinco filtros D-10, fechas Lima→UTC, orden inicio DESC/id DESC, paginación y estados incompatibles explícitos; puestos históricos; H2/MySQL/Chrome | Sin pendiente en historial local; Incremento 9 auditado y aprobado sin observaciones |
+| RF-19 | Comparación | Verificado | CalculadoraEvolucionHistorial pura, serie fin ASC/id ASC, puesto+COM-1.0, indicadores antes de paginar; PM-17:81.25/87.50/-4.17/+4.16; cero/una completas, SVG/tabla accesibles; H2/MySQL/Chrome | Sin pendiente en comparación local; Incremento 9 auditado y aprobado sin observaciones |
 | RF-20 | Errores y recuperación | Verificado | PROC-1.0 etapas 1–4, manual único, D-02 en P3 conservando P1/P2, cancelación concurrente frente a cierre; 409 al intentar cancelar COMPLETADA; H2/MySQL/Chrome | Proveedores e IAM de producción sin certificar |
 
-No se certifica el 100 % del MVP: historial y comparación siguen pendientes. El Incremento 8 completa la sesión solo con los tres bloques de resultado válidos; nunca promedia respuestas faltantes. Evidencias en verificacion_incremento_8.md y evidencias/pruebas-incremento-8.json. El Incremento 8 fue AUDITADO Y APROBADO SIN OBSERVACIONES por el Orquestador (RF-16 Verificado; RF-17 En progreso). El Incremento 7 aprobado sin observaciones fue publicado como ca798f5; los informes anteriores conservan su alcance histórico.
+**20/20 RF implementados y verificados mediante pruebas locales.** El Incremento 9 completa historial y comparación, auditado y aprobado sin observaciones por el Orquestador. Evidencias en verificacion_incremento_9.md y evidencias/pruebas-incremento-9.json. El Incremento 8 fue AUDITADO Y APROBADO SIN OBSERVACIONES y publicado como a05ca28; los informes anteriores conservan su alcance histórico. Esta cobertura no certifica cuentas/modelos de producción ni IAM/bucket AWS.
 
 ## Criterios del tercer entregable
 
 | Criterio | Evidencia disponible | Alcance pendiente |
 | --- | --- | --- |
-| Arquitectura inicial construida | Backend con cuatro capas, migraciones, consulta vertical y Angular | Resto de operaciones del MVP |
-| Librerías explicadas | `dependencias.md`, POM, package.json y lock | Actualizar al integrar los siguientes módulos |
-| Git/GitHub con avances reales | Incrementos 1 a 7 publicados; 7 aprobado sin observaciones: ca798f5; árbol limpio antes del 8 | Incremento 8 aprobado sin observaciones; cierre con commit atómico y push origin/main |
-| Interfaces funcionales del alcance | MCK03..MCK09 y Resumen de sesión conectados, cierre y nueva práctica habilitados | Historial y comparación posteriores |
+| Arquitectura inicial construida | Backend con cuatro capas, migraciones, consulta vertical y Angular | Auditoría final y configuración/verificación de proveedores en producción |
+| Librerías explicadas | `dependencias.md`, POM, package.json y lock | Sin nuevas dependencias en el Incremento 9 |
+| Git/GitHub con avances reales | Incrementos 1 a 8 publicados; Incremento 9 auditado y aprobado sin observaciones; cierre autorizado en Paso 1 del Incremento 10 | Commit atómico y push del Incremento 9 autorizados; hash en evidencia del Incremento 10 |
+| Interfaces funcionales del alcance | MCK03..MCK10 y Resumen de sesión conectados, historial, filtros y comparación | Incremento 9 auditado y aprobado sin observaciones |

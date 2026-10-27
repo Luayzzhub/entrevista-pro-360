@@ -1,4 +1,4 @@
-# Dependencias hasta el Incremento 8
+# Dependencias hasta el Incremento 9
 
 Las versiones del backend provienen de `backend/pom.xml` y del BOM `spring-boot-dependencies:3.5.7` resuelto por Maven. Las del frontend están fijadas sin rangos en `frontend/package.json` y resueltas en `frontend/package-lock.json`. No se atribuye uso funcional a dependencias reservadas.
 
@@ -77,3 +77,7 @@ El Incremento 3 no añade dependencias Maven/npm: reutiliza JPA (`@Lock`), Sprin
 El Incremento 4 no añade dependencias Maven/npm al proyecto ni modifica el lock. Usa signals, `DestroyRef`, `viewChild`, DecimalPipe y Web APIs del navegador. Las pruebas puras utilizan el compilador TypeScript ya instalado y el runner de Node. La verificación de navegador usa Chrome instalado y Playwright en `.tools/browser-check` (auxiliar ignorado, separado de las dependencias de la aplicación), con dispositivos emulados por Chromium y grabaciones reales. Las versiones utilizadas y sus resultados están en `evidencias/pruebas-incremento-4.json`. S3, ffprobe y proveedores de IA no se invocan desde la captura local.
 
 El Incremento 5 activa el SDK S3 existente sin añadir dependencias: el cliente usa DefaultCredentialsProvider, región/bucket y endpoint opcional con forcePathStyle. El adaptador emite peticiones HTTP reales firmadas, condicionales y privadas, con tiempos de llamada acotados. ffprobe y ffmpeg portables están en .tools/ffmpeg (ignorados); las pruebas generan medios con ffmpeg y validan con ffprobe real. HttpServer del JDK implementa el endpoint local de las pruebas; no se sustituye S3Client ni el inspector. En Angular se usa HttpClient XHR con eventos UploadProgress y effect con limpieza de sondeo para MCK 08. La verificación local no certifica IAM/políticas de una cuenta AWS de producción.
+
+## Historial y evolución: Incremento 9
+
+Sin nuevas dependencias ni cambios en POM, package.json o lock. Domain/application reutilizan BigDecimal, RoundingMode, java.time (America/Lima→UTC) y colecciones. Infraestructura reutiliza consultas Spring Data por lotes; presentación usa RequestParam/DateTimeFormat existentes. Angular reutiliza FormsModule, RxJS/switchMap/toSignal, DatePipe/DecimalPipe y SVG nativo accesible, sin librería gráfica adicional. Chrome/Playwright y ffmpeg auxiliares permanecen en .tools ignorado. Pruebas: H2 192 ejecutadas/2 omitidas; MySQL8.4.13 194 ejecutadas; medios6; Chrome9 escenarios sin errores de consola/página.

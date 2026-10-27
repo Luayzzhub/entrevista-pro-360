@@ -9,10 +9,26 @@ export interface SesionResumen {
   id_sesion: number; id_puesto: number; nombre_puesto: string; area_puesto: string; nivel_experiencia: string;
   estado_sesion: EstadoSesion; puntaje_promedio: number | null; fecha_inicio: string; fecha_fin: string | null;
   total_preguntas: number; respuestas_confirmadas: number; respuestas_evaluadas: number; orden_pregunta_habilitada: number | null;
+  version_rubrica: string | null; motivo_cierre: string | null;
+}
+export interface PuntoEvolucion {
+  id_sesion: number; fecha_inicio: string; fecha_fin: string; puntaje_promedio: number; version_rubrica: string;
+}
+export interface ComparacionHistorial {
+  habilitada: boolean; id_puesto: number | null; nombre_puesto: string | null; version_rubrica: string | null;
+  total_sesiones_comparadas: number; promedio_conjunto: number | null; mejor_puntaje: number | null;
+  cambio_vs_primera: number | null; cambio_vs_anterior: number | null; serie: PuntoEvolucion[];
+}
+export interface FiltrosHistorial {
+  id_puesto?: number; fecha_desde?: string; fecha_hasta?: string; estado?: EstadoSesion; version_rubrica?: string;
+  page?: number; size?: number;
 }
 export interface ResumenSesiones {
   sesion_pendiente: SesionResumen | null; ultima_sesion_completada: SesionResumen | null;
   total_sesiones_completadas: number; items: SesionResumen[];
+  pagina: number; tamano_pagina: number; total_items_filtrados: number; total_paginas: number;
+  aviso_filtro_rubrica: string | null; comparacion: ComparacionHistorial;
+  puestos_historial: { id_puesto: number; nombre_puesto: string }[];
 }
 export interface PreguntaSesion {
   id_pregunta: number; orden: number; enunciado: string; competencia_evaluada: string; tiempo_limite_seg: number;
@@ -33,7 +49,11 @@ export function estadoSesionTexto(estado: EstadoSesion): string {
 @Injectable({ providedIn: 'root' })
 export class SesionService {
   private readonly api = inject(ApiClient);
-  consultarResumen(): Observable<ResumenSesiones> { return this.api.get<ResumenSesiones>('/sesiones'); }
+  consultarResumen(filtros: FiltrosHistorial = {}): Observable<ResumenSesiones> {
+    const params = new URLSearchParams();
+    for (const [clave, valor] of Object.entries(filtros)) if (valor !== undefined && valor !== '') params.set(clave, String(valor));
+    return this.api.get<ResumenSesiones>('/sesiones' + (params.size ? '?' + params.toString() : ''));
+  }
   crearSesion(idPuesto: number): Observable<SesionDetalle> { return this.api.post<SesionDetalle>('/sesiones', { id_puesto: idPuesto }); }
   consultarSesion(idSesion: number): Observable<SesionDetalle> { return this.api.get<SesionDetalle>(`/sesiones/${idSesion}`); }
   cancelarSesion(idSesion: number): Observable<SesionDetalle> { return this.api.post<SesionDetalle>(`/sesiones/${idSesion}/cancelacion`, {}); }

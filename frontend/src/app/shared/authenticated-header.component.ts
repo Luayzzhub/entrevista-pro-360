@@ -10,6 +10,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       <nav aria-label="Navegación de cuenta">
         <a routerLink="/panel" routerLinkActive="active" ariaCurrentWhenActive="page">Panel</a>
         <a routerLink="/puestos" routerLinkActive="active" ariaCurrentWhenActive="page">Puestos</a>
+        <a routerLink="/historial" routerLinkActive="active" ariaCurrentWhenActive="page">Historial</a>
         <a routerLink="/perfil" routerLinkActive="active" ariaCurrentWhenActive="page">Perfil</a>
         <span class="account-name">{{ nombre() }}</span>
         <button type="button" class="button secondary" (click)="cerrarSesion.emit()">Cerrar sesión</button>

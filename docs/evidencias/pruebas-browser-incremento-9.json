@@ -1,0 +1,197 @@
+{
+  "incremento": 9,
+  "fecha_utc": "2026-10-27T05:55:52.411Z",
+  "correcto": true,
+  "navegador": "156.0.8078.47",
+  "total_casos": 9,
+  "casos": [
+    {
+      "nombre": "Datos reales persistidos: cinco sesiones completas con 15 respuestas, una cancelada y una EN_PROCESO con una evaluada",
+      "correcto": true,
+      "canonico": [
+        87.5,
+        75,
+        79.17,
+        83.33
+      ],
+      "id_cancelada": 13,
+      "id_en_proceso": 14
+    },
+    {
+      "nombre": "MCK03 → MCK10: lista propia completa, estados, ambas fechas y Sin promedio en sesiones incompletas",
+      "correcto": true
+    },
+    {
+      "nombre": "D-10: aviso exacto e intersección vacía con CANCELADA, filtros conservados",
+      "correcto": true
+    },
+    {
+      "nombre": "PM-17 exacto: cuatro sesiones en serie cronológica y media81.25/mejor87.50/cambios-4.17,+4.16 antes de paginar",
+      "correcto": true
+    },
+    {
+      "nombre": "Paginación real: páginas1/2 y2/2 mantienen los indicadores del conjunto; móvil390 sin desbordamiento de página",
+      "correcto": true
+    },
+    {
+      "nombre": "Historial → resumen → MCK09: video real reproduce y renueva URL SigV4 de300s/no-store; vuelve a Historial",
+      "correcto": true
+    },
+    {
+      "nombre": "Cero completas: indicadores Sin datos, sin gráfico ni ceros inventados",
+      "correcto": true
+    },
+    {
+      "nombre": "Una completa: punto único, media75.00 y sin variación disponible",
+      "correcto": true
+    },
+    {
+      "nombre": "Fechas inválidas con mensaje, limpiar filtros a página1 y enlace de cabecera funcional",
+      "correcto": true
+    }
+  ],
+  "errores_javascript": [],
+  "errores_consola": [],
+  "comparacion_canonica": {
+    "habilitada": true,
+    "id_puesto": 1,
+    "nombre_puesto": "Practicante de Desarrollo TI",
+    "version_rubrica": "COM-1.0",
+    "total_sesiones_comparadas": 4,
+    "promedio_conjunto": 81.25,
+    "mejor_puntaje": 87.5,
+    "cambio_vs_primera": -4.17,
+    "cambio_vs_anterior": 4.16,
+    "serie": [
+      {
+        "id_sesion": 8,
+        "fecha_inicio": "2026-10-27T05:54:55Z",
+        "fecha_fin": "2026-10-27T05:55:05Z",
+        "puntaje_promedio": 87.5,
+        "version_rubrica": "COM-1.0"
+      },
+      {
+        "id_sesion": 9,
+        "fecha_inicio": "2026-10-27T05:55:06Z",
+        "fecha_fin": "2026-10-27T05:55:15Z",
+        "puntaje_promedio": 75,
+        "version_rubrica": "COM-1.0"
+      },
+      {
+        "id_sesion": 10,
+        "fecha_inicio": "2026-10-27T05:55:15Z",
+        "fecha_fin": "2026-10-27T05:55:24Z",
+        "puntaje_promedio": 79.17,
+        "version_rubrica": "COM-1.0"
+      },
+      {
+        "id_sesion": 11,
+        "fecha_inicio": "2026-10-27T05:55:25Z",
+        "fecha_fin": "2026-10-27T05:55:35Z",
+        "puntaje_promedio": 83.33,
+        "version_rubrica": "COM-1.0"
+      }
+    ]
+  },
+  "llamadas_stt": 16,
+  "llamadas_llm": 16,
+  "peticiones_api": [
+    {
+      "metodo": "POST",
+      "url": "/api/v1/auth/login",
+      "estado": 200
+    },
+    {
+      "metodo": "GET",
+      "url": "/api/v1/sesiones",
+      "estado": 200
+    },
+    {
+      "metodo": "GET",
+      "url": "/api/v1/puestos",
+      "estado": 200
+    },
+    {
+      "metodo": "GET",
+      "url": "/api/v1/sesiones?page=0&size=10",
+      "estado": 200
+    },
+    {
+      "metodo": "GET",
+      "url": "/api/v1/sesiones?estado=CANCELADA&version_rubrica=COM-1.0&page=0&size=10",
+      "estado": 200
+    },
+    {
+      "metodo": "GET",
+      "url": "/api/v1/sesiones?id_puesto=1&version_rubrica=COM-1.0&page=0&size=2",
+      "estado": 200
+    },
+    {
+      "metodo": "GET",
+      "url": "/api/v1/sesiones?id_puesto=1&version_rubrica=COM-1.0&page=1&size=2",
+      "estado": 200
+    },
+    {
+      "metodo": "GET",
+      "url": "/api/v1/sesiones?id_puesto=1&version_rubrica=COM-1.0&page=0&size=2",
+      "estado": 200
+    },
+    {
+      "metodo": "GET",
+      "url": "/api/v1/sesiones/11",
+      "estado": 200
+    },
+    {
+      "metodo": "GET",
+      "url": "/api/v1/respuestas/26",
+      "estado": 200
+    },
+    {
+      "metodo": "POST",
+      "url": "/api/v1/respuestas/26/reproduccion",
+      "estado": 200
+    },
+    {
+      "metodo": "POST",
+      "url": "/api/v1/respuestas/26/reproduccion",
+      "estado": 200
+    },
+    {
+      "metodo": "GET",
+      "url": "/api/v1/puestos",
+      "estado": 200
+    },
+    {
+      "metodo": "GET",
+      "url": "/api/v1/sesiones?page=0&size=10",
+      "estado": 200
+    },
+    {
+      "metodo": "GET",
+      "url": "/api/v1/sesiones?id_puesto=3&version_rubrica=COM-1.0&page=0&size=10",
+      "estado": 200
+    },
+    {
+      "metodo": "GET",
+      "url": "/api/v1/sesiones?id_puesto=2&version_rubrica=COM-1.0&page=0&size=10",
+      "estado": 200
+    },
+    {
+      "metodo": "GET",
+      "url": "/api/v1/sesiones?page=0&size=10",
+      "estado": 200
+    },
+    {
+      "metodo": "GET",
+      "url": "/api/v1/sesiones",
+      "estado": 200
+    },
+    {
+      "metodo": "GET",
+      "url": "/api/v1/puestos",
+      "estado": 200
+    }
+  ],
+  "entorno": "Chrome real + Angular + JAR + MySQL8.4.13. ffmpeg y clientes S3/STT/LLM reales sobre fixtures HTTP locales; sin interceptar API de aplicación.",
+  "limites": "No certifica cuentas OpenAI/AWS ni IAM de producción."
+}

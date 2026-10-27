@@ -48,6 +48,7 @@
     <div class="session-actions">
       <a class="button secondary" [routerLink]="['/sesiones', sesion.id_sesion]">Ver detalle</a>
       <a class="button secondary" routerLink="/panel">Volver al panel</a>
+      <a class="button secondary" routerLink="/historial">Historial</a>
       @if (esTerminal(sesion.estado_sesion)) { <a class="button" routerLink="/puestos">Nueva práctica</a> }
       @else {
         <button type="button" class="button" (click)="confirmandoNueva.set(true)">Nueva práctica</button>
