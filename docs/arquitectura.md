@@ -1,6 +1,6 @@
-# Arquitectura — Incrementos 1 a 8
+# Arquitectura — Incrementos 1 a 10 (Tercer Entregable)
 
-Backend modular Spring Boot 3.5.7/Java 17 y Angular 21.2.0 VIS-1.0. Pipeline durable WAV/STT/MET/EVAL con reintento único, cancelación D-02, resultado MCK09/PA-04 y cierre automático de tres respuestas con resumen de sesión. Contratos en api-respuestas.md y api-sesiones.md.
+Backend modular Spring Boot 3.5.7/Java 17 y Angular 21.2.0 VIS-1.0. Pipeline durable WAV/STT/MET/EVAL con reintento único, cancelación D-02, resultado MCK09/PA-04 y cierre automático de tres respuestas con resumen de sesión. Historial D-10 y evolución PM-17 completos. Integración final reproducible contra JAR, Angular AOT y MySQL 8.4.13. Contratos en api-respuestas.md y api-sesiones.md. Incremento 10 auditado y aprobado sin observaciones por el Orquestador; cierre del tercer entregable en main.
 
 ## Cuatro capas
 
@@ -8,7 +8,7 @@ Backend modular Spring Boot 3.5.7/Java 17 y Angular 21.2.0 VIS-1.0. Pipeline dur
 | --- | --- | --- |
 | `presentation` | HTTP, DTO públicos, estructura de solicitudes y errores JSON | `CatalogoController`, `AuthController`, `PerfilController`, `SesionController`, `RespuestaController`, DTO, `GlobalExceptionHandler`, `SecurityExceptionHandler` |
 | `application` | Casos de uso y puertos independientes de frameworks | Servicios de catálogo, registro, autenticación, perfil y sesiones; puertos de entrada/salida y modelos puros de lectura |
-| `domain` | Modelos e invariantes puros | `Puesto`, `Pregunta`, `Usuario`, excepciones de validación y otros cinco modelos canónicos |
+| `domain` | Modelos e invariantes puros | `Puesto`, `Pregunta`, `Usuario`, `SesionEntrevista`, `RespuestaVideo`, `Transcripcion`, `MetricaComunicacion`, `EvaluacionSTAR`, historial y reglas puras |
 | `infrastructure` | JPA, BCrypt, JWT, seguridad y composición | Adaptadores/repositorios JPA, `BCryptPasswordHasher`, `JwtTokenProvider`, `JwtAuthenticationFilter`, configuraciones |
 
 ```mermaid
@@ -152,3 +152,67 @@ ResumenSesionComponent es una ruta standalone protegida (/sesiones/:id/resumen),
 ## Historial D-10 y evolución PM-17: Incremento 9
 
 RegistroHistorial, FiltroHistorial y CalculadoraEvolucionHistorial son Java puro. La aplicación obtiene únicamente sesiones propias bajo transacción de lectura, respuestas/evaluaciones por lotes y catálogo/preguntas cacheados por puesto. Calcula primero el resumen global MCK03; aplica filtros al conjunto para comparación y paginación independientes. La comparación requiere puesto+COM-1.0 y tres evaluaciones asociadas por sesión completa; usa promedios persistidos, BigDecimal escala2 HALF_UP y orden fecha_fin/id ascendente. La tabla usa fecha_inicio/id descendente. Fechas de filtro Lima→UTC con fin exclusivo al día siguiente. El selector histórico es una proyección de puestos propios, sin tablas/columnas adicionales. MCK10 presenta indicadores del servidor, SVG y tabla accesibles, estados sin datos y navegación a resumen/detalle/MCK09. No escribe datos ni programa procesamiento al consultar historial. LayerDependenciesTest conserva domain/application libres de frameworks.
+
+
+## Inventario canónico de las cuatro capas (Secciones 11 y 15)
+
+Los nombres siguientes existen en `backend/src/main/java/pe/utp/entrevistapro360/`; no son nombres propuestos. `LayerDependenciesTest` comprueba la pureza de domain y application en H2 y MySQL. Los atributos Java camelCase se serializan como snake_case en DTO, sin alterar columnas.
+
+| Capa | Nombres canónicos y componentes | Responsabilidad y vínculo real |
+| --- | --- | --- |
+| domain | `SesionEntrevista`, `RespuestaVideo`, `Transcripcion`, `MetricaComunicacion`, `EvaluacionSTAR` | Modelos puros; secuencia/cierre, archivo confirmado, texto, métricas y evaluación |
+| domain | `RespuestaVideo.estadoProcesamiento`, `MetricaComunicacion.palabrasPorMinuto`, `EvaluacionSTAR.areasMejora` | Estado; PPM deterministas; JSON EVAL-1.0 con justificaciones y síntesis |
+| domain | `RegistroHistorial`, `FiltroHistorial`, `CalculadoraEvolucionHistorial`, `ComparacionHistorial` | D-10 y fechas Lima→UTC; comparación PM-17 sobre conjunto antes de paginar |
+| domain | `ContextoProcesamiento`, `CalculadorMetricas`, `ValidadorEvaluacion`, `ResultadoRespuestaSesion` | PROC-1.0, MET-1.0, EVAL-1.0/COM-1.0 y cierre BigDecimal HALF_UP escala2 |
+| application | `ConsultarCatalogoService`, `RegistrarUsuarioService`, `AutenticarUsuarioService`, `GestionarPerfilService` | Casos de uso de catálogo/identidad; puertos in/out independientes de frameworks |
+| application | `GestionarSesionService`, `GestionarRespuestaService`, `ProcesarRespuestasService`; `VistaSesion`, `VistaRespuesta` | Sesión/historial, confirmación idempotente, pipeline durable y proyecciones; sin Spring/JPA/Jackson/SDK |
+| infrastructure | `CatalogoJpaAdapter`, `UsuarioJpaAdapter`, `SesionJpaAdapter`, `ProcesamientoJpaAdapter`; ocho entidades y repositorios JPA | MySQL, transacciones cortas, PESSIMISTIC_WRITE, lotes y fencing |
+| infrastructure | `BCryptPasswordHasher`, `JwtTokenProvider`, `JwtAuthenticationFilter`, `IdentidadConfig`, `SecurityConfig` | Hash costo12, HS256/1800s, principal y configuración |
+| infrastructure | `S3AlmacenamientoVideoAdapter`, `FfprobeInspectorMultimediaAdapter`, `FfmpegExtractorAudioAdapter`, `OpenAiTranscripcionAdapter`, `OpenAiEvaluacionAdapter`, `WorkerRespuestas`, `RenovacionLeaseAdapter` | SDK S3 privado/firma, binarios multimedia, HTTP STT/LLM y worker/heartbeat |
+| presentation | `CatalogoController`, `AuthController`, `PerfilController`, `SesionController`, `RespuestaController`; DTO; handlers JSON | 14 operaciones REST, validación estructural y errores públicos; nunca cálculo de puntajes |
+
+## Mapa de las 12 interfaces Angular
+
+La interfaz MCK04 incluye catálogo y banco de preguntas. MCK05/06/07 son estados del mismo componente de captura dentro de la ruta de sesión; no se inventan rutas independientes. La vista técnica de detalle de sesión envuelve esos estados y sus enlaces.
+
+| Interfaz | Ruta | Componente real / comportamiento |
+| --- | --- | --- |
+| MCK01 Acceso | `/login` | `LoginComponent`, `AuthService`; correo/contraseña y JWT en memoria |
+| MCK02 Registro | `/registro` | `RegistroComponent`; confirmación y validadores Unicode/UTF-8 |
+| MCK03 Panel | `/panel` | `PanelComponent`; nueva/continuar, última completa, perfil e historial |
+| Perfil | `/perfil` | `PerfilComponent`; nombre/resumen editables, email readonly |
+| MCK04 Puesto | `/puestos`, `/puestos/:id/preguntas` | `CatalogoComponent`, `PreguntasComponent`, `IniciarPracticaComponent` |
+| MCK05 Preparación | `/sesiones/:id`, estado preparacion | `CapturaRespuestaComponent`, `GrabacionMediaService`; aviso, ambas pistas y preview |
+| MCK06 Grabación | `/sesiones/:id`, estado grabando | Mismos componentes; MediaRecorder, temporizador60s y STAR solo P2 |
+| MCK07 Revisión | `/sesiones/:id`, estado revision | Mismos componentes; Blob local, reproducir/repetir/confirmar y progreso |
+| MCK08 Procesamiento | `/sesiones/:idSesion/respuestas/:idRespuesta` | `ProcesamientoRespuestaComponent`; cuatro etapas y manual único |
+| MCK09 Resultado | `/sesiones/:idSesion/respuestas/:idRespuesta/resultado` | `ResultadoRespuestaComponent`; COM/STAR/MET/transcripción/video renovable |
+| Resumen de sesión | `/sesiones/:id/resumen` | `ResumenSesionComponent`; tres resultados, media completa o parcial sin promedio |
+| MCK10 Historial | `/historial` | `HistorialComponent`; filtros D-10, paginación, serie PM-17 y SVG/tabla accesibles |
+
+## Las 14 operaciones REST contractuales
+
+Todas bajo `/api/v1`. Las privadas derivan propietario del JWT; no aceptan id_usuario para decidir la propiedad. Registro/login/catálogo son públicos. Las restantes requieren usuario ACTIVO/POSTULANTE; recursos ajenos/inexistentes404.
+
+| Método y endpoint | Controlador / operación | Resultado esperado |
+| --- | --- | --- |
+| POST `/api/v1/auth/registro` | AuthController / registro | 201, perfil público POSTULANTE |
+| POST `/api/v1/auth/login` | AuthController / login | 200, token HS256 y expires_in1800 |
+| GET `/api/v1/perfil` | PerfilController / consultar | 200, perfil propio sin hash |
+| PATCH `/api/v1/perfil` | PerfilController / actualizar | 200, nombre/resumen persistidos |
+| GET `/api/v1/puestos` | CatalogoController / puestos | 200, tres puestos activos |
+| GET `/api/v1/puestos/{id}/preguntas` | CatalogoController / preguntas | 200, tres preguntas ordenadas |
+| POST `/api/v1/sesiones` | SesionController / crear | 201;409 si existe activa |
+| GET `/api/v1/sesiones` | SesionController / listar | 200, historial propio/filtros/indicadores/página |
+| GET `/api/v1/sesiones/{id}` | SesionController / consultar | 200, estado/preguntas/desglose/resumen |
+| POST `/api/v1/sesiones/{id}/cancelacion` | SesionController / cancelar | 200 idempotente;409 si COMPLETADA |
+| PUT `/api/v1/sesiones/{id}/preguntas/{idPregunta}/respuesta` | RespuestaController / confirmar | 202 multipart idempotente; misma respuesta si duplicada |
+| GET `/api/v1/respuestas/{id}` | RespuestaController / consultar | 200, etapas/resultados y elegibilidad manual |
+| POST `/api/v1/respuestas/{id}/reintento` | RespuestaController / reintentar | 200, ciclo2;409 si no elegible |
+| POST `/api/v1/respuestas/{id}/reproduccion` | RespuestaController / reproducir | 200, GET SigV4 de300s; Cache-Control:no-store |
+
+## Integración final del Incremento 10
+
+`scripts/pruebas/verificar-incremento-10-entregable.mjs` ejecuta H2, MySQL, package, medios y Angular AOT; levanta JAR/fixtures/servidor de assets y Chrome, luego consolida evidencias. `servidor-entregable.mjs` sirve dist y reenvía /api al JAR; no usa ng serve ni intercepta API. `recorrido-incremento10.mjs` recorre las12 interfaces y14 endpoints con20RF cubiertos, incluyendo3 capturas nativas y recuperación. Los procesos de prueba usan puertos18080/14200/19090/19091 y bases exclusivas en MySQL33307. Las propiedades de worker del recorrido aceleran el intervalo a1s/backoff1s; producción conserva2s/5s/15s, lease90s y heartbeat20s. No se añaden tablas, columnas, dependencias ni frameworks gráficos.
+
+La verificación local usa binarios y clientes reales sobre proveedores HTTP controlados. Bucket/IAM AWS, cuentas/modelos OpenAI de producción y hardware físico permanecen sin certificar. Los resultados de integración local no constituyen resultados de proveedores productivos.

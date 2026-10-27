@@ -1,65 +1,90 @@
 {
+  "fecha_utc": "2026-10-27T06:34:19.042456+00:00",
+  "alcance": "Incrementos 1 a 10",
   "backend": [
     {
       "groupId": "org.springframework.boot",
       "artifactId": "spring-boot-starter-web",
-      "version": "3.5.7"
+      "version": "3.5.7",
+      "scope": "compile",
+      "uso": "Los 5 controladores REST; DTO públicos"
     },
     {
       "groupId": "org.springframework.boot",
       "artifactId": "spring-boot-starter-validation",
-      "version": "3.5.7"
+      "version": "3.5.7",
+      "scope": "compile",
+      "uso": "DTO registro/perfil/sesión y parámetros de controladores"
     },
     {
       "groupId": "org.springframework.boot",
       "artifactId": "spring-boot-starter-data-jpa",
-      "version": "3.5.7"
+      "version": "3.5.7",
+      "scope": "compile",
+      "uso": "8 entidades/repositorios; SesionJpaAdapter y ProcesamientoJpaAdapter"
     },
     {
       "groupId": "org.springframework.boot",
       "artifactId": "spring-boot-starter-security",
-      "version": "3.5.7"
+      "version": "3.5.7",
+      "scope": "compile",
+      "uso": "SecurityConfig; BCryptPasswordHasher; JwtAuthenticationFilter"
     },
     {
       "groupId": "org.springframework.security",
       "artifactId": "spring-security-oauth2-jose",
-      "version": "6.5.6"
+      "version": "6.5.6",
+      "scope": "compile",
+      "uso": "JwtTokenProvider; IdentidadConfig"
     },
     {
       "groupId": "com.mysql",
       "artifactId": "mysql-connector-j",
-      "version": "9.4.0"
+      "version": "9.4.0",
+      "scope": "runtime",
+      "uso": "Datasource MySQL 8.4.13; JAR e integración"
     },
     {
       "groupId": "org.flywaydb",
       "artifactId": "flyway-core",
-      "version": "11.7.2"
+      "version": "11.7.2",
+      "scope": "compile",
+      "uso": "V1/V2 y validación de checksums"
     },
     {
       "groupId": "org.flywaydb",
       "artifactId": "flyway-mysql",
-      "version": "11.7.2"
+      "version": "11.7.2",
+      "scope": "compile",
+      "uso": "Mismas V1/V2 en MySQL"
     },
     {
       "groupId": "software.amazon.awssdk",
       "artifactId": "s3",
-      "version": "2.31.54"
+      "version": "2.31.54",
+      "scope": "compile",
+      "uso": "S3AlmacenamientoVideoAdapter; firma PA-04"
     },
     {
       "groupId": "org.springframework.boot",
       "artifactId": "spring-boot-starter-test",
-      "version": "3.5.7"
+      "version": "3.5.7",
+      "scope": "test",
+      "uso": "23 suites de dominio/arquitectura/adaptadores/presentación"
     },
     {
       "groupId": "com.h2database",
       "artifactId": "h2",
-      "version": "2.3.232"
+      "version": "2.3.232",
+      "scope": "test",
+      "uso": "Integración efímera con mismas V1/V2"
     }
   ],
   "frontend": {
     "@angular/common": "21.2.0",
     "@angular/compiler": "21.2.0",
     "@angular/core": "21.2.0",
+    "@angular/forms": "21.2.0",
     "@angular/platform-browser": "21.2.0",
     "@angular/router": "21.2.0",
     "rxjs": "7.8.2",
@@ -68,5 +93,220 @@
     "@angular/cli": "21.2.0",
     "@angular/compiler-cli": "21.2.0",
     "typescript": "5.9.3"
+  },
+  "frontend_detalle": [
+    {
+      "nombre": "@angular/common",
+      "version": "21.2.0",
+      "instalada": "21.2.0",
+      "categoria": "dependencies",
+      "uso": "HttpClient, DatePipe/DecimalPipe en historial/resumen/resultados"
+    },
+    {
+      "nombre": "@angular/compiler",
+      "version": "21.2.0",
+      "instalada": "21.2.0",
+      "categoria": "dependencies",
+      "uso": "Plantillas de todos los componentes"
+    },
+    {
+      "nombre": "@angular/core",
+      "version": "21.2.0",
+      "instalada": "21.2.0",
+      "categoria": "dependencies",
+      "uso": "Signals, DI; HistorialComponent, ResumenSesionComponent, ResultadoRespuestaComponent y resto de vistas"
+    },
+    {
+      "nombre": "@angular/forms",
+      "version": "21.2.0",
+      "instalada": "21.2.0",
+      "categoria": "dependencies",
+      "uso": "ReactiveFormsModule en identidad/perfil; FormsModule en HistorialComponent"
+    },
+    {
+      "nombre": "@angular/platform-browser",
+      "version": "21.2.0",
+      "instalada": "21.2.0",
+      "categoria": "dependencies",
+      "uso": "bootstrapApplication en main.ts"
+    },
+    {
+      "nombre": "@angular/router",
+      "version": "21.2.0",
+      "instalada": "21.2.0",
+      "categoria": "dependencies",
+      "uso": "12 interfaces, authGuard y navegación historial→resumen→resultado"
+    },
+    {
+      "nombre": "rxjs",
+      "version": "7.8.2",
+      "instalada": "7.8.2",
+      "categoria": "dependencies",
+      "uso": "switchMap/toSignal, sondeo y cancelación; HistorialComponent y ResumenSesionComponent"
+    },
+    {
+      "nombre": "tslib",
+      "version": "2.8.1",
+      "instalada": "2.8.1",
+      "categoria": "dependencies",
+      "uso": "Helpers de TypeScript"
+    },
+    {
+      "nombre": "@angular/build",
+      "version": "21.2.0",
+      "instalada": "21.2.0",
+      "categoria": "devDependencies",
+      "uso": "Build de producción AOT"
+    },
+    {
+      "nombre": "@angular/cli",
+      "version": "21.2.0",
+      "instalada": "21.2.0",
+      "categoria": "devDependencies",
+      "uso": "Comandos ng build/serve"
+    },
+    {
+      "nombre": "@angular/compiler-cli",
+      "version": "21.2.0",
+      "instalada": "21.2.0",
+      "categoria": "devDependencies",
+      "uso": "AOT y validación de plantillas"
+    },
+    {
+      "nombre": "typescript",
+      "version": "5.9.3",
+      "instalada": "5.9.3",
+      "categoria": "devDependencies",
+      "uso": "Comprobación estricta de tipos y tests de medios"
+    }
+  ],
+  "librerias_runtime_jar": [
+    "HikariCP-6.3.3.jar",
+    "angus-activation-2.0.3.jar",
+    "annotations-2.31.54.jar",
+    "antlr4-runtime-4.13.0.jar",
+    "apache-client-2.31.54.jar",
+    "arns-2.31.54.jar",
+    "aspectjweaver-1.9.24.jar",
+    "auth-2.31.54.jar",
+    "aws-core-2.31.54.jar",
+    "aws-query-protocol-2.31.54.jar",
+    "aws-xml-protocol-2.31.54.jar",
+    "byte-buddy-1.17.8.jar",
+    "checksums-2.31.54.jar",
+    "checksums-spi-2.31.54.jar",
+    "classmate-1.7.1.jar",
+    "commons-codec-1.18.0.jar",
+    "commons-logging-1.2.jar",
+    "crt-core-2.31.54.jar",
+    "endpoints-spi-2.31.54.jar",
+    "eventstream-1.0.1.jar",
+    "flyway-core-11.7.2.jar",
+    "flyway-mysql-11.7.2.jar",
+    "hibernate-commons-annotations-7.0.3.Final.jar",
+    "hibernate-core-6.6.33.Final.jar",
+    "hibernate-validator-8.0.3.Final.jar",
+    "http-auth-2.31.54.jar",
+    "http-auth-aws-2.31.54.jar",
+    "http-auth-aws-eventstream-2.31.54.jar",
+    "http-auth-spi-2.31.54.jar",
+    "http-client-spi-2.31.54.jar",
+    "httpclient-4.5.13.jar",
+    "httpcore-4.4.16.jar",
+    "identity-spi-2.31.54.jar",
+    "istack-commons-runtime-4.1.2.jar",
+    "jackson-annotations-2.19.2.jar",
+    "jackson-core-2.19.2.jar",
+    "jackson-databind-2.19.2.jar",
+    "jackson-dataformat-toml-2.19.2.jar",
+    "jackson-datatype-jdk8-2.19.2.jar",
+    "jackson-datatype-jsr310-2.19.2.jar",
+    "jackson-module-parameter-names-2.19.2.jar",
+    "jakarta.activation-api-2.1.4.jar",
+    "jakarta.annotation-api-2.1.1.jar",
+    "jakarta.inject-api-2.0.1.jar",
+    "jakarta.persistence-api-3.1.0.jar",
+    "jakarta.transaction-api-2.0.1.jar",
+    "jakarta.validation-api-3.0.2.jar",
+    "jakarta.xml.bind-api-4.0.4.jar",
+    "jandex-3.2.0.jar",
+    "jaxb-core-4.0.6.jar",
+    "jaxb-runtime-4.0.6.jar",
+    "jboss-logging-3.6.1.Final.jar",
+    "jcip-annotations-1.0-1.jar",
+    "json-utils-2.31.54.jar",
+    "jul-to-slf4j-2.0.17.jar",
+    "log4j-api-2.24.3.jar",
+    "log4j-to-slf4j-2.24.3.jar",
+    "logback-classic-1.5.20.jar",
+    "logback-core-1.5.20.jar",
+    "metrics-spi-2.31.54.jar",
+    "micrometer-commons-1.15.5.jar",
+    "micrometer-observation-1.15.5.jar",
+    "mysql-connector-j-9.4.0.jar",
+    "netty-buffer-4.1.128.Final.jar",
+    "netty-codec-4.1.128.Final.jar",
+    "netty-codec-http-4.1.128.Final.jar",
+    "netty-codec-http2-4.1.128.Final.jar",
+    "netty-common-4.1.128.Final.jar",
+    "netty-handler-4.1.128.Final.jar",
+    "netty-nio-client-2.31.54.jar",
+    "netty-resolver-4.1.128.Final.jar",
+    "netty-transport-4.1.128.Final.jar",
+    "netty-transport-classes-epoll-4.1.128.Final.jar",
+    "netty-transport-native-unix-common-4.1.128.Final.jar",
+    "nimbus-jose-jwt-9.37.4.jar",
+    "profiles-2.31.54.jar",
+    "protocol-core-2.31.54.jar",
+    "reactive-streams-1.0.4.jar",
+    "regions-2.31.54.jar",
+    "retries-2.31.54.jar",
+    "retries-spi-2.31.54.jar",
+    "s3-2.31.54.jar",
+    "sdk-core-2.31.54.jar",
+    "slf4j-api-2.0.17.jar",
+    "snakeyaml-2.4.jar",
+    "spring-aop-6.2.12.jar",
+    "spring-aspects-6.2.12.jar",
+    "spring-beans-6.2.12.jar",
+    "spring-boot-3.5.7.jar",
+    "spring-boot-autoconfigure-3.5.7.jar",
+    "spring-boot-jarmode-tools-3.5.7.jar",
+    "spring-context-6.2.12.jar",
+    "spring-core-6.2.12.jar",
+    "spring-data-commons-3.5.5.jar",
+    "spring-data-jpa-3.5.5.jar",
+    "spring-expression-6.2.12.jar",
+    "spring-jcl-6.2.12.jar",
+    "spring-jdbc-6.2.12.jar",
+    "spring-orm-6.2.12.jar",
+    "spring-security-config-6.5.6.jar",
+    "spring-security-core-6.5.6.jar",
+    "spring-security-crypto-6.5.6.jar",
+    "spring-security-oauth2-core-6.5.6.jar",
+    "spring-security-oauth2-jose-6.5.6.jar",
+    "spring-security-web-6.5.6.jar",
+    "spring-tx-6.2.12.jar",
+    "spring-web-6.2.12.jar",
+    "spring-webmvc-6.2.12.jar",
+    "third-party-jackson-core-2.31.54.jar",
+    "tomcat-embed-core-10.1.48.jar",
+    "tomcat-embed-el-10.1.48.jar",
+    "tomcat-embed-websocket-10.1.48.jar",
+    "txw2-4.0.6.jar",
+    "utils-2.31.54.jar"
+  ],
+  "fuente_backend": "POM efectivo recién resuelto y BOOT-INF/lib del JAR ejecutado",
+  "fuente_frontend": "package.json + package-lock.json + node_modules (igualdad comprobada)",
+  "java_puro": "CalculadoraEvolucionHistorial, FiltroHistorial, CalculadorMetricas y ValidadorEvaluacion: JDK17, sin dependencias externas",
+  "herramientas": {
+    "chrome": "156.0.8078.47",
+    "playwright": "1.64.1",
+    "mysql": "8.4.13",
+    "ffmpeg": "ffmpeg version 9.0.2-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+    "ffprobe": "ffprobe version 9.0.2-essentials_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers",
+    "maven": "3.9.9",
+    "python": "3.13.7",
+    "node": "v24.19.0"
   }
 }

@@ -1,8 +1,8 @@
-# Entrevista Pro 360 — Incrementos 1 a 9
+# Entrevista Pro 360 — Incrementos 1 a 10 (Entrega Final del Tercer Entregable)
 
 MVP universitario con Spring Boot de cuatro capas, MySQL/Flyway y Angular VIS-1.0. El worker PROC-1.0 extrae WAV, transcribe, calcula MET-1.0 y evalúa EVAL-1.0/COM-1.0. MCK08 sigue el avance; MCK09 muestra resultado y video privado por URL firmada. Al validar las tres respuestas, cierra atómicamente la sesión a COMPLETADA con promedio global. El Resumen de sesión muestra el desglose y conserva los resultados de sesiones canceladas sin inventar promedio ni ceros.
 
-MCK10 (`/historial`) permite consultar sesiones propias con filtros D-10 y paginación. La comparación PM-17 requiere puesto y COM-1.0, usa todas las sesiones completas filtradas antes de paginar y muestra indicadores, gráfico SVG y tabla cronológica. **20/20 RF implementados y comprobados localmente**, con auditoría del Incremento 9 pendiente; proveedores de producción sin certificar.
+MCK10 (`/historial`) permite consultar sesiones propias con filtros D-10 y paginación. La comparación PM-17 requiere puesto y COM-1.0, usa todas las sesiones completas filtradas antes de paginar y muestra indicadores, gráfico SVG y tabla cronológica. **20/20 RF implementados y comprobados localmente**, Incremento 9 auditado y aprobado sin observaciones y publicado como `dcfb66d`; Incremento 10 auditado y aprobado sin observaciones por el Orquestador (cierre del tercer entregable en main). Proveedores de producción sin certificar.
 
 ## Requisitos
 
@@ -11,10 +11,10 @@ MCK10 (`/historial`) permite consultar sesiones propias con filtros D-10 y pagin
 | Java JDK | 17 (compilación objetivo); JDK 21 también puede compilar para 17 |
 | Maven | 3.6.3 o superior; verificación realizada con 3.9.9 |
 | Node.js | 20.19+, 22.12+ o 24.x, según compatibilidad de Angular 21 |
-| npm | Incluido con Node; usar `npm ci` con el lock entregado |
-| Angular CLI | 21.2.0 local, instalado mediante `npm ci`; no requiere instalación global |
+| npm | Incluido con Node; usar `npm.cmd ci` con el lock entregado |
+| Angular CLI | 21.2.0 local, instalado mediante `npm.cmd ci`; no requiere instalación global |
 | MySQL | 8.4; verificado con 8.4.13 en una base exclusiva y usuario autorizado para migraciones |
-| Git | Incrementos 1 a 8 publicados; Incremento 9 sin commit ni staging para auditoría |
+| Git | Incrementos 1 a 10: cierre del tercer entregable en main y publicación en origin/main |
 | Navegador y dispositivos | Cámara + micrófono; `getUserMedia` y MediaRecorder con uno de los tres formatos negociados. Usar localhost/loopback o HTTPS |
 | ffprobe / ffmpeg | 9.0.2 portable verificado: inspección de uploads y extracción WAV PCM s16le, mono, 16 kHz |
 
@@ -30,7 +30,7 @@ CREATE USER 'entrevista'@'localhost' IDENTIFIED BY 'CAMBIAR_LOCALMENTE';
 GRANT ALL PRIVILEGES ON entrevista_pro_360.* TO 'entrevista'@'localhost';
 ```
 
-No importes V1/V2 manualmente. Flyway los ejecuta una sola vez al iniciar y valida sus checksums. Las ocho tablas de negocio suman 68 columnas; la tabla técnica de Flyway es adicional. No cambies una migración ya aplicada: agrega V3 cuando corresponda.
+No importes V1/V2 manualmente. Flyway los ejecuta una sola vez al iniciar y valida sus checksums. Las ocho tablas de negocio suman 68 columnas; la tabla técnica de Flyway es adicional. V1 y V2 son invariantes del MVP: no modificarlas ni agregar V3+. Hibernate conserva ddl-auto=validate.
 
 ## 2. Configuración de entorno
 
@@ -78,19 +78,19 @@ En otro terminal desde la raíz:
 
 ```powershell
 cd frontend
-npm ci
-npm start
+npm.cmd ci
+npm.cmd start
 ```
 
 Abre [http://localhost:4200](http://localhost:4200). `proxy.conf.json` reenvía `/api/**` a `127.0.0.1:8080`. El backend debe estar iniciado para obtener datos. Puedes seleccionar cualquier puesto y leer sus tres preguntas; no hay datos de respaldo simulados. Si el servidor no responde, se muestra un error con reintento.
 
-Recorrido del Incremento 2: `/registro` → `/login` → `/panel` → `/perfil`. Las contraseñas requieren 12 puntos de código Unicode como mínimo y 72 bytes UTF-8 como máximo; sus espacios se conservan. Confirmación debe coincidir exactamente. Tras registrarte inicia sesión con esas credenciales. En el perfil solo se editan nombre y resumen; el correo es de solo lectura.
+Identidad y perfil: `/registro` → `/login` → `/panel` → `/perfil`. Las contraseñas requieren 12 puntos de código Unicode como mínimo y 72 bytes UTF-8 como máximo; sus espacios se conservan. Confirmación debe coincidir exactamente. Tras registrarte inicia sesión con esas credenciales. En el perfil solo se editan nombre y resumen; el correo es de solo lectura.
 
-Recorrido del Incremento 3: `/panel` → **Nueva práctica** → `/puestos` → **Ver preguntas** o **Iniciar práctica** → `/sesiones/:id`. La pregunta 1 queda disponible; la siguiente solo se habilita cuando la anterior tiene una respuesta persistida en `EVALUADO`. Este incremento no graba ni sube videos. Mientras exista una sesión pendiente, panel/catálogo/preguntas permiten continuarla o finalizarla con confirmación explícita. Cancelar conserva las respuestas y no genera promedio; después se puede crear otra práctica. Dos POST concurrentes para el mismo usuario producen un 201 y un 409 bajo bloqueo pesimista de su fila en MySQL.
+Catálogo y sesión: `/panel` → **Nueva práctica** → `/puestos` → **Ver preguntas** o **Iniciar práctica** → `/sesiones/:id`. La pregunta 1 queda disponible; la siguiente solo se habilita cuando la anterior tiene una respuesta persistida en `EVALUADO`. Mientras exista una sesión pendiente, panel/catálogo/preguntas permiten continuarla o finalizarla con confirmación explícita. Cancelar conserva las respuestas y no genera promedio; después se puede crear otra práctica. Dos POST concurrentes para el mismo usuario producen un 201 y un 409 bajo bloqueo pesimista de su fila en MySQL.
 
-Recorrido del Incremento 4 dentro de la pregunta habilitada:
+Captura dentro de la pregunta habilitada:
 
-1. Lee el aviso de procesamiento futuro y pulsa **Comprobar cámara y micrófono**. Autoriza ambos dispositivos; se comprueban pistas vivas y se muestra una vista previa silenciada. Si deniegas el acceso, cambia los permisos en el navegador y pulsa **Volver a intentar permisos**.
+1. Lee el aviso de privacidad y procesamiento y pulsa **Comprobar cámara y micrófono**. Autoriza ambos dispositivos; se comprueban pistas vivas y se muestra una vista previa silenciada. Si deniegas el acceso, cambia los permisos en el navegador y pulsa **Volver a intentar permisos**.
 2. Pulsa **Iniciar grabación**. Mantén el contexto de puesto, pregunta, competencia y guía STAR cuando corresponda. El contador usa un reloj monotónico y detiene automáticamente al borde de 60 s; puedes pulsar **Detener grabación** antes.
 3. Reproduce la toma con imagen/audio y revisa duración, formato y bytes. Se exige `1 <= duración <= 60` y `0 < bytes < 50_000_000`. **Volver a grabar** descarta y revoca la toma local y vuelve a preparar la misma pregunta.
 
@@ -113,8 +113,8 @@ cd backend
 mvn test
 mvn package
 cd ..\frontend
-npm run test:media
-npm run build
+npm.cmd run test:media
+npm.cmd run build
 ```
 
 `mvn test` utiliza H2 y las mismas migraciones Flyway, sin AWS/OpenAI. Comprueba dominio, capas, JWT, BCrypt, registro, perfil, catálogo y sesiones, incluida concurrencia HTTP real. Las dos pruebas específicas de MySQL se omiten en este modo. Integración usa BCrypt de costo 4; otra prueba comprueba costo 12. H2 no certifica todos los tipos de MySQL. Si conservas `TEST_DB_URL` de una ejecución anterior, elimina esa variable antes del pase H2 (`Remove-Item Env:TEST_DB_URL`).
@@ -149,6 +149,48 @@ El JAR queda en `backend/target/entrevista-pro-360-0.1.0-SNAPSHOT.jar`. Carga la
 - [Verificación del Incremento 8](docs/verificacion_incremento_8.md).
 - [Verificación del Incremento 9](docs/verificacion_incremento_9.md).
 
-Los Incrementos 1 a 8 están publicados en [Luayzzhub/entrevista-pro-360](https://github.com/Luayzzhub/entrevista-pro-360). El Incremento 8 fue AUDITADO Y APROBADO SIN OBSERVACIONES y publicado como a05ca28d539eadb8af1b5a2c1b27e050fdc6fef3. HEAD y remoto coincidieron y el árbol quedó limpio antes de iniciar el 9. El Incremento 9 queda SIN COMMIT ni staging para auditoría. Los informes anteriores conservan su alcance histórico; la documentación de diseño original permanece fuera del repositorio.
+Los Incrementos 1 a 10 se consolidan en main y origin/main en [Luayzzhub/entrevista-pro-360](https://github.com/Luayzzhub/entrevista-pro-360). El Incremento 9 fue **AUDITADO Y APROBADO SIN OBSERVACIONES** y publicado como `dcfb66ddc8503db435ac6233c47e1280f27b083a`. HEAD y origin/main coincidieron y el árbol quedó limpio antes de iniciar el 10. El Incremento 10 fue **AUDITADO Y APROBADO SIN OBSERVACIONES** por el Orquestador; cierra el tercer entregable con el commit `feat: consolidar integracion final E2E, matriz 20/20 RF y evidencias del tercer entregable`. Los informes anteriores conservan su alcance histórico; la documentación de diseño original permanece fuera del repositorio.
 
 El worker está habilitado por defecto. Propiedades de integraciones: worker-habilitado=true, worker-intervalo-ms=2000, worker-heartbeat-ms=20000, worker-backoff-1-segundos=5 y worker-backoff-2-segundos=15. FFMPEG_BIN selecciona el ejecutable de extracción, también resuelto desde .tools/ffmpeg. La invocación secuencial evita acumular trabajos ffmpeg; el heartbeat dispone de su propio hilo.
+
+
+## 6. Demostración reproducible del tercer entregable (Incremento 10)
+
+Desde la raíz, con los prerrequisitos de este entorno local ya preparados:
+
+```powershell
+node scripts/pruebas/verificar-incremento-10-entregable.mjs
+# Revalidar los artefactos existentes y regenerar informe/matriz/versiones/JSON:
+python scripts/pruebas/registrar-evidencias-incremento10.py
+```
+
+El comando integral ejecuta las pruebas H2 y MySQL8.4.13, empaqueta el JAR, ejecuta los6 tests de medios y construye Angular AOT de producción. Inicia MySQL33307 solo si hace falta, JAR18080, servidor de assets14200, fixture S3 SDK19090 y STT/LLM HTTP19091; ejecuta Chrome headless y detiene únicamente sus procesos. Usa bases exclusivas `ep360_incremento10_test` y `ep360_incremento10_browser`, conserva los datos browser y no borra bases. Rechaza puertos ocupados por otros procesos. El root sin contraseña corresponde únicamente al datadir local de pruebas.
+
+Prerrequisitos no versionados: `.tools/apache-maven-3.9.9`, `.tools/m2`, `.tools/mysql84` y `.tools/mysql84-data` inicializado, `.tools/ffmpeg`, Chrome portátil en `.tools/chrome-for-testing/chrome-win64/chrome.exe` y Playwright1.64.1 en `.tools/browser-check/node_modules`. Frontend instalado con `npm.cmd ci`; JDK17 por JAVA_HOME o `C:/Program Files/Java/jdk-17`. EP360_CHROME_BIN y EP360_PYTHON_BIN permiten rutas alternativas. La suite no descarga herramientas ni altera dependencias. Si el entorno de ejecución bloquea TCP/procesos locales, necesita permiso de ejecución fuera del sandbox. No se incluyen binarios ni secretos en Git.
+
+El recorrido completo es **MCK02 registro → MCK01 acceso → MCK03 panel → Perfil → MCK04 puestos/preguntas → MCK05 permisos y privacidad → MCK06 grabación → MCK07 revisión/repetición/confirmación → MCK08 cuatro etapas → MCK09 resultado**, repetido P1/P2/P3 (STAR solo P2), **Resumen de sesión → MCK10 historial/filtros/comparación → resumen/resultado propios → cerrar sesión**. La automatización usa permisos y dispositivos emulados de Chrome con MediaRecorder/ffmpeg/ffprobe reales. Otras sesiones creadas por API completan PM-17 y la media HALF_UP; una sesión con fallo STT comprueba reintento manual y cancelación con resultados conservados sin promedio. Las12 interfaces y14 operaciones están inventariadas en arquitectura.md.
+
+Para ejecutar individualmente con Maven local desde backend:
+
+```powershell
+$env:JAVA_HOME='C:\Program Files\Java\jdk-17'
+$env:FFMPEG_BIN=(Resolve-Path '..\.tools\ffmpeg\ffmpeg.exe').Path
+$env:FFPROBE_BIN=(Resolve-Path '..\.tools\ffmpeg\ffprobe.exe').Path
+Remove-Item Env:TEST_DB_URL -ErrorAction SilentlyContinue
+..\.tools\apache-maven-3.9.9\bin\mvn.cmd '-Dmaven.repo.local=../.tools/m2' -B -ntp test
+# Con MySQL8.4.13 corriendo y la base exclusiva creada:
+$env:TEST_DB_URL='jdbc:mysql://127.0.0.1:33307/ep360_incremento10_test?connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true'
+$env:TEST_DB_USERNAME='root'
+$env:TEST_DB_PASSWORD=''
+..\.tools\apache-maven-3.9.9\bin\mvn.cmd '-Dmaven.repo.local=../.tools/m2' '-Dspring.profiles.active=mysql' -B -ntp test
+```
+
+Desde frontend: `npm.cmd run test:media` y `npm.cmd run build`. El runner integral separa las variables y snapshots XML H2/MySQL, registra salidas y códigos, y valida invariantes. No realiza git add, commit ni push del Incremento10.
+
+Paquete final: [Informe10](docs/verificacion_incremento_10.md), [evidencia consolidada](docs/evidencias/pruebas-incremento-10.json), [Chrome](docs/evidencias/pruebas-browser-incremento-10.json), [trazabilidad20RF y4 criterios](docs/matriz_evidencias_rf.md), [versiones exactas](docs/evidencias/versiones-resueltas.json). Los JSON incluyen hashes del JAR/build/scripts, resultados y alcance. Logs, XML y capturas originales permanecen en `.tools/inc10-*` ignorado. **20/20 verificados localmente** no certifica AWS bucket/IAM, cuentas/modelos OpenAI en producción ni hardware físico.
+
+## Estado del incremento final
+
+| Incremento | Estado | Referencia Git |
+| --- | --- | --- |
+| Incremento 10 | Auditado y aprobado (cierre del tercer entregable en main) | main; consultar el hash final con git log -n 10 --oneline |

@@ -1,4 +1,4 @@
-# Dependencias hasta el Incremento 9
+# Dependencias — Incrementos 1 a 10 (Tercer Entregable)
 
 Las versiones del backend provienen de `backend/pom.xml` y del BOM `spring-boot-dependencies:3.5.7` resuelto por Maven. Las del frontend están fijadas sin rangos en `frontend/package.json` y resueltas en `frontend/package-lock.json`. No se atribuye uso funcional a dependencias reservadas.
 
@@ -9,12 +9,12 @@ Las versiones del backend provienen de `backend/pom.xml` y del BOM `spring-boot-
 | Java JDK | Backend completo | release 17; JDK de verificación 17.0.12 | Records, tipos de negocio y ejecución JVM | `domain/*.java`, `pom.xml` |
 | Maven | Construcción | 3.9.9 utilizado; mínimo 3.6.3 | Resolver dependencias, compilar, probar y empaquetar | `backend/pom.xml` |
 | Spring Boot parent / Maven plugin | Composición/build | 3.5.7 | Autoconfiguración y JAR ejecutable | `EntrevistaPro360Application.java`, `pom.xml` |
-| `spring-boot-starter-web` | Presentación | 3.5.7; Spring MVC/Web 6.2.12 | HTTP REST, despacho de solicitudes y JSON | `CatalogoController`, `GlobalExceptionHandler` |
-| `spring-boot-starter-validation` | Presentación | 3.5.7; Hibernate Validator 8.0.3.Final | Validar el ID positivo | `CatalogoController.preguntas` con `@Positive` |
+| `spring-boot-starter-web` | Presentación | 3.5.7; Spring MVC/Web 6.2.12 | HTTP REST, despacho de solicitudes y JSON | `CatalogoController`, `AuthController`, `PerfilController`, `SesionController`, `RespuestaController`, handlers JSON |
+| `spring-boot-starter-validation` | Presentación | 3.5.7; Hibernate Validator 8.0.3.Final | Validar DTO de identidad/perfil/sesión, IDs y parámetros | DTO de registro/perfil/sesión; controladores con `@Positive` |
 | `spring-boot-starter-data-jpa` | Infraestructura | 3.5.7; Spring Data JPA 3.5.5; Hibernate ORM 6.6.33.Final | Catálogo, identidad, sesiones y pipeline, transacciones y PESSIMISTIC_WRITE | Adaptadores de catálogo/usuario/sesión y ProcesamientoJpaAdapter; ocho entidades/repositorios, locks de sesión y respuesta |
 | `spring-boot-starter-security` | Infraestructura/presentación | 3.5.7; Spring Security 6.5.6 | Cadena stateless, autenticación JWT y hash BCrypt con costo 12 por defecto | `SecurityConfig`, `JwtAuthenticationFilter`, `BCryptPasswordHasher`, `SecurityExceptionHandler` |
 | `spring-security-oauth2-jose` | Infraestructura / identidad | 6.5.6, gestionada por Boot | Emitir y verificar JWT HS256, issuer y vigencia exacta | `IdentidadConfig` (`NimbusJwtEncoder`, `NimbusJwtDecoder`), `JwtTokenProvider`, `JwtAuthenticationFilter` |
-| `mysql-connector-j` | Infraestructura, runtime | 9.4.0, gestionada por Boot | JDBC hacia MySQL | application.yml, datasource y adaptadores JPA; servidor 8.4.13 verificado en Incremento 6 |
+| `mysql-connector-j` | Infraestructura, runtime | 9.4.0, gestionada por Boot | JDBC hacia MySQL | application.yml, datasource y adaptadores JPA; servidor 8.4.13 verificado nuevamente en Incremento 10 |
 | `flyway-core` | Infraestructura | 11.7.2, gestionada por Boot | Historial, validación y aplicación de migraciones | `db/migration/V1__esquema_inicial.sql`, `V2__catalogo_semilla.sql`, `application.yml` |
 | `flyway-mysql` | Infraestructura | 11.7.2, gestionada por Boot | Soporte específico del motor MySQL para Flyway | Mismas migraciones al iniciar con MySQL |
 | software.amazon.awssdk:s3 | Infraestructura de almacenamiento | 2.31.54, ya declarada | S3Client real, firma, PUT condicional, HEAD/reconciliación y DELETE | AlmacenamientoConfig, S3AlmacenamientoVideoAdapter y pruebas con HTTP local |
@@ -23,7 +23,7 @@ Las versiones del backend provienen de `backend/pom.xml` y del BOM `spring-boot-
 | Jackson Databind | Presentación, transitiva de Web | 2.19.2 | Serializar DTO y errores con nombres estables | DTO `ApiError`, `SecurityExceptionHandler`, estrategia `SNAKE_CASE` |
 | `spring-boot-starter-test` | Pruebas | 3.5.7; JUnit Jupiter 5.12.2 | Integración Spring, MockMvc y aserciones | `CatalogoIntegrationTest`, `PuestoPreguntaTest`, `LayerDependenciesTest`, `MySqlSchemaIntegrationTest` |
 | H2 | Pruebas únicamente | 2.3.232, gestionada por Boot | Base efímera en modo MySQL para `mvn test` sin servicios externos | `src/test/resources/application.yml`; usa las migraciones originales |
-| MySQL Server | Persistencia externa | 8.4.13 utilizado en Incremento 6; 8.0.44 en informes anteriores | Esquema real, restricciones, claims y pipeline | Perfil mysql y JAR con datadir/base aislados |
+| MySQL Server | Persistencia externa | 8.4.13 utilizado en Incremento 10; 8.0.44 en informes históricos | Esquema real, restricciones, claims y pipeline | Perfil mysql y JAR con datadir/base aislados |
 
 Los starters declaran su versión mediante el parent. Las transitivas listadas explican el uso efectivo; no se añaden dependencias explícitas redundantes para Jackson, Hibernate o JUnit. La tabla no es un inventario de todas las transitivas.
 
@@ -32,13 +32,13 @@ Los starters declaran su versión mediante el parent. Las transitivas listadas e
 | Librería/Herramienta | Capa/Módulo | Versión declarada / instalada | Propósito técnico | Componente/archivo real que la utiliza en este incremento |
 | --- | --- | --- | --- | --- |
 | Node.js / npm | Construcción | Node 24.19.0; npm 11.17.0 utilizados | Instalación y ejecución de Angular CLI | `package.json`, `package-lock.json` |
-| `@angular/core` | Aplicación | 21.2.0 | Componentes standalone, inyección y señales sin Zone.js | `app.config.ts`, `app.component.ts`, componentes de catálogo/preguntas |
-| `@angular/common` | Core HTTP / presentación | 21.2.0 | HttpClient, interceptores, DatePipe UTC y DecimalPipe con dos decimales | `ApiClient`, `SesionService`, `SesionComponent`, `PanelComponent`, servicios de identidad |
-| `@angular/forms` | Identidad y perfil | 21.2.0 | Formularios reactivos, validadores y mensajes por campo | `login.component.ts`, `registro.component.ts`, `perfil.component.ts`, `shared/usuario.validators.ts` |
+| `@angular/core` | Aplicación | 21.2.0 | Componentes standalone, inyección y señales sin Zone.js | `app.config.ts`, `app.component.ts`, `HistorialComponent`, `ResumenSesionComponent`, `ResultadoRespuestaComponent` y resto de componentes |
+| `@angular/common` | Core HTTP / presentación | 21.2.0 | HttpClient, interceptores, DatePipe UTC y DecimalPipe con dos decimales | `SesionService`, `HistorialComponent`, `ResumenSesionComponent`, `ResultadoRespuestaComponent`, servicios HTTP |
+| `@angular/forms` | Identidad, perfil e historial | 21.2.0 | Formularios reactivos y FormsModule para filtros | `LoginComponent`, `RegistroComponent`, `PerfilComponent`, `HistorialComponent`, validadores compartidos |
 | `@angular/compiler` | Compilación Angular | 21.2.0 | Compilación de plantillas | Plantillas de componentes, procesadas por CLI/compiler-cli |
 | `@angular/platform-browser` | Arranque | 21.2.0 | Bootstrap de aplicación web | `src/main.ts` |
-| `@angular/router` | Navegación | 21.2.0 | Rutas diferidas, parámetros, enlaces y títulos | `app.routes.ts`, `preguntas.component.ts`, `public-header.component.ts` |
-| `rxjs` | Consultas y estado | 7.8.2 | Streams HTTP, cancelación de solicitudes anteriores y reintento explícito | `catalogo.service.ts`, `catalogo.component.ts`, `preguntas.component.ts`, interceptor |
+| `@angular/router` | Navegación | 21.2.0 | Rutas diferidas, parámetros, enlaces y títulos | `app.routes.ts`, `HistorialComponent`, `ResumenSesionComponent`, `ResultadoRespuestaComponent`, cabeceras y guards |
+| `rxjs` | Consultas y estado | 7.8.2 | Streams HTTP, cancelación de solicitudes anteriores y reintento explícito | `HistorialComponent`, `ResumenSesionComponent`, `ResultadoRespuestaComponent`, servicios e interceptores |
 | `tslib` | Runtime generado | 2.8.1 | Helpers compartidos de TypeScript | Compilación con `importHelpers: true` en `tsconfig.json` |
 | `@angular/build` | Build/serve | 21.2.0 | Compilación de producción y servidor de desarrollo | Builders `application` y `dev-server` de `angular.json` |
 | `@angular/cli` | Herramientas | 21.2.0 | Comandos `ng build` y `ng serve` | Scripts `build` y `start` de `package.json` |
@@ -52,7 +52,7 @@ Los starters declaran su versión mediante el parent. Las transitivas listadas e
 
 `ReactiveFormsModule` está activo en las tres pantallas de formulario. Los validadores de contraseña cuentan puntos de código y bytes UTF-8 sin recortar espacios. No se instala un SDK OpenAI en el frontend ni se envían secretos de proveedores al navegador. El Bearer token propio se conserva únicamente en memoria.
 
-## Integraciones activas y evaluación pendiente
+## Integraciones activas y validación productiva pendiente
 
 | Librería/Herramienta | Capa/Módulo | Versión declarada | Propósito técnico | Estado/archivo real |
 | --- | --- | --- | --- | --- |
@@ -72,7 +72,7 @@ Desde `backend/`, `mvn help:effective-pom` muestra las dependencias resueltas; `
 
 No se añadieron dependencias Maven en el Incremento 2: se activó JOSE, ya declarado, y se añadió solamente `@angular/forms` al manifiesto npm. `UsuarioTest`, `AuthPerfilIntegrationTest` e `IdentidadConfigTest` amplían la verificación automatizada con las dependencias de prueba existentes.
 
-El Incremento 3 no añade dependencias Maven/npm: reutiliza JPA (`@Lock`), Spring Transaction (`@Transactional`, READ_COMMITTED), Hibernate JSON, Web/TestRestTemplate para HTTP real y `java.util.concurrent` para la barrera/solicitudes de la prueba concurrente. `Clock` del JDK sigue inyectado en los casos de uso. Los nuevos consumidores son `GestionarSesionService`, `SesionJpaAdapter`, `SesionController`, `SesionEntrevistaTest` y `SesionIntegrationTest`. Frontend reutiliza RxJS/signals, HttpClient, Router y pipes de Angular. SDK S3 permanece reservado.
+El Incremento 3 no añade dependencias Maven/npm: reutiliza JPA (`@Lock`), Spring Transaction (`@Transactional`, READ_COMMITTED), Hibernate JSON, Web/TestRestTemplate para HTTP real y `java.util.concurrent` para la barrera/solicitudes de la prueba concurrente. `Clock` del JDK sigue inyectado en los casos de uso. Los nuevos consumidores son `GestionarSesionService`, `SesionJpaAdapter`, `SesionController`, `SesionEntrevistaTest` y `SesionIntegrationTest`. Frontend reutiliza RxJS/signals, HttpClient, Router y pipes de Angular. El SDK S3 se activó en el Incremento 5 y continúa activo en la entrega final.
 
 El Incremento 4 no añade dependencias Maven/npm al proyecto ni modifica el lock. Usa signals, `DestroyRef`, `viewChild`, DecimalPipe y Web APIs del navegador. Las pruebas puras utilizan el compilador TypeScript ya instalado y el runner de Node. La verificación de navegador usa Chrome instalado y Playwright en `.tools/browser-check` (auxiliar ignorado, separado de las dependencias de la aplicación), con dispositivos emulados por Chromium y grabaciones reales. Las versiones utilizadas y sus resultados están en `evidencias/pruebas-incremento-4.json`. S3, ffprobe y proveedores de IA no se invocan desde la captura local.
 
@@ -81,3 +81,20 @@ El Incremento 5 activa el SDK S3 existente sin añadir dependencias: el cliente 
 ## Historial y evolución: Incremento 9
 
 Sin nuevas dependencias ni cambios en POM, package.json o lock. Domain/application reutilizan BigDecimal, RoundingMode, java.time (America/Lima→UTC) y colecciones. Infraestructura reutiliza consultas Spring Data por lotes; presentación usa RequestParam/DateTimeFormat existentes. Angular reutiliza FormsModule, RxJS/switchMap/toSignal, DatePipe/DecimalPipe y SVG nativo accesible, sin librería gráfica adicional. Chrome/Playwright y ffmpeg auxiliares permanecen en .tools ignorado. Pruebas: H2 192 ejecutadas/2 omitidas; MySQL8.4.13 194 ejecutadas; medios6; Chrome9 escenarios sin errores de consola/página.
+
+
+## Integración final y consumidores del Incremento 10
+
+No se modifica backend/pom.xml, frontend/package.json ni package-lock.json. `evidencias/versiones-resueltas.json` se regenera desde el POM efectivo recién resuelto y registra los JAR exactos de BOOT-INF/lib; para cada paquete directo frontend comprueba igualdad entre versión declarada, lock e instalación. Incluye @angular/forms21.2.0, anteriormente ausente del JSON histórico. Las transitivas runtime completas se enumeran en ese JSON; la tabla anterior explica los componentes principales y todas las dependencias directas.
+
+| Herramienta o API | Versión exacta / naturaleza | Uso real hasta el10 |
+| --- | --- | --- |
+| JDK BigDecimal, RoundingMode, java.time y colecciones | Java17; sin librería Maven externa | `CalculadoraEvolucionHistorial`, `FiltroHistorial`, `SesionEntrevista`, `CalculadorMetricas`; HALF_UP escala2 y Lima→UTC |
+| Angular FormsModule | @angular/forms21.2.0 | Filtros D-10 de `HistorialComponent`; los formularios de identidad/perfil conservan ReactiveFormsModule |
+| SVG y HTML accesible | APIs nativas, sin paquete gráfico | `HistorialComponent`: gráfico PM-17, puntos y tabla cronológica |
+| Chrome for Testing | 156.0.8078.47 | Recorrido de las12 interfaces con dispositivos emulados y MediaRecorder nativo |
+| Playwright auxiliar | 1.64.1; solo .tools/browser-check | `recorrido-incremento10.mjs`; no dependencia de frontend ni runtime productivo |
+| Python | 3.13.7 verificado localmente | `registrar-evidencias-incremento10.py`; JSON, hashes SHA256, XML y ZIP con stdlib |
+| Node HTTP/fs/child_process/net | Node24.19.0 del entorno; stdlib | Runner integral, servidor AOT/proxy y fixtures S3/STT/LLM; sin paquetes nuevos |
+
+`ResultadoRespuestaComponent` reutiliza HttpClient/RxJS para resultado y renovación, DatePipe/DecimalPipe y Router; `ResumenSesionComponent` usa RxJS/toSignal y la misma API privada; `HistorialComponent` usa FormsModule, switchMap/toSignal, Router y pipes. `CalculadoraEvolucionHistorial` sigue en domain puro, sin Angular ni Spring. Ninguna vista importa secretos de AWS/OpenAI. Las versiones y resultados recién verificados se registran en la evidencia10; la producción externa permanece sin certificar.

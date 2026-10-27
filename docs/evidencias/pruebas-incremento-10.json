@@ -1,0 +1,941 @@
+{
+  "incremento": 10,
+  "fecha_utc": "2026-10-27T06:34:19.153563+00:00",
+  "resultado": "IMPLEMENTADO_VERIFICADO_LOCALMENTE_Y_APROBADO_EN_AUDITORIA_FINAL",
+  "git": {
+    "rama": "main",
+    "head": "dcfb66ddc8503db435ac6233c47e1280f27b083a",
+    "origin_main": "dcfb66ddc8503db435ac6233c47e1280f27b083a",
+    "incremento9": "AUDITADO_APROBADO_SIN_OBSERVACIONES",
+    "mensaje_incremento9": "feat: implementar historial paginado D-10, comparacion evolutiva PM-17 y vista MCK10",
+    "commits_publicados": {
+      "1": "c626aaf16aca3c64322fa6719d6257e1b2ccc7f8",
+      "2": "e47eeb6affc14b00fbcfc81912e304d145d47819",
+      "3": "214c011c7b13e0c365dbac33d592dd1661347001",
+      "4": "dd40f77b33745d48ac09afce1ecbb4d437ae4a73",
+      "5": "4d00e56b0f905f1a2b0770453b913538bd9519c8",
+      "6": "f702fc4d03ff6e580e9cc92466c96a68798800db",
+      "7": "ca798f5d112469ccac07668e53959cb1feaed314",
+      "8": "a05ca28d539eadb8af1b5a2c1b27e050fdc6fef3",
+      "9": "dcfb66ddc8503db435ac6233c47e1280f27b083a"
+    },
+    "incremento10_sin_commit": true,
+    "indice_vacio": true,
+    "tools_ignorado": true,
+    "nota_corte": "Los campos Git describen la ejecucion local previa al cierre documental, commit y push finales autorizados tras la auditoria"
+  },
+  "backend_h2": {
+    "descubiertas": 194,
+    "fallas": 0,
+    "errores": 0,
+    "omitidas": 2,
+    "ejecutadas": 192,
+    "suites": [
+      {
+        "nombre": "pe.utp.entrevistapro360.architecture.LayerDependenciesTest",
+        "descubiertas": 1,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "e04c760760c35468b1e641dddbb3f64ed4b0af193cb6e4f7e4ac181cf1116210"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.CalculadoraEvolucionHistorialTest",
+        "descubiertas": 12,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "228a60438dcef6e20c42f0c727842559136c7edd137a9e50979bbc7ea8bf5488"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.CalculadorMetricasTest",
+        "descubiertas": 7,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "2c15608505627cb59680abc82c0ca85565fa6b6b9b0eaaaa94a992a10a0463d4"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.ContextoProcesamientoTest",
+        "descubiertas": 4,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "ee975ccde47aed3347688d25491b48a9a43da186f38533d9334188742129681e"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.PuestoPreguntaTest",
+        "descubiertas": 6,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "1e1c3f3c6c44655c056deef67d1770c0fccc95d891cec1b2012148f2d68099c4"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.RespuestaVideoTest",
+        "descubiertas": 8,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "b3d0127c6e90c304aee33d3c675e6ab943cad2b796811bc7a194fb1ef67b16f6"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.SesionEntrevistaTest",
+        "descubiertas": 23,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "a20278c136890a49511dee05552a4378bb06c149f6ea8f3b91e831c7dba36df7"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.UsuarioTest",
+        "descubiertas": 11,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "fc49130f85a8824328fe509b814c8a8634891065a141d11e9e99ac71b6fa2db5"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.ValidadorEvaluacionTest",
+        "descubiertas": 7,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "ba132d958a4101532db0aa72a5c25f3d1e57ebaa9095ef927b57fc13514f9a41"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.config.IdentidadConfigTest",
+        "descubiertas": 3,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "ce8cdefee75bc25cffc2df63bd9ce931ca6b79b05b89b96b4c1f2b25cfa059d3"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.llm.OpenAiEvaluacionAdapterTest",
+        "descubiertas": 5,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "d6ada83346c82d2a2960b81007b6e4a5da8a1cb6334dcf3c55f2f3a36d5dfef7"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.media.FfmpegExtractorAudioAdapterTest",
+        "descubiertas": 2,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "44096014413477b2536d5a22819539bfcc089d1d243b703de8f9a10f897056f3"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.media.FfprobeInspectorMultimediaAdapterTest",
+        "descubiertas": 8,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "49036ba3947fee9853a9939ee8e02937ac9bb8e762ba5bb2886461c730b15ceb"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.MySqlSchemaIntegrationTest",
+        "descubiertas": 2,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 2,
+        "sha256": "88426b135d094c529b0a656b6124f21e5ef09c110c10aca2ee879be259fc483f"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.storage.S3AlmacenamientoVideoAdapterTest",
+        "descubiertas": 3,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "c92a475db7dac51833bef37c2cba8201e2357f4ba5594a32d880dfee42319f0c"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.stt.OpenAiTranscripcionAdapterTest",
+        "descubiertas": 5,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "96e16d31235b294fbab177d09c802609f6ce98c60fc429f6a14087703cbaedc2"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.AuthPerfilIntegrationTest",
+        "descubiertas": 13,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "f18bc4a72168481e8f99186fcf6e6785c1cd3f5d0b5cfd5b9e34f17d29bfd4cb"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.CatalogoIntegrationTest",
+        "descubiertas": 8,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "9590dd0c0c66d4023692214192358c046a0ccf4e6ea1c9c5c662b8a81c22c4af"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.ConfirmacionRespuestaIntegrationTest",
+        "descubiertas": 11,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "d7a3f011fff96f6f81a973108f046ab12d3c333be47dc6aed70e6869f7be2b31"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.EvaluacionIntegrationTest",
+        "descubiertas": 18,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "471b5eacbc91b09122bc689e416bdbfffd9427f130d56c4dec2248a347626b9c"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.HistorialIntegrationTest",
+        "descubiertas": 12,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "b26c07c7934a50afc6f752e550f6a324d9907e1d5a6fd54c0c40a2f4f7bd1cc0"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.PipelineIntegrationTest",
+        "descubiertas": 11,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "2cda994117b468b0144c9cb242157237cfb3e422b12b3d06fbf875e84a6d6653"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.SesionIntegrationTest",
+        "descubiertas": 14,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "37b074109ef331a6258ed289085769c18786e338b2a71082795711f2463479d6"
+      }
+    ],
+    "log": ".tools/inc10-h2.log"
+  },
+  "backend_mysql": {
+    "descubiertas": 194,
+    "fallas": 0,
+    "errores": 0,
+    "omitidas": 0,
+    "ejecutadas": 194,
+    "suites": [
+      {
+        "nombre": "pe.utp.entrevistapro360.architecture.LayerDependenciesTest",
+        "descubiertas": 1,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "444799d90bb8a028f3ffa8648f87acff42af66eb969e80f38d9d6ea212b7176d"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.CalculadoraEvolucionHistorialTest",
+        "descubiertas": 12,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "72ae44d499d4addccd0df01ef50b648879863c6bad853508f14d39fa0d434dd7"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.CalculadorMetricasTest",
+        "descubiertas": 7,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "c34c4588afe3a201c8dab2e7359da59919a9a7750f941941296d2ab6c0534726"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.ContextoProcesamientoTest",
+        "descubiertas": 4,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "2543ae5bb95bfc724ea31f04139cce75f3253c477ca26f851d55d1b5a823d5b9"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.PuestoPreguntaTest",
+        "descubiertas": 6,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "ff3ad07eb9bd636de8169387c71c9464b5204024bdb6caa490f3fdbc4d3d4196"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.RespuestaVideoTest",
+        "descubiertas": 8,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "5f0fac9080551969058d87cf5cded7c1ad739ff9ab7e03f0e72f5c2d3397f76d"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.SesionEntrevistaTest",
+        "descubiertas": 23,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "12efce4c8b2e8fb64f790ecd4d33d9f50b88158d34e9d90f340dcce6da10db05"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.UsuarioTest",
+        "descubiertas": 11,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "3ed2442c5d1d4fe1c9a26c507536beb99e793666a7e173c20513ffea8084cca5"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.ValidadorEvaluacionTest",
+        "descubiertas": 7,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "74ad2d8e1b22f2d5f7c56cf36030791141d8f302392e7970d836a86a702fb426"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.config.IdentidadConfigTest",
+        "descubiertas": 3,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "5dd07629ff28a197e5c1df6e17a465a6bb62d6cdc529608428910c01f6035f61"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.llm.OpenAiEvaluacionAdapterTest",
+        "descubiertas": 5,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "af34a9ab69822c24396d8aefa2bfc5978cb710fc52909b8b473814f19b622bba"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.media.FfmpegExtractorAudioAdapterTest",
+        "descubiertas": 2,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "356236243169057241ceac22d7fdcc44990f18742321810d3ee83c2bda493a17"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.media.FfprobeInspectorMultimediaAdapterTest",
+        "descubiertas": 8,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "96a44d7c5669ddaa4e911395148b255f34d164129f56fa717f9b151cdb97fa86"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.MySqlSchemaIntegrationTest",
+        "descubiertas": 2,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "7b541dda5f01c444def58500f6cddba497e0a6fff9350e15ab8255bb7bb4ddfc"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.storage.S3AlmacenamientoVideoAdapterTest",
+        "descubiertas": 3,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "8743833b597ed6eecd4ab2546030ea86f8b5603e83a88750f3d8ca3b0549f5ad"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.stt.OpenAiTranscripcionAdapterTest",
+        "descubiertas": 5,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "ec84d9c5da6ca18b2d127bf6fc6238b2f85f4e0bd19b71c7500f7c892eb269c4"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.AuthPerfilIntegrationTest",
+        "descubiertas": 13,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "01e81a63d38b96d61c58874db37613a362a834f7537605de2f0b47da58bffe33"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.CatalogoIntegrationTest",
+        "descubiertas": 8,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "6700758dff3aca39286c6aa20c543af69328064ad3fc4c13ef19e6ef17524d3f"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.ConfirmacionRespuestaIntegrationTest",
+        "descubiertas": 11,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "e77cb3d1e1e32329aff78a6f926c390828badd8bedb5a7eb013f4737f9d0bad2"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.EvaluacionIntegrationTest",
+        "descubiertas": 18,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "d62eaacab3c0fcbbcc66a4c79f12c2a5d9ab2f4cd55b7acfe04e95ae3e989598"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.HistorialIntegrationTest",
+        "descubiertas": 12,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "c137c3ea12a9289d81071939f241ca5db94058df3270844f09c0ec5377b1b734"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.PipelineIntegrationTest",
+        "descubiertas": 11,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "4214636539e7b640ad107f816af338c160af7d843a116ed307966a10b5ed0134"
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.SesionIntegrationTest",
+        "descubiertas": 14,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0,
+        "sha256": "21ed22fa4c84fe8f6e1ee3e51d1bf0ef9045caaaba83299e045974ab48f13e62"
+      }
+    ],
+    "log": ".tools/inc10-mysql.log"
+  },
+  "frontend": {
+    "build": "AOT producción sin advertencias",
+    "medios": 6,
+    "chrome_casos": 12,
+    "interfaces": [
+      "MCK02",
+      "MCK01",
+      "MCK03",
+      "Perfil",
+      "MCK04",
+      "MCK05",
+      "MCK06",
+      "MCK07",
+      "MCK08",
+      "MCK09",
+      "Resumen de sesión",
+      "MCK10"
+    ],
+    "endpoints": [
+      "GET /api/v1/perfil",
+      "GET /api/v1/puestos",
+      "GET /api/v1/puestos/{id}/preguntas",
+      "GET /api/v1/respuestas/{id}",
+      "GET /api/v1/sesiones",
+      "GET /api/v1/sesiones/{id}",
+      "PATCH /api/v1/perfil",
+      "POST /api/v1/auth/login",
+      "POST /api/v1/auth/registro",
+      "POST /api/v1/respuestas/{id}/reintento",
+      "POST /api/v1/respuestas/{id}/reproduccion",
+      "POST /api/v1/sesiones",
+      "POST /api/v1/sesiones/{id}/cancelacion",
+      "PUT /api/v1/sesiones/{id}/preguntas/{id}/respuesta"
+    ],
+    "errores_javascript": 0,
+    "errores_consola": 0
+  },
+  "esquema": {
+    "version": "8.4.13",
+    "tablas_negocio": 8,
+    "columnas": 68,
+    "por_tabla": {
+      "evaluaciones_star": 14,
+      "metricas_comunicacion": 8,
+      "preguntas": 8,
+      "puestos": 6,
+      "respuestas_video": 10,
+      "sesiones_entrevista": 7,
+      "transcripciones": 6,
+      "usuarios": 9
+    },
+    "migraciones": [
+      "V1",
+      "V2"
+    ],
+    "ddl_auto": "validate"
+  },
+  "trazabilidad": [
+    {
+      "RF": "RF-01",
+      "funcion": "Registro",
+      "estado": "Verificado localmente",
+      "incrementos": [
+        2
+      ],
+      "commits": [
+        "e47eeb6affc14b00fbcfc81912e304d145d47819"
+      ],
+      "domain": "Usuario",
+      "application": "RegistrarUsuarioService",
+      "infrastructure": "UsuarioJpaAdapter; BCryptPasswordHasher",
+      "presentation_angular": "AuthController; RegistroComponent",
+      "pruebas_h2_mysql": "UsuarioTest; AuthPerfilIntegrationTest",
+      "chrome": "Registro MCK02"
+    },
+    {
+      "RF": "RF-02",
+      "funcion": "Acceso y cierre",
+      "estado": "Verificado localmente",
+      "incrementos": [
+        2
+      ],
+      "commits": [
+        "e47eeb6affc14b00fbcfc81912e304d145d47819"
+      ],
+      "domain": "Usuario",
+      "application": "AutenticarUsuarioService",
+      "infrastructure": "JwtTokenProvider; JwtAuthenticationFilter",
+      "presentation_angular": "AuthController; AuthService; LoginComponent; authGuard",
+      "pruebas_h2_mysql": "IdentidadConfigTest; AuthPerfilIntegrationTest",
+      "chrome": "Inicio MCK01; cierre y rutas protegidas"
+    },
+    {
+      "RF": "RF-03",
+      "funcion": "Perfil",
+      "estado": "Verificado localmente",
+      "incrementos": [
+        2
+      ],
+      "commits": [
+        "e47eeb6affc14b00fbcfc81912e304d145d47819"
+      ],
+      "domain": "Usuario",
+      "application": "GestionarPerfilService",
+      "infrastructure": "UsuarioJpaAdapter",
+      "presentation_angular": "PerfilController; PerfilComponent",
+      "pruebas_h2_mysql": "UsuarioTest; AuthPerfilIntegrationTest",
+      "chrome": "Perfil: nombre/resumen persistidos y correo readonly"
+    },
+    {
+      "RF": "RF-04",
+      "funcion": "Catálogo",
+      "estado": "Verificado localmente",
+      "incrementos": [
+        1,
+        3
+      ],
+      "commits": [
+        "c626aaf16aca3c64322fa6719d6257e1b2ccc7f8",
+        "214c011c7b13e0c365dbac33d592dd1661347001"
+      ],
+      "domain": "Puesto; Pregunta",
+      "application": "ConsultarCatalogoService",
+      "infrastructure": "CatalogoJpaAdapter",
+      "presentation_angular": "CatalogoController; CatalogoComponent; PreguntasComponent",
+      "pruebas_h2_mysql": "PuestoPreguntaTest; CatalogoIntegrationTest",
+      "chrome": "MCK04: 3 puestos y 9 preguntas"
+    },
+    {
+      "RF": "RF-05",
+      "funcion": "Inicio de práctica",
+      "estado": "Verificado localmente",
+      "incrementos": [
+        3
+      ],
+      "commits": [
+        "214c011c7b13e0c365dbac33d592dd1661347001"
+      ],
+      "domain": "SesionEntrevista",
+      "application": "GestionarSesionService",
+      "infrastructure": "SesionJpaAdapter; UsuarioJpaRepository",
+      "presentation_angular": "SesionController; PanelComponent; IniciarPracticaComponent",
+      "pruebas_h2_mysql": "SesionEntrevistaTest; SesionIntegrationTest",
+      "chrome": "MCK03: sesión activa única, conflicto409 y continuar"
+    },
+    {
+      "RF": "RF-06",
+      "funcion": "Tres preguntas secuenciales",
+      "estado": "Verificado localmente",
+      "incrementos": [
+        3,
+        8
+      ],
+      "commits": [
+        "214c011c7b13e0c365dbac33d592dd1661347001",
+        "a05ca28d539eadb8af1b5a2c1b27e050fdc6fef3"
+      ],
+      "domain": "SesionEntrevista; Pregunta",
+      "application": "GestionarSesionService; ProcesarRespuestasService",
+      "infrastructure": "SesionJpaAdapter; ProcesamientoJpaAdapter",
+      "presentation_angular": "SesionController; SesionComponent",
+      "pruebas_h2_mysql": "SesionEntrevistaTest; SesionIntegrationTest; EvaluacionIntegrationTest",
+      "chrome": "P1→P2→P3 capturadas en Chrome y cierre"
+    },
+    {
+      "RF": "RF-07",
+      "funcion": "Permisos",
+      "estado": "Verificado localmente",
+      "incrementos": [
+        4
+      ],
+      "commits": [
+        "dd40f77b33745d48ac09afce1ecbb4d437ae4a73"
+      ],
+      "domain": "No invocado en permisos locales",
+      "application": "No invocada antes de confirmar",
+      "infrastructure": "Web API MediaDevices en navegador",
+      "presentation_angular": "CapturaRespuestaComponent; GrabacionMediaService",
+      "pruebas_h2_mysql": "ConfirmacionRespuestaIntegrationTest (frontera al confirmar)",
+      "chrome": "MCK05: ambas pistas live/enabled y aviso de privacidad"
+    },
+    {
+      "RF": "RF-08",
+      "funcion": "Captura",
+      "estado": "Verificado localmente",
+      "incrementos": [
+        4,
+        5
+      ],
+      "commits": [
+        "dd40f77b33745d48ac09afce1ecbb4d437ae4a73",
+        "4d00e56b0f905f1a2b0770453b913538bd9519c8"
+      ],
+      "domain": "RespuestaVideo (al confirmar)",
+      "application": "GestionarRespuestaService (al confirmar)",
+      "infrastructure": "FfprobeInspectorMultimediaAdapter (al confirmar)",
+      "presentation_angular": "CapturaRespuestaComponent; GrabacionMediaService",
+      "pruebas_h2_mysql": "RespuestaVideoTest; FfprobeInspectorMultimediaAdapterTest",
+      "chrome": "MCK06: MediaRecorder real en 3 respuestas"
+    },
+    {
+      "RF": "RF-09",
+      "funcion": "Límite multimedia",
+      "estado": "Verificado localmente",
+      "incrementos": [
+        4,
+        5
+      ],
+      "commits": [
+        "dd40f77b33745d48ac09afce1ecbb4d437ae4a73",
+        "4d00e56b0f905f1a2b0770453b913538bd9519c8"
+      ],
+      "domain": "RespuestaVideo",
+      "application": "GestionarRespuestaService",
+      "infrastructure": "FfprobeInspectorMultimediaAdapter",
+      "presentation_angular": "RespuestaController; GrabacionMediaService",
+      "pruebas_h2_mysql": "RespuestaVideoTest; FfprobeInspectorMultimediaAdapterTest; ConfirmacionRespuestaIntegrationTest",
+      "chrome": "Temporizador 00:02/01:00 y duración real1..60; test:media para borde60s"
+    },
+    {
+      "RF": "RF-10",
+      "funcion": "Revisión y repetición",
+      "estado": "Verificado localmente",
+      "incrementos": [
+        4,
+        5
+      ],
+      "commits": [
+        "dd40f77b33745d48ac09afce1ecbb4d437ae4a73",
+        "4d00e56b0f905f1a2b0770453b913538bd9519c8"
+      ],
+      "domain": "Sin mutación durante revisión",
+      "application": "GestionarRespuestaService al confirmar",
+      "infrastructure": "S3AlmacenamientoVideoAdapter al confirmar",
+      "presentation_angular": "CapturaRespuestaComponent; GrabacionMediaService",
+      "pruebas_h2_mysql": "ConfirmacionRespuestaIntegrationTest",
+      "chrome": "MCK07: reproducción y repetición sin nuevas respuestas"
+    },
+    {
+      "RF": "RF-11",
+      "funcion": "Subida privada",
+      "estado": "Verificado localmente",
+      "incrementos": [
+        5
+      ],
+      "commits": [
+        "4d00e56b0f905f1a2b0770453b913538bd9519c8"
+      ],
+      "domain": "RespuestaVideo",
+      "application": "GestionarRespuestaService",
+      "infrastructure": "S3AlmacenamientoVideoAdapter",
+      "presentation_angular": "RespuestaController; RespuestaService",
+      "pruebas_h2_mysql": "S3AlmacenamientoVideoAdapterTest; ConfirmacionRespuestaIntegrationTest",
+      "chrome": "PUT real SDK/S3 local, datos privados y reproducción firmada"
+    },
+    {
+      "RF": "RF-12",
+      "funcion": "Metadatos",
+      "estado": "Verificado localmente",
+      "incrementos": [
+        5
+      ],
+      "commits": [
+        "4d00e56b0f905f1a2b0770453b913538bd9519c8"
+      ],
+      "domain": "RespuestaVideo; ContextoProcesamiento",
+      "application": "GestionarRespuestaService",
+      "infrastructure": "RespuestaVideoJpaEntity; ProcesamientoJpaAdapter; ffprobe",
+      "presentation_angular": "RespuestaController; ProcesamientoRespuestaComponent",
+      "pruebas_h2_mysql": "RespuestaVideoTest; ConfirmacionRespuestaIntegrationTest",
+      "chrome": "MCK08: bytes, duración y PROC-1.0 persistidos"
+    },
+    {
+      "RF": "RF-13",
+      "funcion": "Transcripción",
+      "estado": "Verificado localmente",
+      "incrementos": [
+        6
+      ],
+      "commits": [
+        "f702fc4d03ff6e580e9cc92466c96a68798800db"
+      ],
+      "domain": "Transcripcion",
+      "application": "ProcesarRespuestasService",
+      "infrastructure": "FfmpegExtractorAudioAdapter; OpenAiTranscripcionAdapter",
+      "presentation_angular": "RespuestaController; ResultadoRespuestaComponent",
+      "pruebas_h2_mysql": "FfmpegExtractorAudioAdapterTest; OpenAiTranscripcionAdapterTest; PipelineIntegrationTest",
+      "chrome": "WAV pcm_s16le/mono16k y transcripción visible"
+    },
+    {
+      "RF": "RF-14",
+      "funcion": "Métricas",
+      "estado": "Verificado localmente",
+      "incrementos": [
+        6
+      ],
+      "commits": [
+        "f702fc4d03ff6e580e9cc92466c96a68798800db"
+      ],
+      "domain": "MetricaComunicacion; CalculadorMetricas",
+      "application": "ProcesarRespuestasService",
+      "infrastructure": "ProcesamientoJpaAdapter",
+      "presentation_angular": "RespuestaController; ResultadoRespuestaComponent",
+      "pruebas_h2_mysql": "CalculadorMetricasTest; PipelineIntegrationTest",
+      "chrome": "MET-1.0: conteos/PPM/muletillas visibles"
+    },
+    {
+      "RF": "RF-15",
+      "funcion": "Evaluación",
+      "estado": "Verificado localmente",
+      "incrementos": [
+        7
+      ],
+      "commits": [
+        "ca798f5d112469ccac07668e53959cb1feaed314"
+      ],
+      "domain": "EvaluacionSTAR; ValidadorEvaluacion",
+      "application": "ProcesarRespuestasService",
+      "infrastructure": "OpenAiEvaluacionAdapter; EvaluacionJpaEntity",
+      "presentation_angular": "RespuestaController; ResultadoRespuestaComponent",
+      "pruebas_h2_mysql": "ValidadorEvaluacionTest; OpenAiEvaluacionAdapterTest; EvaluacionIntegrationTest",
+      "chrome": "COM-1.0: 4 criterios/justificaciones; STAR solo P2"
+    },
+    {
+      "RF": "RF-16",
+      "funcion": "Feedback y resumen",
+      "estado": "Verificado localmente",
+      "incrementos": [
+        7,
+        8
+      ],
+      "commits": [
+        "ca798f5d112469ccac07668e53959cb1feaed314",
+        "a05ca28d539eadb8af1b5a2c1b27e050fdc6fef3"
+      ],
+      "domain": "SesionEntrevista; ResultadoRespuestaSesion",
+      "application": "ProcesarRespuestasService; GestionarSesionService",
+      "infrastructure": "ProcesamientoJpaAdapter; SesionJpaAdapter",
+      "presentation_angular": "SesionController; ResumenSesionComponent; ResultadoRespuestaComponent",
+      "pruebas_h2_mysql": "SesionEntrevistaTest; EvaluacionIntegrationTest",
+      "chrome": "COMPLETADA, medias87.50/75.00/79.17/83.33 y resumen"
+    },
+    {
+      "RF": "RF-17",
+      "funcion": "Consulta propia",
+      "estado": "Verificado localmente",
+      "incrementos": [
+        3,
+        7,
+        8,
+        9
+      ],
+      "commits": [
+        "214c011c7b13e0c365dbac33d592dd1661347001",
+        "ca798f5d112469ccac07668e53959cb1feaed314",
+        "a05ca28d539eadb8af1b5a2c1b27e050fdc6fef3",
+        "dcfb66ddc8503db435ac6233c47e1280f27b083a"
+      ],
+      "domain": "RegistroHistorial",
+      "application": "GestionarSesionService; GestionarRespuestaService",
+      "infrastructure": "SesionJpaAdapter; ProcesamientoJpaAdapter",
+      "presentation_angular": "SesionController; RespuestaController; HistorialComponent",
+      "pruebas_h2_mysql": "HistorialIntegrationTest; EvaluacionIntegrationTest",
+      "chrome": "Otra cuenta404/lista vacía; historial→resumen→MCK09"
+    },
+    {
+      "RF": "RF-18",
+      "funcion": "Historial",
+      "estado": "Verificado localmente",
+      "incrementos": [
+        9
+      ],
+      "commits": [
+        "dcfb66ddc8503db435ac6233c47e1280f27b083a"
+      ],
+      "domain": "RegistroHistorial; FiltroHistorial",
+      "application": "GestionarSesionService",
+      "infrastructure": "SesionJpaAdapter; ProcesamientoJpaAdapter",
+      "presentation_angular": "SesionController; HistorialComponent",
+      "pruebas_h2_mysql": "CalculadoraEvolucionHistorialTest; HistorialIntegrationTest",
+      "chrome": "5 filtros, fecha Lima→UTC, D10 y paginación real"
+    },
+    {
+      "RF": "RF-19",
+      "funcion": "Comparación",
+      "estado": "Verificado localmente",
+      "incrementos": [
+        9
+      ],
+      "commits": [
+        "dcfb66ddc8503db435ac6233c47e1280f27b083a"
+      ],
+      "domain": "CalculadoraEvolucionHistorial; ComparacionHistorial",
+      "application": "GestionarSesionService",
+      "infrastructure": "ProcesamientoJpaAdapter (lecturas por lotes)",
+      "presentation_angular": "SesionController; HistorialComponent",
+      "pruebas_h2_mysql": "CalculadoraEvolucionHistorialTest; HistorialIntegrationTest",
+      "chrome": "PM17 exacto81.25/87.50/-4.17/+4.16; móvil sin overflow"
+    },
+    {
+      "RF": "RF-20",
+      "funcion": "Errores y recuperación",
+      "estado": "Verificado localmente",
+      "incrementos": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "commits": [
+        "4d00e56b0f905f1a2b0770453b913538bd9519c8",
+        "f702fc4d03ff6e580e9cc92466c96a68798800db",
+        "ca798f5d112469ccac07668e53959cb1feaed314",
+        "a05ca28d539eadb8af1b5a2c1b27e050fdc6fef3"
+      ],
+      "domain": "ContextoProcesamiento; SesionEntrevista",
+      "application": "ProcesarRespuestasService; GestionarRespuestaService",
+      "infrastructure": "WorkerRespuestas; RenovacionLeaseAdapter; ProcesamientoJpaAdapter",
+      "presentation_angular": "RespuestaController; ProcesamientoRespuestaComponent; CancelarPracticaComponent",
+      "pruebas_h2_mysql": "ContextoProcesamientoTest; PipelineIntegrationTest; EvaluacionIntegrationTest",
+      "chrome": "3 fallos STT, manual único, recuperación y CANCELADA sin promedio"
+    }
+  ],
+  "ejecucion": {
+    "incremento": 10,
+    "inicio_utc": "2026-10-27T06:29:09.112Z",
+    "correcto": true,
+    "pasos": [
+      {
+        "nombre": "h2",
+        "codigo": 0,
+        "duracion_ms": 66235,
+        "log": ".tools/inc10-h2.log"
+      },
+      {
+        "nombre": "mysql",
+        "codigo": 0,
+        "duracion_ms": 73703,
+        "log": ".tools/inc10-mysql.log"
+      },
+      {
+        "nombre": "package",
+        "codigo": 0,
+        "duracion_ms": 9304,
+        "log": ".tools/inc10-package.log"
+      },
+      {
+        "nombre": "media",
+        "codigo": 0,
+        "duracion_ms": 557,
+        "log": ".tools/inc10-media.log"
+      },
+      {
+        "nombre": "angular-build",
+        "codigo": 0,
+        "duracion_ms": 8600,
+        "log": ".tools/inc10-angular-build.log"
+      },
+      {
+        "nombre": "browser",
+        "codigo": 0,
+        "duracion_ms": 117497,
+        "log": ".tools/inc10-browser.log"
+      }
+    ],
+    "head": "dcfb66ddc8503db435ac6233c47e1280f27b083a",
+    "origin_main": "dcfb66ddc8503db435ac6233c47e1280f27b083a",
+    "commit_incremento9": "feat: implementar historial paginado D-10, comparacion evolutiva PM-17 y vista MCK10",
+    "tools_ignorado": true,
+    "mysql_iniciado_por_suite": true,
+    "mysql_version": "8.4.13",
+    "fin_utc": "2026-10-27T06:34:08.793Z"
+  },
+  "hashes_sha256": {
+    "backend/target/entrevista-pro-360-0.1.0-SNAPSHOT.jar": "23a7c7ff4d13936dd28867e7a5c8d7aabd8ff6206bed4d2deba791245aa54038",
+    "frontend/dist/entrevista-pro-360/browser/index.html": "7dae07ce6a64d24679e210d428e3e1ed5a1a4b48fcbffc040b5b30ee85e5ac9f",
+    "backend/pom.xml": "4860b19abb1d013bcbe4222cef55ebdb3cd77de1efd44474ff3b9e2067f56f90",
+    "frontend/package.json": "a79dc5538da6de61865c6bbd07245a1841ff02e6b0b9b041d3867bf0a2b3df99",
+    "frontend/package-lock.json": "e476d8a0e6d65a49d39f9ef2f9ad271a5d5e45e2985854a5bcb1dd9da963e290",
+    "backend/src/main/resources/db/migration/V1__esquema_inicial.sql": "c581ee2254f9b5ffdcfdc5336fc7f54639e920cfb63e6db5d31f289d509cacd6",
+    "backend/src/main/resources/db/migration/V2__catalogo_semilla.sql": "f322e737190317c92f01ac9176c03dba6828d8f7f9675a9f99d8ffeb28be825b",
+    "scripts/pruebas/verificar-incremento-10-entregable.mjs": "848ee628d238bf5a701f3aa284c422a885a50c6da79606e9abd6b7f08ab47f1f",
+    "scripts/pruebas/recorrido-incremento10.mjs": "2ecce44af7834cb899dffa9df5fb57e785cc58ebdd9139558b30308260bbf329",
+    "scripts/pruebas/registrar-evidencias-incremento10.py": "fd110977ff20220f8f0003a82ed8416ff99a425cfe4da3c65b4b08a683493dda",
+    "scripts/pruebas/servidor-entregable.mjs": "0bb0a7a2b9443be06bd3765bef847bddddc32c1dd2108d20db927860bf77b911",
+    "scripts/pruebas/pipeline-resumen-http-local.cjs": "6b3fd91768d163ee2d1bee9beaed6a13d0373170c7e3499ac9e3cd8ac6fe4325"
+  },
+  "angular_assets_sha256": {
+    "frontend/dist/entrevista-pro-360/browser/chunk-2L3DMOYE.js": "d9b19fa2f51dd6281a50e5154da631f0260e59376f0d90a5facd8c890dcdf451",
+    "frontend/dist/entrevista-pro-360/browser/chunk-4FH3MIG2.js": "2f583d62939df9ecd5ab730104f158a954da4cc71f1cfeef7e7f6930dc6cb1db",
+    "frontend/dist/entrevista-pro-360/browser/chunk-6TV4VRP2.js": "1d39a5c83f4bf9301031632a4e3703d56856b3cdeea770687f3205c7b87a8989",
+    "frontend/dist/entrevista-pro-360/browser/chunk-7KXTIIRD.js": "5dcaee8fc08c29a43207a63a5b980a7c64620b48313c6cda72fb63a6128df4a1",
+    "frontend/dist/entrevista-pro-360/browser/chunk-7OSDI3P6.js": "b8edf1dd13d7f4d68d10156c2c592f6d633598a29551bb3227986661d3bace22",
+    "frontend/dist/entrevista-pro-360/browser/chunk-BSRSSHB6.js": "16eaa76bfa33b984be19b200bfcec88fdf5e83dd7d3fb95bba815476851182cd",
+    "frontend/dist/entrevista-pro-360/browser/chunk-D466SFRQ.js": "200be9116550f377ee799e4e347065a2de10738376849052166268d0fa33f3f0",
+    "frontend/dist/entrevista-pro-360/browser/chunk-EKNEGEB3.js": "7ca8ba6d42945ebff6e492b43b590fc67e3a3e057d78dddd164d71a743f501a4",
+    "frontend/dist/entrevista-pro-360/browser/chunk-IGXUH6PG.js": "ceb54f8325332e1d277620cdbe72fc2d320457158d7ccf39e507957235cf0dd5",
+    "frontend/dist/entrevista-pro-360/browser/chunk-IHCT6PU4.js": "14f6157dadfd7d282b244d88b5096622b739a9fe4574eacddbeeaf8185345729",
+    "frontend/dist/entrevista-pro-360/browser/chunk-IW6NSOER.js": "cd36f05763037a56a4ec1a3828126bfee44c8966716e7dacf76104aced3a8fb1",
+    "frontend/dist/entrevista-pro-360/browser/chunk-JBGUR7IY.js": "15ff0c1e376d682b1d3cba89d7e1817a720a15ca453e5ba39874af3b0ed463d8",
+    "frontend/dist/entrevista-pro-360/browser/chunk-JYFAUEA2.js": "6cbd5951e1fc1bbd0bdd7713575cf548a001a43ebb978ae2f62effb9048bf9ed",
+    "frontend/dist/entrevista-pro-360/browser/chunk-LGWWD6W2.js": "ba21ce9b4378d3ca3108841ee74f36304c75afb55a86b197034b287af6861543",
+    "frontend/dist/entrevista-pro-360/browser/chunk-LS24OPMV.js": "abf4fc09900c045698d54892d3329589577398cdeeece3b618db2dd5de04e717",
+    "frontend/dist/entrevista-pro-360/browser/chunk-MF2J6OBP.js": "b86406549b0d5d6a3409b7b2fef56f9486dc734de10aa4b8d0d9b7c8a4c8ffc0",
+    "frontend/dist/entrevista-pro-360/browser/chunk-N6T6KGXF.js": "4308998da5f1cdb57161351873e15d180a056bbed33564eee1eba68ab97f3077",
+    "frontend/dist/entrevista-pro-360/browser/chunk-NFGKFNLX.js": "0578ad736342bee254629cb27cda51fcc097c8212db49d20b91a837f31a7d700",
+    "frontend/dist/entrevista-pro-360/browser/chunk-O67QEIDT.js": "ad04bf3592dd2c70c939b979b937a75f9d69c3dc349920f228618a0b0db54321",
+    "frontend/dist/entrevista-pro-360/browser/chunk-PBZWGTWC.js": "10e93eb1616351c136102acf48787489f71d900f880dfb930777b447bc77ffb6",
+    "frontend/dist/entrevista-pro-360/browser/chunk-Q6FPQUMH.js": "f7e96118f5b49342d9b5c81355415ff22acb87a34e6fe0eef8d7521d1ac5e223",
+    "frontend/dist/entrevista-pro-360/browser/chunk-S63IIDBV.js": "e5f5d97c72cfe037176b87a2da4aeadbbd2ead98f79a9e95278dba0d2bb80e49",
+    "frontend/dist/entrevista-pro-360/browser/chunk-VZVCGOKY.js": "0b005857dd496ff2d76814b2fb001df55bbb3ad53a911d9580727746548adf93",
+    "frontend/dist/entrevista-pro-360/browser/index.html": "7dae07ce6a64d24679e210d428e3e1ed5a1a4b48fcbffc040b5b30ee85e5ac9f",
+    "frontend/dist/entrevista-pro-360/browser/main-ELT4FUMV.js": "6a75174ee2ec445bb4704518049e5df89c09ace9e664a5c69da7d86beaa18143",
+    "frontend/dist/entrevista-pro-360/browser/styles-TR3MDQZS.css": "ec265a096ccbe97b7a645f67d5412ada9500e566885fbd5c1edb9809b60927f1"
+  },
+  "evidencia_browser_sha256": "d54099cfaf0f060a05b9519d0fe53137075af4fb767e93acb5d4fa6fd9bf06c2",
+  "versiones_sha256": "e80ff9db11f7acf794872a0a9e177bdb219b274d1b845d54b5c2cd74e9e11176",
+  "limites": "Verificación local con clientes S3/HTTP y binarios reales sobre fixtures S3/STT/LLM. No certifica bucket/IAM AWS, cuenta/modelos OpenAI de producción ni matriz de hardware físico.",
+  "estado": "implementado_verificado_localmente_y_aprobado_en_auditoria_final",
+  "auditoria": {
+    "responsable": "Orquestador",
+    "dictamen": "AUDITADO Y APROBADO SIN OBSERVACIONES",
+    "alcance": "Auditoría final del tercer entregable",
+    "cierre": "Auditado y aprobado (cierre del tercer entregable en main)",
+    "actualizacion_hash": "SHA256 del generador actualizado solo por los metadatos y plantillas de aprobacion; resultados de pruebas auditados conservados"
+  }
+}

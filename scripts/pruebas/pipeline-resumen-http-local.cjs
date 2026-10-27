@@ -1,6 +1,6 @@
 // Fixture de protocolo S3/STT local. No acredita IAM, firma AWS ni una cuenta OpenAI real.
 const http=require('node:http'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
-const root=path.resolve(__dirname,'../../.tools/inc8-http-data');fs.mkdirSync(root,{recursive:true});
+const root=process.env.EP360_FIXTURE_DATA_DIR||path.resolve(__dirname,'../../.tools/inc8-http-data');fs.mkdirSync(root,{recursive:true});
 const objetos=new Map(),peticionesS3=[],peticionesStt=[];
 let llmFallos=0,llmEstado=503,llmModo='correcto';
 const peticionesLlm=[];
