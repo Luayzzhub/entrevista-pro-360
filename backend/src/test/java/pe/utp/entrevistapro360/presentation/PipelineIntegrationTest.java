@@ -97,7 +97,7 @@ class PipelineIntegrationTest {
         var m=repo.buscarMetrica(id).orElseThrow();
         assertThat(m.conteoPalabras()).isEqualTo(7);assertThat(m.conteoMuletillas()).isEqualTo(3);
         assertThat(m.versionMetricas()).isEqualTo("MET-1.0");
-        assertThat(worker.procesarSiguiente()).isFalse();
+        assertThat(contexto().elegible(new SesionEntrevista(sesion,usuario,1,SesionEntrevista.EstadoSesion.EN_PROCESO,null,LocalDateTime.now(reloj),null),LocalDateTime.now(reloj))).isTrue();
         estado().andExpect(status().isOk()).andExpect(jsonPath("$.estado_procesamiento").value("TRANSCRITO"))
             .andExpect(jsonPath("$.etapa_actual").value("EVALUAR")).andExpect(jsonPath("$.metricas.conteo_palabras").value(7))
             .andExpect(jsonPath("$.puede_reintentar").value(false));

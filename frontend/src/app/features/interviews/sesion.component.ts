@@ -30,7 +30,10 @@ interface EstadoVista { cargando: boolean; sesion: SesionDetalle | null; error: 
         <h2 class="session-list-title">Las tres preguntas de tu práctica</h2>
         <ol class="question-list">
           @for (pregunta of sesion.preguntas; track pregunta.id_pregunta) {
-            <li class="question-card" [class.available-question]="pregunta.habilitada"><div class="question-number" aria-hidden="true">0{{ pregunta.orden }}</div><div><span class="tag">{{ estadoPregunta(pregunta, esTerminal(sesion.estado_sesion)) }}</span><h3>{{ pregunta.enunciado }}</h3><p class="competency">{{ pregunta.competencia_evaluada }}</p>@if (pregunta.id_respuesta !== null) { <a class="text-link" [routerLink]="['/sesiones', sesion.id_sesion, 'respuestas', pregunta.id_respuesta]">Ver estado del procesamiento</a> }</div></li>
+            <li class="question-card" [class.available-question]="pregunta.habilitada"><div class="question-number" aria-hidden="true">0{{ pregunta.orden }}</div><div><span class="tag">{{ estadoPregunta(pregunta, esTerminal(sesion.estado_sesion)) }}</span><h3>{{ pregunta.enunciado }}</h3><p class="competency">{{ pregunta.competencia_evaluada }}</p>@if (pregunta.id_respuesta !== null) {
+              @if (pregunta.estado_procesamiento === 'EVALUADO') { <a class="text-link" [routerLink]="['/sesiones', sesion.id_sesion, 'respuestas', pregunta.id_respuesta, 'resultado']">Ver resultado de tu respuesta</a> }
+              @else { <a class="text-link" [routerLink]="['/sesiones', sesion.id_sesion, 'respuestas', pregunta.id_respuesta]">Ver estado del procesamiento</a> }
+            }</div></li>
           }
         </ol>
         <div class="session-actions"><a class="button secondary" routerLink="/panel">Volver al panel</a>

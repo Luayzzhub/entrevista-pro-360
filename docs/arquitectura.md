@@ -1,6 +1,6 @@
-# Arquitectura — Incrementos 1 a 6
+# Arquitectura — Incrementos 1 a 7
 
-Backend modular Spring Boot 3.5.7/Java 17 y Angular 21.2.0 VIS-1.0. Catálogo, identidad, sesiones, captura, confirmación privada y pipeline durable de extracción WAV, STT y métricas MET-1.0, con reintento único y cancelación D-02. Contratos de respuestas en api-respuestas.md.
+Backend modular Spring Boot 3.5.7/Java 17 y Angular 21.2.0 VIS-1.0. Catálogo, identidad, sesiones, captura privada y pipeline durable WAV/STT/MET/EVAL, con reintento único, cancelación D-02, resultado individual MCK09 y reproducción PA-04. Contratos en api-respuestas.md.
 
 ## Cuatro capas
 
@@ -27,7 +27,7 @@ Dominio y aplicación solo importan Java y las capas internas permitidas. `Layer
 
 Se conservan los GET públicos del Incremento 1. El caso de uso busca un puesto activo y valida exactamente tres preguntas activas del mismo puesto, con órdenes 1, 2 y 3. Ausencia/inactividad produce 404; catálogo incompleto, 409. La semilla resuelve IDs por nombre único.
 
-No se modifican V1/V2 ni se añaden V3+: ocho tablas y 68 columnas de negocio, InnoDB, `utf8mb4_unicode_ci`, JSON y acciones referenciales. `flyway_schema_history` es técnica adicional; Hibernate usa `ddl-auto=validate`. Hay siete mapeos JPA activos: usuarios, puestos, preguntas, sesiones, respuestas, transcripciones y métricas. La tabla canónica de evaluación sigue reservada al Incremento 7.
+No se modifican V1/V2 ni se añaden V3+: ocho tablas y 68 columnas de negocio, InnoDB, `utf8mb4_unicode_ci`, JSON y acciones referenciales. `flyway_schema_history` es técnica adicional; Hibernate usa `ddl-auto=validate`. Hay ocho mapeos JPA activos, incluidos EvaluacionJpaEntity y sus 14 columnas canónicas de evaluaciones_star.
 
 Las operaciones JPA son transaccionales en los adaptadores. Las pruebas MVC atraviesan seguridad, casos de uso y JPA reales, sin mocks del catálogo o identidad. H2 usa las mismas migraciones en modo MySQL; el perfil de pruebas `mysql` repite la integración y comprueba metadatos reales.
 
@@ -117,7 +117,7 @@ Referencias: [ffprobe](https://ffmpeg.org/ffprobe.html) y [escrituras condiciona
 
 ## Worker durable: Incremento 6
 
-ContextoProcesamiento y CalculadorMetricas residen en dominio puro. ProcesarRespuestasService coordina puertos para repositorio, S3, extracción, STT y heartbeat, sin importar Spring/JPA/HTTP. ProcesamientoJpaAdapter implementa transacciones cortas READ_COMMITTED con orden de locks sesión/respuesta. Claim, versión, intento y lease se confirman antes de ffmpeg/HTTP. El resultado se confirma solo si versión, etapa y lease siguen vigentes; si la sesión terminó se libera únicamente el lease. La consulta de candidatos pagina por lotes acotados y omite EVALUAR incluso si existen muchas respuestas listas.
+ContextoProcesamiento y CalculadorMetricas residen en dominio puro. ProcesarRespuestasService coordina puertos para repositorio, S3, extracción, STT, LLM y heartbeat, sin importar Spring/JPA/HTTP. ProcesamientoJpaAdapter implementa transacciones cortas READ_COMMITTED con orden de locks sesión/respuesta. Claim, versión, intento y lease se confirman antes de ffmpeg/HTTP. El resultado se confirma solo si versión, etapa y lease siguen vigentes; si la sesión terminó se libera únicamente el lease. La consulta de candidatos pagina lotes acotados y ahora admite EVALUAR; excluye EVALUADO/FINALIZADO.
 
 WorkerRespuestas utiliza @Scheduled con fixedDelay 2000 ms y una invocación secuencial protegida por AtomicBoolean: no acumula trabajos ni procesos multimedia. RenovacionLeaseAdapter usa un ejecutor independiente de un hilo para renovar cada 20000 ms a 90 s desde ahora; cancelar la vigilancia y verificar etapa/lease impiden renovar una ejecución ya finalizada. El planificador se desactiva con integraciones.worker-habilitado=false en pruebas.
 
@@ -125,4 +125,14 @@ FfmpegExtractorAudioAdapter ejecuta argumentos separados y timeout de 60 s; vali
 
 El repositorio aplica inserción única de transcripción y upsert de métricas bajo el mismo lock que el avance. confianza_stt permanece NULL. El cálculo MET-1.0 normaliza NFKC y aplica el catálogo exacto; si PPM no cabe en DECIMAL(6,2), se clasifica la entrada como definitiva en lugar de truncar o alterar V1. D-02 cancela con fecha final válida y promedio null. El reintento manual reutiliza la misma exclusión y restaura el último hito en ciclo 2.
 
-GET expone un resumen de métricas y elegibilidad de reintento, sin serializar contexto ni referencias S3. MCK 08 se detiene en TRANSCRITO/EVALUAR y distingue agotamiento recuperable de falla definitiva. La siguiente pregunta sigue bloqueada: evaluación COM-1.0, cierre automático, resultados e historial completo corresponden a incrementos siguientes.
+GET expone transcripción, métricas, evaluación y elegibilidad real de reintento, sin serializar contexto ni claves S3. MCK08 sigue EVALUAR y se detiene en EVALUADO/FINALIZADO; distingue agotamiento recuperable de falla definitiva. La siguiente pregunta se habilita por el estado EVALUADO.
+
+## Evaluación y reproducción: Incremento 7
+
+ValidadorEvaluacion valida Map/Number/String en dominio puro: campos exactos, versiones, booleano STAR, anclas discretas, longitudes y elementos cualitativos. Calcula puntaje_general con BigDecimal y crea areas_mejora con versión, justificaciones y síntesis. El LLM no decide el promedio. EvaluacionLlmPort recibe EntradaEvaluacion de siete campos sin identidad añadida; OpenAiEvaluacionAdapter implementa Responses, store=false, sin herramientas, esquema cerrado, timeout total de 60 s y máximo 2 MB. Instrucciones separan la transcripción de las órdenes del sistema. Refusal, incompleto, JSON/contrato inválido son SALIDA_EVALUACION_INVALIDA recuperable.
+
+EVALUAR exige transcripción y MET-1.0 persistidas. Una evaluación existente válida evita repetir la llamada. Guardar evaluación y EVALUADO/FINALIZADO comparte el lock y transacción final con fencing. El contador/lease/reintento manual conserva la etapa EVALUAR y el hito TRANSCRITO; nunca vuelve a audio/STT/MET. Cancelar durante la llamada solo libera lease. No se calcula promedio global ni se completa la sesión, incluso con tres evaluaciones.
+
+FirmaVideoPort usa AwsS3V4Signer y Aws4PresignerParams del SDK v2 existente como firma S3 equivalente, con signingClockOverride y expiración exacta de 300 s. Primero se comprueban propiedad y HEAD privado; ausencia devuelve VIDEO_NO_DISPONIBLE y fallo de infraestructura 503. El enlace es transitorio, GET y HTTP/HTTPS; el POST lleva Cache-Control: no-store y no escribe en BD. En fixtures se verifica criptográficamente SigV4 y se rechazan firmas alteradas/vencidas. IAM y bucket de producción no se certifican.
+
+MCK09 usa interpolación de texto sin innerHTML, muestra criterios/feedback/STAR y métricas separadas, renueva el video al vencer o ante error posterior a expira_en y conserva el resultado si falta el objeto. Limpia suscripciones y temporizadores al salir. Nueva práctica exige confirmar cancelación antes de /puestos; P3 informa que el cierre global corresponde al Incremento 8.

@@ -12,17 +12,15 @@
         <li [class.stage-current]="r.etapa_actual === 'EXTRAER_AUDIO'" [class.stage-done]="r.ultimo_hito_valido === 'AUDIO_EXTRAIDO' || r.ultimo_hito_valido === 'TRANSCRITO' || r.ultimo_hito_valido === 'EVALUADO'">Extracción de audio @if (r.etapa_actual === 'EXTRAER_AUDIO') { <span class="tag">Próxima etapa</span> }</li>
         <li [class.stage-current]="r.etapa_actual === 'TRANSCRIBIR'" [class.stage-done]="r.ultimo_hito_valido === 'TRANSCRITO' || r.ultimo_hito_valido === 'EVALUADO'">Transcripción STT</li>
         <li [class.stage-current]="r.etapa_actual === 'METRICAS'" [class.stage-done]="r.etapa_actual === 'EVALUAR' || r.estado_procesamiento === 'EVALUADO'">Métricas MET-1.0</li>
-        <li [class.stage-current]="r.etapa_actual === 'EVALUAR'">Evaluación COM-1.0 — Incremento 7</li>
+        <li [class.stage-current]="r.etapa_actual === 'EVALUAR'" [class.stage-done]="r.estado_procesamiento === 'EVALUADO'">Evaluación de respuesta COM-1.0</li>
       </ol><p>Último hito confirmado: {{ r.ultimo_hito_valido }}.</p>
       @if (r.estado_procesamiento === 'SUBIDO') { <p class="notice privacy">Tu video está validado y almacenado en privado. La extracción de audio se procesará automáticamente.</p> }
-      @if (r.estado_procesamiento === 'TRANSCRITO' && r.etapa_actual === 'EVALUAR') {
-        <p class="notice success" role="status">Audio extraído, transcripción STT en español y métricas MET-1.0 registradas. La evaluación COM-1.0 se completará en el Incremento 7. El seguimiento automático ha finalizado.</p>
-      }
+      @if (r.estado_procesamiento === 'TRANSCRITO' && r.etapa_actual === 'EVALUAR') { <p class="notice privacy" role="status">Transcripción y métricas registradas. Estamos evaluando tu respuesta con la rúbrica COM-1.0.</p> }
       @if (r.metricas; as m) {
         <dl class="take-metadata"><div><dt>Palabras</dt><dd>{{ m.conteo_palabras }}</dd></div><div><dt>Palabras por minuto</dt><dd>{{ m.palabras_por_minuto | number:'1.2-2' }}</dd></div><div><dt>Muletillas</dt><dd>{{ m.conteo_muletillas }}</dd></div></dl>
       }
       <p class="form-help">
-        @if (['SUBIDO', 'AUDIO_EXTRAIDO', 'TRANSCRITO'].includes(r.estado_procesamiento) && r.etapa_actual !== 'EVALUAR' && r.estado_sesion !== 'CANCELADA') { El análisis continúa en segundo plano aunque salgas de esta pantalla. }
+        @if (['SUBIDO', 'AUDIO_EXTRAIDO', 'TRANSCRITO'].includes(r.estado_procesamiento) && r.estado_sesion !== 'CANCELADA') { El análisis continúa en segundo plano aunque salgas de esta pantalla. }
         La siguiente pregunta solo se habilitará cuando esta respuesta alcance el estado EVALUADO.
       </p>
       @if (r.estado_procesamiento === 'FALLIDO' && r.error) {
@@ -30,7 +28,7 @@
         @if (r.puede_reintentar) { <button type="button" class="button" [disabled]="reintentando()" (click)="reintentar()">{{ reintentando() ? 'Reintentando…' : 'Reintentar análisis' }}</button> }
         @if (r.estado_sesion === 'CANCELADA') { <p>La sesión pasó a CANCELADA conforme a D-02. Puedes volver a su detalle o al panel para iniciar una nueva práctica.</p> }
       }
-      @if (r.estado_procesamiento === 'EVALUADO') { <p class="notice success">La respuesta ya fue evaluada. Puedes consultar la siguiente pregunta en tu sesión.</p> }
+      @if (r.estado_procesamiento === 'EVALUADO') { <p class="notice success" role="status">La respuesta ya fue evaluada.</p><a class="button" [routerLink]="['/sesiones', r.id_sesion, 'respuestas', r.id_respuesta, 'resultado']">Ver resultado de tu respuesta</a> }
     </section>
   }
   <div class="session-actions"><button type="button" class="button secondary" [disabled]="cargando()" (click)="recargar()">Actualizar estado</button><a class="button" [routerLink]="['/sesiones', idSesion()]">Volver a la sesión</a><a class="button secondary" routerLink="/panel">Volver al panel</a></div>

@@ -16,12 +16,21 @@ public final class ProcesarRespuestasService {
     private final RenovacionLeasePort heartbeat;
     private final Clock clock;
     private final long base1, base2;
+    private final CatalogoRepository catalogo;
+    private final EvaluacionLlmPort llm;
     private final AtomicBoolean ocupado = new AtomicBoolean();
-    private record Resultado(String audio, String texto, MetricaComunicacion metrica) { }
+    private record Resultado(String audio, String texto, MetricaComunicacion metrica, EvaluacionSTAR evaluacion) {
+        Resultado(String a,String t,MetricaComunicacion m) { this(a,t,m,null); }
+    }
     public ProcesarRespuestasService(ProcesamientoRepository repo, AlmacenamientoVideoPort almacenamiento, ExtractorAudioPort extractor,
             TranscripcionSttPort stt, RenovacionLeasePort heartbeat, Clock clock, long base1, long base2) {
+        this(repo,almacenamiento,extractor,stt,heartbeat,clock,base1,base2,null,(entrada,modelo)->{throw new FalloEtapaException("CONFIGURACION_LLM",false);});
+    }
+    public ProcesarRespuestasService(ProcesamientoRepository repo, AlmacenamientoVideoPort almacenamiento, ExtractorAudioPort extractor,
+            TranscripcionSttPort stt, RenovacionLeasePort heartbeat, Clock clock, long base1, long base2, CatalogoRepository catalogo, EvaluacionLlmPort llm) {
         this.repo=repo; this.almacenamiento=almacenamiento; this.extractor=extractor; this.stt=stt; this.heartbeat=heartbeat;
         this.clock=clock; this.base1=base1; this.base2=base2;
+        this.catalogo=catalogo;this.llm=llm;
     }
     private LocalDateTime ahora() { return LocalDateTime.now(clock).withNano(0); }
     public boolean procesarSiguiente() {
@@ -56,9 +65,12 @@ public final class ProcesarRespuestasService {
                 case EXTRAER_AUDIO -> extraer(trabajo,contexto);
                 case TRANSCRIBIR -> transcribir(trabajo,contexto);
                 case METRICAS -> metricas(trabajo);
-                case EVALUAR -> throw new IllegalStateException("EVALUAR no corresponde al Incremento 6.");
+                case EVALUAR -> evaluar(trabajo,contexto);
+                case FINALIZADO -> throw new IllegalStateException("Un trabajo finalizado no es elegible.");
             };
             finalizar(trabajo,resultado);
+        } catch (SalidaEvaluacionInvalidaException ex) {
+            fallar(trabajo,new FalloEtapaException("SALIDA_EVALUACION_INVALIDA",true));
         } catch (TranscripcionSinPalabrasException ex) {
             fallar(trabajo,new FalloEtapaException("TRANSCRIPCION_SIN_PALABRAS",false));
         } catch (FalloEtapaException ex) {
@@ -117,6 +129,22 @@ public final class ProcesarRespuestasService {
             throw new FalloEtapaException("METRICAS_FUERA_DE_RANGO",false);
         return new Resultado(null,null,metrica);
     }
+    private Resultado evaluar(TrabajoReclamado trabajo,ContextoProcesamiento contexto) {
+        long id=trabajo.respuesta().idRespuesta();
+        var t=repo.buscarTranscripcion(id).orElseThrow(()->new FalloEtapaException("PRERREQUISITOS_EVALUACION",false));
+        var m=repo.buscarMetrica(id).orElseThrow(()->new FalloEtapaException("PRERREQUISITOS_EVALUACION",false));
+        if(t.textoTranscrito()==null || t.textoTranscrito().isBlank() || !"MET-1.0".equals(m.versionMetricas()))
+            throw new FalloEtapaException("PRERREQUISITOS_EVALUACION",false);
+        var pregunta=catalogo.buscarPreguntasActivas(trabajo.sesion().idPuesto()).stream()
+                .filter(p->p.idPregunta().equals(trabajo.respuesta().idPregunta())).findFirst()
+                .orElseThrow(()->new FalloEtapaException("PRERREQUISITOS_EVALUACION",false));
+        var existente=repo.buscarEvaluacion(id);
+        if(existente.isPresent()) return new Resultado(null,null,null,ValidadorEvaluacion.validarGuardada(existente.get(),pregunta.aplicaStar()));
+        var puesto=catalogo.buscarPuesto(trabajo.sesion().idPuesto()).orElseThrow(()->new FalloEtapaException("PRERREQUISITOS_EVALUACION",false));
+        var entrada=new EntradaEvaluacion(puesto.nombrePuesto(),pregunta.enunciado(),pregunta.competenciaEvaluada(),pregunta.aplicaStar(),t.textoTranscrito());
+        var e=ValidadorEvaluacion.validar(id,llm.evaluar(entrada,contexto.modeloLlm()),pregunta.aplicaStar(),ahora());
+        return new Resultado(null,null,null,e);
+    }
     private void finalizar(TrabajoReclamado trabajo, Resultado resultado) {
         repo.conRespuestaBloqueada(trabajo.respuesta().idRespuesta(), datos -> {
             var c=new ContextoProcesamiento(datos.respuesta());
@@ -131,6 +159,7 @@ public final class ProcesarRespuestasService {
                     actualizada=c.transcrito();
                 }
                 case METRICAS -> { repo.guardarMetrica(resultado.metrica()); actualizada=c.metricasCompletas(); }
+                case EVALUAR -> { repo.guardarEvaluacion(resultado.evaluacion()); actualizada=c.evaluado(); }
                 default -> { return null; }
             }
             repo.actualizar(actualizada); return null;

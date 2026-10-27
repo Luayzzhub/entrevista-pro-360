@@ -1,0 +1,50 @@
+<section class="session-page" aria-labelledby="titulo-resultado">
+  <span class="eyebrow">TU EVALUACIÓN INDIVIDUAL</span><h1 id="titulo-resultado">Resultado de tu respuesta</h1>
+  @if (cargando()) { <p class="status-panel" role="status">Cargando resultado…</p> }
+  @if (error()) { <p class="notice error" role="alert">{{ error() }}</p> }
+  @if (respuesta(); as r) {
+    <header class="form-card"><span class="pill">{{ r.estado_procesamiento }}</span><h2>{{ r.nombre_puesto }}</h2><h3>Pregunta {{ r.orden_pregunta }} de 3</h3><p>{{ r.enunciado_pregunta }}</p><p class="competency"><strong>Competencia:</strong> {{ r.competencia_evaluada }}</p></header>
+    @if (r.evaluacion; as e) {
+      <section class="form-card" aria-label="Puntaje y criterios COM-1.0">
+        <h2>Puntaje general</h2><p class="session-score">{{ e.puntaje_general | number:'1.2-2' }} / 100</p><p>Rúbrica COM-1.0 · Cada criterio pesa 25 %.</p>
+        <div class="result-grid">@for (c of criterios; track c.clave) {
+          <article class="result-criterion"><h3>{{ c.nombre }}</h3><strong>{{ e.criterios[c.clave].puntaje | number:'1.2-2' }} / 100</strong><p class="safe-text">{{ e.criterios[c.clave].justificacion }}</p></article>
+        }</div>
+      </section>
+      <section class="form-card" aria-label="Diagnóstico cualitativo STAR"><h2>Diagnóstico cualitativo STAR</h2>
+        @if (e.aplica_star && e.detalle_star; as detalle) {
+          <dl class="result-grid">@for (s of star; track s.clave) { <div class="result-criterion"><dt><strong>{{ s.nombre }}</strong> · {{ detalle[s.clave].estado }}</dt><dd class="safe-text">{{ detalle[s.clave].observacion }}</dd></div> }</dl>
+        } @else { <p>STAR no aplica a esta pregunta</p> }
+      </section>
+      <section class="form-card" aria-label="Feedback formativo"><h2>Feedback formativo</h2>
+        <h3>Fortaleza principal</h3><p class="safe-text">{{ e.fortaleza_principal }}</p>
+        <h3>Áreas de mejora</h3><p class="safe-text">{{ e.sintesis_areas_mejora }}</p>
+        <h3>Recomendaciones</h3><p class="safe-text">{{ e.recomendaciones }}</p>
+      </section>
+      @if (r.metricas; as m) {
+        <section class="form-card" aria-label="Métricas descriptivas MET-1.0"><h2>Métricas descriptivas MET-1.0</h2><p>Estas medidas describen tu comunicación y se muestran por separado de los puntajes.</p>
+          <dl class="take-metadata"><div><dt>Duración confirmada</dt><dd>{{ r.duracion_segundos | number:'1.3-3' }} s</dd></div><div><dt>Palabras</dt><dd>{{ m.conteo_palabras }}</dd></div><div><dt>Palabras por minuto</dt><dd>{{ m.palabras_por_minuto | number:'1.2-2' }}</dd></div><div><dt>Muletillas</dt><dd>{{ m.conteo_muletillas }}</dd></div></dl>
+          @if (m.conteo_muletillas === 0) { <p>Sin muletillas detectadas</p> } @else { <ul>@for (entrada of m.detalle_muletillas | keyvalue; track entrada.key) { <li>{{ entrada.key }}: {{ entrada.value }}</li> }</ul> }
+        </section>
+      }
+      <section class="form-card" aria-label="Video de tu respuesta"><h2>Video de tu respuesta</h2>
+        @if (errorVideo()) { <p class="notice error" role="status">{{ errorVideo() }}</p> }
+        @if (videoUrl(); as url) { <video class="result-video" controls playsinline preload="metadata" [src]="url" (error)="falloVideo()" aria-label="Video autorizado de tu respuesta"></video> }
+        @if (expiraEn()) { <p class="form-help">Enlace temporal disponible hasta {{ expiraEn() | date:'HH:mm:ss':'UTC' }} UTC.</p> }
+        <button type="button" class="button secondary" [disabled]="renovando()" (click)="renovarVideo()">{{ renovando() ? 'Renovando enlace…' : 'Renovar enlace de video' }}</button>
+      </section>
+      @if (r.transcripcion; as t) { <section class="form-card" aria-label="Transcripción de tu respuesta"><h2>Transcripción</h2><p class="safe-text">{{ t.texto_transcrito }}</p><p class="form-help">Idioma: {{ t.idioma }} · {{ t.fecha_transcripcion | date:'dd/MM/yyyy HH:mm:ss':'UTC' }} UTC.</p></section> }
+      @if (r.orden_pregunta === 3) { <p class="notice privacy">El cierre automático y el resumen global de las 3 respuestas se activarán en el Incremento 8. Puedes volver al detalle de la sesión o al panel.</p> }
+      <div class="session-actions">
+        @if (r.orden_pregunta < 3 && r.estado_sesion === 'EN_PROCESO') {
+          <a class="button" [routerLink]="['/sesiones', r.id_sesion]">Siguiente pregunta</a>
+          <app-cancelar-practica [idSesion]="r.id_sesion" (cancelada)="cancelada($event)" />
+          <button class="button secondary" type="button" (click)="nuevaPractica.set(true)">Nueva práctica</button>
+          @if (nuevaPractica()) { <app-cancelar-practica [idSesion]="r.id_sesion" etiqueta="Confirmar cierre para nueva práctica" (cancelada)="cancelada($event)" /> }
+        } @else if (r.estado_sesion === 'CANCELADA') { <a class="button" routerLink="/puestos">Nueva práctica</a> }
+        <a class="button secondary" [routerLink]="['/sesiones', r.id_sesion]">Volver a la sesión</a><a class="button secondary" routerLink="/panel">Volver al panel</a>
+      </div>
+    } @else { <a class="button" [routerLink]="['/sesiones', r.id_sesion, 'respuestas', r.id_respuesta]">Ver estado del procesamiento</a> }
+  }
+</section>
+

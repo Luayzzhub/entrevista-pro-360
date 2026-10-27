@@ -12,7 +12,8 @@ import pe.utp.entrevistapro360.domain.*;
 public class ProcesamientoJpaAdapter implements ProcesamientoRepository {
     private final RespuestaVideoJpaRepository respuestas; private final SesionEntrevistaJpaRepository sesiones;
     private final TranscripcionJpaRepository transcripciones; private final MetricaJpaRepository metricas;
-    public ProcesamientoJpaAdapter(RespuestaVideoJpaRepository r,SesionEntrevistaJpaRepository s,TranscripcionJpaRepository t,MetricaJpaRepository m) { respuestas=r;sesiones=s;transcripciones=t;metricas=m; }
+    private final EvaluacionJpaRepository evaluaciones;
+    public ProcesamientoJpaAdapter(RespuestaVideoJpaRepository r,SesionEntrevistaJpaRepository s,TranscripcionJpaRepository t,MetricaJpaRepository m,EvaluacionJpaRepository e) { respuestas=r;sesiones=s;transcripciones=t;metricas=m;evaluaciones=e; }
     @Override public List<Long> candidatos(LocalDateTime ahora) {
         List<Long> ids=new ArrayList<>();
         for (int page=0;;page++) {
@@ -21,8 +22,8 @@ public class ProcesamientoJpaAdapter implements ProcesamientoRepository {
                 RespuestaVideo r=entity.toDomain();
                 if (!ContextoProcesamiento.compatible(r)) continue;
                 var c=new ContextoProcesamiento(r);
-                // La consulta ya excluye sesiones terminales. Las fechas/etapa viven en el JSON portable PROC-1.0.
-                if (c.etapa()!=ContextoProcesamiento.Etapa.EVALUAR && c.leaseLibre(ahora)) {
+                // La consulta excluye sesiones terminales; FINALIZADO no admite nuevos claims.
+                if (c.etapa()!=ContextoProcesamiento.Etapa.FINALIZADO && c.leaseLibre(ahora)) {
                     Object proximo=r.procesamientoContexto().get("proximo_intento_utc");
                     if(proximo==null || !java.time.OffsetDateTime.parse(proximo.toString()).toInstant().isAfter(ahora.toInstant(java.time.ZoneOffset.UTC))) ids.add(r.idRespuesta());
                 }
@@ -46,4 +47,8 @@ public class ProcesamientoJpaAdapter implements ProcesamientoRepository {
     @Override public Optional<MetricaComunicacion> buscarMetrica(long r) { return metricas.findByRespuestaId(r).map(MetricaJpaEntity::toDomain); }
     @Override @Transactional public void guardarTranscripcion(Transcripcion t) { if(transcripciones.findByRespuestaId(t.idRespuesta()).isEmpty())transcripciones.saveAndFlush(TranscripcionJpaEntity.nueva(t)); }
     @Override @Transactional public void guardarMetrica(MetricaComunicacion m) { var e=metricas.findByRespuestaId(m.idRespuesta()).orElseGet(()->MetricaJpaEntity.nueva(m));e.actualizar(m);metricas.saveAndFlush(e); }
+    @Override public Optional<EvaluacionSTAR> buscarEvaluacion(long r) { return evaluaciones.findByRespuestaId(r).map(EvaluacionJpaEntity::toDomain); }
+    @Override @Transactional public void guardarEvaluacion(EvaluacionSTAR e) {
+        if(evaluaciones.findByRespuestaId(e.idRespuesta()).isEmpty()) evaluaciones.saveAndFlush(EvaluacionJpaEntity.nueva(e));
+    }
 }

@@ -18,8 +18,8 @@ public class ApplicationConfig {
             pe.utp.entrevistapro360.application.port.out.AlmacenamientoVideoPort almacenamiento, Clock clock,
             @org.springframework.beans.factory.annotation.Value("${integraciones.stt-model}") String stt,
             @org.springframework.beans.factory.annotation.Value("${integraciones.llm-model}") String llm,
-            pe.utp.entrevistapro360.application.port.out.ProcesamientoRepository procesamiento) {
-        return new pe.utp.entrevistapro360.application.GestionarRespuestaService(sesiones, catalogo, inspector, almacenamiento, clock, stt, llm, procesamiento);
+            pe.utp.entrevistapro360.application.port.out.ProcesamientoRepository procesamiento,pe.utp.entrevistapro360.application.port.out.FirmaVideoPort firma) {
+        return new pe.utp.entrevistapro360.application.GestionarRespuestaService(sesiones, catalogo, inspector, almacenamiento, clock, stt, llm, procesamiento,firma);
     }
     @Bean
     ConsultarCatalogo consultarCatalogo(CatalogoRepository repository) {

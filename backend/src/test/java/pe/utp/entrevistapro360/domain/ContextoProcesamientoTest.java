@@ -34,14 +34,15 @@ class ContextoProcesamientoTest {
         for(int i=0;i<3;i++) manual=c(c(manual).reclamar(now)).fallar("TEMP",true,now,0,5,15);
         assertThat(c(manual).definitivo()).isTrue(); assertThat(c(manual).recuperable()).isFalse();
     }
-    @Test void caidaTercerIntentoNoAdmiteCuartoYEvaluarNoEsElegible() {
+    @Test void caidaTercerIntentoNoAdmiteCuartoYFinalizadoNoEsElegible() {
         var r=nueva(); for(int i=0;i<3;i++) r=c(r).reclamar(now);
         var agotada=c(r).agotarLease(now.plusSeconds(91),5,15);
         assertThat(c(agotada).intentos()).isEqualTo(3); assertThat(c(agotada).version()).isEqualTo(4);
         final var tercera=r; assertThatThrownBy(()->c(tercera).reclamar(now)).isInstanceOf(IllegalStateException.class);
         var terminada=c(c(c(nueva()).audioExtraido("audio.wav")).transcrito()).metricasCompletas();
         assertThat(c(terminada).etapa()).isEqualTo(ContextoProcesamiento.Etapa.EVALUAR);
-        assertThat(c(terminada).elegible(sesion(),now)).isFalse();
+        assertThat(c(terminada).elegible(sesion(),now)).isTrue();
+        assertThat(c(c(terminada).evaluado()).elegible(sesion(),now)).isFalse();
         assertThat(c(nueva()).elegible(sesion().finalizarAnticipadamente(now),now)).isFalse();
     }
     @Test void errorDefinitivoNoProgramaIntentosNiPermiteManual() {

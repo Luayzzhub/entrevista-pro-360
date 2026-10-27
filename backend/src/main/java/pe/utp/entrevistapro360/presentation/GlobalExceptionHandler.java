@@ -24,6 +24,8 @@ import pe.utp.entrevistapro360.domain.TransicionSesionInvalidaException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(pe.utp.entrevistapro360.application.VideoNoDisponibleException.class)
+    ResponseEntity<ApiError> videoNoDisponible(RuntimeException ex) { return ResponseEntity.status(404).body(ApiError.of("VIDEO_NO_DISPONIBLE",ex.getMessage())); }
     @ExceptionHandler(pe.utp.entrevistapro360.domain.ReintentoNoDisponibleException.class)
     ResponseEntity<ApiError> reintento(RuntimeException ex) {
         return ResponseEntity.status(409).body(ApiError.of("REINTENTO_NO_DISPONIBLE",ex.getMessage()));

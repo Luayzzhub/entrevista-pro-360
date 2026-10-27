@@ -15,6 +15,7 @@ public class S3HttpFixture implements AutoCloseable {
     public final Map<String, Objeto> objetos = new ConcurrentHashMap<>();
     public final List<Peticion> peticiones = new CopyOnWriteArrayList<>();
     public volatile boolean noDisponible;
+    public volatile java.time.Clock relojFirma=java.time.Clock.systemUTC();
     public volatile Runnable despuesDePut = () -> { };
     private final HttpServer server;
     public S3HttpFixture() {
@@ -36,7 +37,8 @@ public class S3HttpFixture implements AutoCloseable {
         try {
             String metodo = x.getRequestMethod(), clave = x.getRequestURI().getPath();
             var h = x.getRequestHeaders();
-            boolean firmada = h.getFirst("Authorization") != null && h.getFirst("Authorization").startsWith("AWS4-HMAC-SHA256");
+            boolean firmada = (h.getFirst("Authorization") != null && h.getFirst("Authorization").startsWith("AWS4-HMAC-SHA256"))
+                    || FirmaS3Fixture.verificar(x,relojFirma);
             peticiones.add(new Peticion(metodo, clave, h.getFirst("If-None-Match"), h.getFirst("Content-Type"), h.getFirst("x-amz-acl"), firmada));
             if (!firmada) { error(x, 403, "AccessDenied"); return; }
             if (noDisponible) { error(x, 503, "ServiceUnavailable"); return; }

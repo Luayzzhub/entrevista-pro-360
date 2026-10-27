@@ -13,4 +13,6 @@ public interface ProcesamientoRepository {
     Optional<MetricaComunicacion> buscarMetrica(long respuesta);
     void guardarTranscripcion(Transcripcion transcripcion);
     void guardarMetrica(MetricaComunicacion metrica);
+    Optional<EvaluacionSTAR> buscarEvaluacion(long respuesta);
+    void guardarEvaluacion(EvaluacionSTAR evaluacion);
 }

@@ -48,7 +48,10 @@ public class S3AlmacenamientoVideoAdapter implements AlmacenamientoVideoPort {
     @Override public boolean existePrivado(String clave) {
         configurar();
         try { s3.headObject(HeadObjectRequest.builder().bucket(bucket).key(clave).build()); return true; }
-        catch (S3Exception ex) { if (ex.statusCode()==404) return false; throw clasificar(ex); }
+        catch (S3Exception ex) {
+            if (ex.statusCode()==404 && (ex.awsErrorDetails()==null || !"NoSuchBucket".equals(ex.awsErrorDetails().errorCode()))) return false;
+            throw clasificar(ex);
+        }
         catch (RuntimeException ex) { throw clasificar(ex); }
     }
     @Override public void descargarPrivado(String clave, Path destino) {

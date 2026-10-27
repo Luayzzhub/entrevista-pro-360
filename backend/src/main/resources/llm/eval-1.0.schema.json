@@ -1,0 +1,270 @@
+{
+  "type": "object",
+  "properties": {
+    "version_contrato": {
+      "type": "string",
+      "enum": [
+        "EVAL-1.0"
+      ]
+    },
+    "version_rubrica": {
+      "type": "string",
+      "enum": [
+        "COM-1.0"
+      ]
+    },
+    "criterios": {
+      "type": "object",
+      "properties": {
+        "relevancia": {
+          "type": "object",
+          "properties": {
+            "puntaje": {
+              "type": "integer",
+              "enum": [
+                0,
+                25,
+                50,
+                75,
+                100
+              ]
+            },
+            "justificacion": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 600
+            }
+          },
+          "required": [
+            "puntaje",
+            "justificacion"
+          ],
+          "additionalProperties": false
+        },
+        "claridad": {
+          "type": "object",
+          "properties": {
+            "puntaje": {
+              "type": "integer",
+              "enum": [
+                0,
+                25,
+                50,
+                75,
+                100
+              ]
+            },
+            "justificacion": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 600
+            }
+          },
+          "required": [
+            "puntaje",
+            "justificacion"
+          ],
+          "additionalProperties": false
+        },
+        "estructura": {
+          "type": "object",
+          "properties": {
+            "puntaje": {
+              "type": "integer",
+              "enum": [
+                0,
+                25,
+                50,
+                75,
+                100
+              ]
+            },
+            "justificacion": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 600
+            }
+          },
+          "required": [
+            "puntaje",
+            "justificacion"
+          ],
+          "additionalProperties": false
+        },
+        "evidencias": {
+          "type": "object",
+          "properties": {
+            "puntaje": {
+              "type": "integer",
+              "enum": [
+                0,
+                25,
+                50,
+                75,
+                100
+              ]
+            },
+            "justificacion": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 600
+            }
+          },
+          "required": [
+            "puntaje",
+            "justificacion"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "relevancia",
+        "claridad",
+        "estructura",
+        "evidencias"
+      ],
+      "additionalProperties": false
+    },
+    "aplica_star": {
+      "type": "boolean"
+    },
+    "detalle_star": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "situacion": {
+              "type": "object",
+              "properties": {
+                "estado": {
+                  "type": "string",
+                  "enum": [
+                    "PRESENTE",
+                    "PARCIAL",
+                    "AUSENTE"
+                  ]
+                },
+                "observacion": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 600
+                }
+              },
+              "required": [
+                "estado",
+                "observacion"
+              ],
+              "additionalProperties": false
+            },
+            "tarea": {
+              "type": "object",
+              "properties": {
+                "estado": {
+                  "type": "string",
+                  "enum": [
+                    "PRESENTE",
+                    "PARCIAL",
+                    "AUSENTE"
+                  ]
+                },
+                "observacion": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 600
+                }
+              },
+              "required": [
+                "estado",
+                "observacion"
+              ],
+              "additionalProperties": false
+            },
+            "accion": {
+              "type": "object",
+              "properties": {
+                "estado": {
+                  "type": "string",
+                  "enum": [
+                    "PRESENTE",
+                    "PARCIAL",
+                    "AUSENTE"
+                  ]
+                },
+                "observacion": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 600
+                }
+              },
+              "required": [
+                "estado",
+                "observacion"
+              ],
+              "additionalProperties": false
+            },
+            "resultado": {
+              "type": "object",
+              "properties": {
+                "estado": {
+                  "type": "string",
+                  "enum": [
+                    "PRESENTE",
+                    "PARCIAL",
+                    "AUSENTE"
+                  ]
+                },
+                "observacion": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 600
+                }
+              },
+              "required": [
+                "estado",
+                "observacion"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "situacion",
+            "tarea",
+            "accion",
+            "resultado"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "fortaleza_principal": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1200
+    },
+    "areas_mejora": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1200
+    },
+    "recomendaciones": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1200
+    }
+  },
+  "required": [
+    "version_contrato",
+    "version_rubrica",
+    "criterios",
+    "aplica_star",
+    "detalle_star",
+    "fortaleza_principal",
+    "areas_mejora",
+    "recomendaciones"
+  ],
+  "additionalProperties": false
+}
+

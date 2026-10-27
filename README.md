@@ -1,6 +1,6 @@
-# Entrevista Pro 360 — Incrementos 1 a 6
+# Entrevista Pro 360 — Incrementos 1 a 7
 
-MVP universitario con Spring Boot de cuatro capas, MySQL/Flyway y Angular VIS-1.0. Incluye identidad, catálogo, sesiones, captura, confirmación privada y worker durable PROC-1.0: extrae WAV con ffmpeg, transcribe en español por HTTP OpenAI y calcula MET-1.0. MCK 08 muestra el avance y permite un reintento manual. Tras las métricas queda TRANSCRITO/EVALUAR, en espera de la evaluación del Incremento 7.
+MVP universitario con Spring Boot de cuatro capas, MySQL/Flyway y Angular VIS-1.0. El worker durable PROC-1.0 extrae WAV, transcribe, calcula MET-1.0 y evalúa EVAL-1.0/COM-1.0. MCK 08 sigue el avance y permite un reintento manual; MCK 09 muestra resultado, transcripción y reproducción privada por URL firmada de 300 s. EVALUADO/FINALIZADO habilita la siguiente pregunta. Tras la tercera evaluación la sesión sigue EN_PROCESO sin promedio: el cierre corresponde al Incremento 8.
 
 ## Requisitos
 
@@ -12,7 +12,7 @@ MVP universitario con Spring Boot de cuatro capas, MySQL/Flyway y Angular VIS-1.
 | npm | Incluido con Node; usar `npm ci` con el lock entregado |
 | Angular CLI | 21.2.0 local, instalado mediante `npm ci`; no requiere instalación global |
 | MySQL | 8.4; verificado con 8.4.13 en una base exclusiva y usuario autorizado para migraciones |
-| Git | Incrementos 1 a 5 publicados; Incremento 6 sin commit para auditoría |
+| Git | Incrementos 1 a 6 publicados; Incremento 7 sin commit ni staging para auditoría |
 | Navegador y dispositivos | Cámara + micrófono; `getUserMedia` y MediaRecorder con uno de los tres formatos negociados. Usar localhost/loopback o HTTPS |
 | ffprobe / ffmpeg | 9.0.2 portable verificado: inspección de uploads y extracción WAV PCM s16le, mono, 16 kHz |
 
@@ -44,7 +44,7 @@ Spring y Angular no cargan `.env` automáticamente. Este script importa variable
 
 `DB_URL`, `DB_USERNAME` y `DB_PASSWORD` conectan la base. `JWT_SECRET` configura HS256 y debe contener al menos 32 bytes UTF-8. Si queda vacío en local, se genera una clave aleatoria por arranque: reiniciar invalida los tokens previos. Para producción activa `SPRING_PROFILES_ACTIVE=prod` y configura una clave propia; este perfil rechaza claves ausentes/cortas y fija BCrypt en costo 12.
 
-Configura AWS_REGION y S3_BUCKET con un bucket privado; el servidor necesita PutObject, GetObject/HEAD y DeleteObject para sus claves. El SDK obtiene credenciales del proveedor estándar AWS, nunca de Angular. S3_ENDPOINT_OVERRIDE queda vacío para AWS y admite un endpoint local con acceso por ruta. Configura OPENAI_API_KEY para STT; OPENAI_BASE_URL vale https://api.openai.com y STT_MODEL conserva gpt-4o-mini-transcribe-2025-12-15. La verificación usa S3 y STT HTTP locales con clientes reales: la cuenta OpenAI, disponibilidad del snapshot e IAM/bucket de producción no fueron certificados. No publiques .env ni claves.
+Configura AWS_REGION y S3_BUCKET con un bucket privado; el servidor necesita PutObject, GetObject/HEAD y DeleteObject para sus claves. El SDK obtiene credenciales del proveedor estándar AWS, nunca de Angular. S3_ENDPOINT_OVERRIDE queda vacío para AWS y admite un endpoint local con acceso por ruta. La reproducción valida propietario y HEAD antes de firmar GET por 300 s, sin persistir el enlace. Configura OPENAI_API_KEY para STT y evaluación; OPENAI_BASE_URL vale https://api.openai.com, STT_MODEL conserva gpt-4o-mini-transcribe-2025-12-15 y LLM_MODEL gpt-5.4-mini-2026-03-17. Responses usa store=false, sin herramientas y JSON Schema estricto. Las verificaciones usan S3/STT/LLM HTTP locales con clientes reales; las cuentas, modelos e IAM/bucket de producción no fueron certificados. No publiques .env ni claves.
 
 FFPROBE_BIN indica el ejecutable (por defecto ffprobe). En Windows el adaptador encuentra automáticamente .tools/ffmpeg/ffprobe.exe desde la raíz o backend. Si no dispones de binarios, descarga una compilación Windows enlazada desde [FFmpeg](https://ffmpeg.org/download.html) y coloca ffprobe.exe y ffmpeg.exe en esa carpeta ignorada; también puedes usar PATH o una ruta explícita en FFPROBE_BIN. Las pruebas necesitan ffmpeg real para generar sus archivos; FFMPEG_BIN permite seleccionar su ruta. No hay simulación de inspección ni descarga automática al atender una petición.
 
@@ -94,7 +94,9 @@ Recorrido del Incremento 4 dentro de la pregunta habilitada:
 
 En Incremento 5 **Confirmar respuesta se habilita para una toma local válida**. Mientras sube se bloquean confirmar/repetir, se muestra progreso y se pide mantener abierta la pestaña. Un fallo de red o S3 conserva la toma para volver a confirmar; 413/415/422 permiten repetirla. Solo un 202 revoca la toma y navega a /sesiones/:idSesion/respuestas/:idRespuesta (MCK 08).
 
-Grabar/repetir no crea filas; confirmar persiste SUBIDO y cambia la sesión a EN_PROCESO. El worker avanza a AUDIO_EXTRAIDO, TRANSCRITO y METRICAS. MCK 08 consulta cada 3 s y detiene el polling al llegar a TRANSCRITO/EVALUAR, FALLIDO o sesión terminal. Un fallo recuperable agotado permite Reintentar análisis una vez; una falla definitiva cancela la sesión conforme a D-02. La siguiente pregunta continúa bloqueada hasta EVALUADO, que corresponde al Incremento 7.
+Grabar/repetir no crea filas; confirmar persiste SUBIDO y cambia la sesión a EN_PROCESO. El worker procesa audio, STT, METRICAS y EVALUAR. MCK 08 consulta cada 3 s, también durante EVALUAR, hasta EVALUADO/FINALIZADO, FALLIDO o sesión terminal. Un fallo recuperable agotado permite Reintentar análisis una vez desde la etapa fallida; una falla definitiva cancela la sesión conforme a D-02. EVALUADO permite abrir MCK 09 y habilita la siguiente pregunta.
+
+MCK 09 presenta puntaje backend, cuatro criterios de peso 25 %, feedback plano seguro, STAR cualitativo cuando aplica y métricas descriptivas separadas del puntaje. El video usa un enlace temporal renovable; si falta, se conservan transcripción y resultado. Siguiente pregunta abre el detalle de sesión. Nueva práctica exige confirmar la cancelación de la sesión vigente. No se reemplazan videos confirmados. La tercera respuesta evaluada mantiene EN_PROCESO, promedio y fecha final nulos; se informa el límite del Incremento 8.
 
 La negociación prueba, en orden, WebM VP8/Opus, WebM VP9/Opus y MP4 H.264/AAC; ninguna opción disponible bloquea la captura. La duración local mide el intervalo solicitado; el servidor inspecciona las pistas/códecs y la duración real con ffprobe. Acepta WebM streaming sin duración en cabecera leyendo los timestamps de sus paquetes. Exige duración 1..60 s antes de redondear y tamaño estrictamente menor a 50 000 000 bytes.
 
@@ -139,7 +141,8 @@ El JAR queda en `backend/target/entrevista-pro-360-0.1.0-SNAPSHOT.jar`. Carga la
 - [Contrato de respuestas](docs/api-respuestas.md).
 - [Verificación del Incremento 5](docs/verificacion_incremento_5.md).
 - [Verificación del Incremento 6](docs/verificacion_incremento_6.md).
+- [Verificación del Incremento 7](docs/verificacion_incremento_7.md).
 
-Los Incrementos 1 a 5 están publicados en [Luayzzhub/entrevista-pro-360](https://github.com/Luayzzhub/entrevista-pro-360). El Incremento 6 fue auditado y aprobado sin observaciones y se cierra/publica mediante este commit atómico en origin/main. El Incremento 7 corresponde a evaluación estructurada EVAL-1.0/COM-1.0 con gpt-5.4-mini-2026-03-17, reproducción autorizada por URL firmada PA-04, resultado MCK 09 y habilitación de la siguiente pregunta. El cierre automático de sesión corresponde al Incremento 8. Los informes anteriores conservan su alcance histórico; la documentación de diseño original permanece fuera del repositorio.
+Los Incrementos 1 a 6 están publicados en [Luayzzhub/entrevista-pro-360](https://github.com/Luayzzhub/entrevista-pro-360). El Incremento 6 fue aprobado sin observaciones y publicado en main como f702fc4d03ff6e580e9cc92466c96a68798800db; el árbol quedó limpio y sincronizado antes de iniciar el 7. El Incremento 7 fue AUDITADO Y APROBADO SIN OBSERVACIONES y queda cerrado y publicado mediante este commit atómico en main. El cierre automático de sesión corresponde al Incremento 8. Los informes anteriores conservan su alcance histórico; la documentación de diseño original permanece fuera del repositorio.
 
 El worker está habilitado por defecto. Propiedades de integraciones: worker-habilitado=true, worker-intervalo-ms=2000, worker-heartbeat-ms=20000, worker-backoff-1-segundos=5 y worker-backoff-2-segundos=15. FFMPEG_BIN selecciona el ejecutable de extracción, también resuelto desde .tools/ffmpeg. La invocación secuencial evita acumular trabajos ffmpeg; el heartbeat dispone de su propio hilo.

@@ -11,15 +11,17 @@ public final class GestionarRespuestaService implements GestionarRespuesta {
     private final SesionRepository sesiones;
     private final CatalogoRepository catalogo;
     private final ProcesamientoRepository procesamiento;
+    private final FirmaVideoPort firma;
     private final InspectorMultimediaPort inspector;
     private final AlmacenamientoVideoPort almacenamiento;
     private final Clock clock;
     private final String modeloStt, modeloLlm;
     public GestionarRespuestaService(SesionRepository sesiones, CatalogoRepository catalogo, InspectorMultimediaPort inspector,
-            AlmacenamientoVideoPort almacenamiento, Clock clock, String modeloStt, String modeloLlm, ProcesamientoRepository procesamiento) {
+            AlmacenamientoVideoPort almacenamiento, Clock clock, String modeloStt, String modeloLlm, ProcesamientoRepository procesamiento, FirmaVideoPort firma) {
         this.sesiones = sesiones; this.catalogo = catalogo; this.inspector = inspector;
         this.almacenamiento = almacenamiento; this.clock = clock; this.modeloStt = modeloStt; this.modeloLlm = modeloLlm;
         this.procesamiento = procesamiento;
+        this.firma = firma;
     }
     @Override public VistaRespuesta confirmarRespuesta(long usuario, long sesion, int pregunta, Path archivo, long bytes) {
         VistaRespuesta previa = sesiones.conSesionBloqueada(usuario, sesion, s -> comprobar(s, pregunta));
@@ -86,12 +88,21 @@ public final class GestionarRespuestaService implements GestionarRespuesta {
         }).orElseThrow(RespuestaNoEncontradaException::new);
         return consultarRespuesta(usuario,idRespuesta);
     }
+    @Override public ReproduccionVideo reproducirRespuesta(long usuario,long idRespuesta) {
+        var r=sesiones.buscarRespuestaPropia(usuario,idRespuesta).orElseThrow(RespuestaNoEncontradaException::new);
+        try {
+            if(!almacenamiento.existePrivado(r.publicIdCloud()))throw new VideoNoDisponibleException();
+        }catch(FalloEtapaException ex){throw new AlmacenamientoNoDisponibleException();}
+        var inicio=clock.instant().truncatedTo(java.time.temporal.ChronoUnit.SECONDS);
+        return new ReproduccionVideo(idRespuesta,firma.firmar(r.publicIdCloud(),inicio),inicio.plusSeconds(300).atOffset(ZoneOffset.UTC));
+    }
     private VistaRespuesta vista(RespuestaVideo r, SesionEntrevista s, boolean existente) {
         Puesto puesto = catalogo.buscarPuesto(s.idPuesto()).orElseThrow(PuestoNoEncontradoException::new);
         Pregunta pregunta = catalogo.buscarPreguntasActivas(s.idPuesto()).stream().filter(p -> p.idPregunta().equals(r.idPregunta()))
                 .findFirst().orElseThrow(PreguntaNoEncontradaException::new);
         return new VistaRespuesta(r, s, puesto, pregunta, existente,
                 new ContextoProcesamiento(r).puedeReintentar(s,LocalDateTime.now(clock).withNano(0)),
-                procesamiento.buscarMetrica(r.idRespuesta()).orElse(null));
+                procesamiento.buscarMetrica(r.idRespuesta()).orElse(null),procesamiento.buscarTranscripcion(r.idRespuesta()).orElse(null),
+                procesamiento.buscarEvaluacion(r.idRespuesta()).orElse(null));
     }
 }

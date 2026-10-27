@@ -5,7 +5,7 @@ import java.util.*;
 import static pe.utp.entrevistapro360.domain.RespuestaVideo.EstadoProcesamiento.*;
 
 public final class ContextoProcesamiento {
-    public enum Etapa { EXTRAER_AUDIO, TRANSCRIBIR, METRICAS, EVALUAR }
+    public enum Etapa { EXTRAER_AUDIO, TRANSCRIBIR, METRICAS, EVALUAR, FINALIZADO }
     private final RespuestaVideo respuesta;
     private final Map<String, Object> datos;
     public ContextoProcesamiento(RespuestaVideo respuesta) {
@@ -19,6 +19,7 @@ public final class ContextoProcesamiento {
     public String hito() { return (String) datos.get("ultimo_hito_valido"); }
     public String audio() { return (String) datos.get("referencia_audio"); }
     public String modeloStt() { return (String) datos.get("modelo_stt"); }
+    public String modeloLlm() { return (String) datos.get("modelo_llm"); }
     public int intentos() { return ((Number) mapa(mapa(datos.get("intentos_por_etapa")).get(etapa().name())).get("ciclo_" + ciclo())).intValue(); }
     public boolean agotado() { return intentos() >= 3; }
     public boolean tieneLease() { return datos.get("bloqueo_hasta_utc") != null; }
@@ -30,7 +31,7 @@ public final class ContextoProcesamiento {
     public boolean elegible(SesionEntrevista sesion, LocalDateTime ahora) {
         LocalDateTime proximo = fecha("proximo_intento_utc");
         return !sesion.esTerminal() && Set.of(SUBIDO, AUDIO_EXTRAIDO, TRANSCRITO).contains(respuesta.estadoProcesamiento())
-                && etapa() != Etapa.EVALUAR && leaseLibre(ahora) && (proximo == null || !proximo.isAfter(ahora));
+                && etapa() != Etapa.FINALIZADO && leaseLibre(ahora) && (proximo == null || !proximo.isAfter(ahora));
     }
     public RespuestaVideo reclamar(LocalDateTime ahora) {
         if (agotado()) throw new IllegalStateException("No se permite un cuarto intento del ciclo.");
@@ -54,6 +55,7 @@ public final class ContextoProcesamiento {
     }
     public RespuestaVideo transcrito() { return exito(TRANSCRITO, Etapa.METRICAS); }
     public RespuestaVideo metricasCompletas() { return exito(TRANSCRITO, Etapa.EVALUAR); }
+    public RespuestaVideo evaluado() { return exito(EVALUADO, Etapa.FINALIZADO); }
     private RespuestaVideo exito(RespuestaVideo.EstadoProcesamiento estado, Etapa siguiente) {
         datos.put("ultimo_hito_valido", estado.name()); datos.put("etapa_actual", siguiente.name());
         datos.put("ultimo_error", null); datos.put("proximo_intento_utc", null); datos.put("bloqueo_hasta_utc", null);

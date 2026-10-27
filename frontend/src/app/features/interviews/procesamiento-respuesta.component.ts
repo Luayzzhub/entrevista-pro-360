@@ -36,7 +36,7 @@ export class ProcesamientoRespuestaComponent {
             if (respuesta.id_sesion !== sesion) { this.error.set('Esta respuesta no pertenece a la sesión indicada.'); return; }
             this.respuesta.set(respuesta); this.error.set(null);
             if (['SUBIDO', 'AUDIO_EXTRAIDO', 'TRANSCRITO'].includes(respuesta.estado_procesamiento)
-                && respuesta.etapa_actual !== 'EVALUAR' && !['CANCELADA', 'COMPLETADA'].includes(respuesta.estado_sesion))
+                && !['CANCELADA', 'COMPLETADA'].includes(respuesta.estado_sesion))
               temporizador = setTimeout(consultar, 3000);
           },
           error: error => { if (activa) { this.cargando.set(false); this.error.set(mensajeApi(error)); } }

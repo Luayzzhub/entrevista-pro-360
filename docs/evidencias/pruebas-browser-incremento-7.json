@@ -1,0 +1,581 @@
+{
+  "correcto": true,
+  "fecha_utc": "2026-10-25T23:36:36.482Z",
+  "navegador": "156.0.8078.47",
+  "total_casos": 9,
+  "casos": [
+    {
+      "nombre": "MCK08 → MCK09: P1, cuatro criterios, feedback plano, MET, transcripción y reproducción real",
+      "correcto": true,
+      "id_respuesta": 1
+    },
+    {
+      "nombre": "URL firmada real: 300 s, no-store, renovación manual y firma alterada rechazada",
+      "correcto": true
+    },
+    {
+      "nombre": "Error de reproductor después de expira_en renueva el enlace automáticamente",
+      "correcto": true
+    },
+    {
+      "nombre": "VIDEO_NO_DISPONIBLE oculta video y conserva evaluación, transcripción y métricas",
+      "correcto": true
+    },
+    {
+      "nombre": "P1 EVALUADO habilita Pregunta 2 y el detalle ofrece enlace a MCK09",
+      "correcto": true
+    },
+    {
+      "nombre": "P2: cuatro elementos STAR cualitativos y MCK09 adaptable a móvil",
+      "correcto": true,
+      "id_respuesta": 2
+    },
+    {
+      "nombre": "P3 EVALUADO conserva EN_PROCESO, promedio y fecha_fin nulos; cierre reservado al Incremento8",
+      "correcto": true,
+      "id_respuesta": 3
+    },
+    {
+      "nombre": "EVALUAR 3 × HTTP503 → FALLIDO recuperable → manual202 → MCK09 sin repetir etapas previas",
+      "correcto": true,
+      "id_respuesta": 4
+    },
+    {
+      "nombre": "Nueva práctica exige confirmar cierre, cancela sesión vigente y abre /puestos",
+      "correcto": true
+    }
+  ],
+  "peticiones_api": [
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/auth/login",
+      "estado": 200,
+      "ms": 1792971356917
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones",
+      "estado": 200,
+      "ms": 1792971357014
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/puestos",
+      "estado": 200,
+      "ms": 1792971357740
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones",
+      "estado": 200,
+      "ms": 1792971357741
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/sesiones",
+      "estado": 201,
+      "ms": 1792971357940
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/1",
+      "estado": 200,
+      "ms": 1792971358008
+    },
+    {
+      "metodo": "PUT",
+      "ruta": "/api/v1/sesiones/1/preguntas/1/respuesta",
+      "estado": 202,
+      "ms": 1792971362466
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/1",
+      "estado": 200,
+      "ms": 1792971362583
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/1",
+      "estado": 200,
+      "ms": 1792971365644
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/1",
+      "estado": 200,
+      "ms": 1792971366044
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/respuestas/1/reproduccion",
+      "estado": 200,
+      "ms": 1792971366114
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/respuestas/1/reproduccion",
+      "estado": 200,
+      "ms": 1792971367554
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/respuestas/1/reproduccion",
+      "estado": 200,
+      "ms": 1792971367603
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/respuestas/1/reproduccion",
+      "estado": 404,
+      "ms": 1792971367752
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/1",
+      "estado": 200,
+      "ms": 1792971368009
+    },
+    {
+      "metodo": "PUT",
+      "ruta": "/api/v1/sesiones/1/preguntas/2/respuesta",
+      "estado": 202,
+      "ms": 1792971370988
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/2",
+      "estado": 200,
+      "ms": 1792971371046
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/2",
+      "estado": 200,
+      "ms": 1792971374096
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/2",
+      "estado": 200,
+      "ms": 1792971374521
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/respuestas/2/reproduccion",
+      "estado": 200,
+      "ms": 1792971374550
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/1",
+      "estado": 200,
+      "ms": 1792971374965
+    },
+    {
+      "metodo": "PUT",
+      "ruta": "/api/v1/sesiones/1/preguntas/3/respuesta",
+      "estado": 202,
+      "ms": 1792971377852
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/3",
+      "estado": 200,
+      "ms": 1792971377895
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/3",
+      "estado": 200,
+      "ms": 1792971380932
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/3",
+      "estado": 200,
+      "ms": 1792971381341
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/respuestas/3/reproduccion",
+      "estado": 200,
+      "ms": 1792971381374
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/auth/login",
+      "estado": 200,
+      "ms": 1792971382468
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones",
+      "estado": 200,
+      "ms": 1792971382504
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/puestos",
+      "estado": 200,
+      "ms": 1792971382879
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones",
+      "estado": 200,
+      "ms": 1792971382892
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/sesiones",
+      "estado": 201,
+      "ms": 1792971382978
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/sesiones/2",
+      "estado": 200,
+      "ms": 1792971383021
+    },
+    {
+      "metodo": "PUT",
+      "ruta": "/api/v1/sesiones/2/preguntas/1/respuesta",
+      "estado": 202,
+      "ms": 1792971385912
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/4",
+      "estado": 200,
+      "ms": 1792971385971
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/4",
+      "estado": 200,
+      "ms": 1792971389010
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/4",
+      "estado": 200,
+      "ms": 1792971392054
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/respuestas/4/reintento",
+      "estado": 202,
+      "ms": 1792971392644
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/4",
+      "estado": 200,
+      "ms": 1792971392678
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/4",
+      "estado": 200,
+      "ms": 1792971395720
+    },
+    {
+      "metodo": "GET",
+      "ruta": "/api/v1/respuestas/4",
+      "estado": 200,
+      "ms": 1792971396159
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/respuestas/4/reproduccion",
+      "estado": 200,
+      "ms": 1792971396188
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/sesiones/2/cancelacion",
+      "estado": 200,
+      "ms": 1792971396420
+    }
+  ],
+  "errores_javascript": [],
+  "llamadas_stt": 4,
+  "llamadas_llm": 7,
+  "puts_wav": 4,
+  "esquema_llm": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "version_contrato": {
+          "type": "string",
+          "enum": [
+            "EVAL-1.0"
+          ]
+        },
+        "version_rubrica": {
+          "type": "string",
+          "enum": [
+            "COM-1.0"
+          ]
+        },
+        "criterios": {
+          "type": "object",
+          "properties": {
+            "relevancia": {
+              "type": "object",
+              "properties": {
+                "puntaje": {
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    25,
+                    50,
+                    75,
+                    100
+                  ]
+                },
+                "justificacion": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 600
+                }
+              },
+              "required": [
+                "puntaje",
+                "justificacion"
+              ],
+              "additionalProperties": false
+            },
+            "claridad": {
+              "type": "object",
+              "properties": {
+                "puntaje": {
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    25,
+                    50,
+                    75,
+                    100
+                  ]
+                },
+                "justificacion": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 600
+                }
+              },
+              "required": [
+                "puntaje",
+                "justificacion"
+              ],
+              "additionalProperties": false
+            },
+            "estructura": {
+              "type": "object",
+              "properties": {
+                "puntaje": {
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    25,
+                    50,
+                    75,
+                    100
+                  ]
+                },
+                "justificacion": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 600
+                }
+              },
+              "required": [
+                "puntaje",
+                "justificacion"
+              ],
+              "additionalProperties": false
+            },
+            "evidencias": {
+              "type": "object",
+              "properties": {
+                "puntaje": {
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    25,
+                    50,
+                    75,
+                    100
+                  ]
+                },
+                "justificacion": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 600
+                }
+              },
+              "required": [
+                "puntaje",
+                "justificacion"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "relevancia",
+            "claridad",
+            "estructura",
+            "evidencias"
+          ],
+          "additionalProperties": false
+        },
+        "aplica_star": {
+          "type": "boolean"
+        },
+        "detalle_star": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "situacion": {
+                  "type": "object",
+                  "properties": {
+                    "estado": {
+                      "type": "string",
+                      "enum": [
+                        "PRESENTE",
+                        "PARCIAL",
+                        "AUSENTE"
+                      ]
+                    },
+                    "observacion": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 600
+                    }
+                  },
+                  "required": [
+                    "estado",
+                    "observacion"
+                  ],
+                  "additionalProperties": false
+                },
+                "tarea": {
+                  "type": "object",
+                  "properties": {
+                    "estado": {
+                      "type": "string",
+                      "enum": [
+                        "PRESENTE",
+                        "PARCIAL",
+                        "AUSENTE"
+                      ]
+                    },
+                    "observacion": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 600
+                    }
+                  },
+                  "required": [
+                    "estado",
+                    "observacion"
+                  ],
+                  "additionalProperties": false
+                },
+                "accion": {
+                  "type": "object",
+                  "properties": {
+                    "estado": {
+                      "type": "string",
+                      "enum": [
+                        "PRESENTE",
+                        "PARCIAL",
+                        "AUSENTE"
+                      ]
+                    },
+                    "observacion": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 600
+                    }
+                  },
+                  "required": [
+                    "estado",
+                    "observacion"
+                  ],
+                  "additionalProperties": false
+                },
+                "resultado": {
+                  "type": "object",
+                  "properties": {
+                    "estado": {
+                      "type": "string",
+                      "enum": [
+                        "PRESENTE",
+                        "PARCIAL",
+                        "AUSENTE"
+                      ]
+                    },
+                    "observacion": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 600
+                    }
+                  },
+                  "required": [
+                    "estado",
+                    "observacion"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "situacion",
+                "tarea",
+                "accion",
+                "resultado"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fortaleza_principal": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1200
+        },
+        "areas_mejora": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1200
+        },
+        "recomendaciones": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1200
+        }
+      },
+      "required": [
+        "version_contrato",
+        "version_rubrica",
+        "criterios",
+        "aplica_star",
+        "detalle_star",
+        "fortaleza_principal",
+        "areas_mejora",
+        "recomendaciones"
+      ],
+      "additionalProperties": false
+    },
+    "name": "evaluacion_eval_1_0",
+    "type": "json_schema",
+    "strict": true
+  },
+  "entorno": "JAR y worker reales, MySQL8.4.13, ffmpeg real, HTTP S3/STT/LLM locales, SigV4 verificada y Chrome con cámara/micrófono emulados"
+}

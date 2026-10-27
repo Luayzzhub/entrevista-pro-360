@@ -1,4 +1,4 @@
-# Dependencias hasta el Incremento 6
+# Dependencias hasta el Incremento 7
 
 Las versiones del backend provienen de `backend/pom.xml` y del BOM `spring-boot-dependencies:3.5.7` resuelto por Maven. Las del frontend están fijadas sin rangos en `frontend/package.json` y resueltas en `frontend/package-lock.json`. No se atribuye uso funcional a dependencias reservadas.
 
@@ -11,7 +11,7 @@ Las versiones del backend provienen de `backend/pom.xml` y del BOM `spring-boot-
 | Spring Boot parent / Maven plugin | Composición/build | 3.5.7 | Autoconfiguración y JAR ejecutable | `EntrevistaPro360Application.java`, `pom.xml` |
 | `spring-boot-starter-web` | Presentación | 3.5.7; Spring MVC/Web 6.2.12 | HTTP REST, despacho de solicitudes y JSON | `CatalogoController`, `GlobalExceptionHandler` |
 | `spring-boot-starter-validation` | Presentación | 3.5.7; Hibernate Validator 8.0.3.Final | Validar el ID positivo | `CatalogoController.preguntas` con `@Positive` |
-| `spring-boot-starter-data-jpa` | Infraestructura | 3.5.7; Spring Data JPA 3.5.5; Hibernate ORM 6.6.33.Final | Catálogo, identidad, sesiones y pipeline, transacciones y PESSIMISTIC_WRITE | Adaptadores de catálogo/usuario/sesión y ProcesamientoJpaAdapter; siete entidades/repositorios, locks de sesión y respuesta |
+| `spring-boot-starter-data-jpa` | Infraestructura | 3.5.7; Spring Data JPA 3.5.5; Hibernate ORM 6.6.33.Final | Catálogo, identidad, sesiones y pipeline, transacciones y PESSIMISTIC_WRITE | Adaptadores de catálogo/usuario/sesión y ProcesamientoJpaAdapter; ocho entidades/repositorios, locks de sesión y respuesta |
 | `spring-boot-starter-security` | Infraestructura/presentación | 3.5.7; Spring Security 6.5.6 | Cadena stateless, autenticación JWT y hash BCrypt con costo 12 por defecto | `SecurityConfig`, `JwtAuthenticationFilter`, `BCryptPasswordHasher`, `SecurityExceptionHandler` |
 | `spring-security-oauth2-jose` | Infraestructura / identidad | 6.5.6, gestionada por Boot | Emitir y verificar JWT HS256, issuer y vigencia exacta | `IdentidadConfig` (`NimbusJwtEncoder`, `NimbusJwtDecoder`), `JwtTokenProvider`, `JwtAuthenticationFilter` |
 | `mysql-connector-j` | Infraestructura, runtime | 9.4.0, gestionada por Boot | JDBC hacia MySQL | application.yml, datasource y adaptadores JPA; servidor 8.4.13 verificado en Incremento 6 |
@@ -58,9 +58,11 @@ Los starters declaran su versión mediante el parent. Las transitivas listadas e
 | --- | --- | --- | --- | --- |
 | Extracción de audio con FFmpeg | Infraestructura activa | 9.0.2 | Extraer WAV desde video confirmado | Worker durable y FfmpegExtractorAudioAdapter; fuera de confirmación |
 | STT OpenAI | Infraestructura activa | gpt-4o-mini-transcribe-2025-12-15 exacto | Transcribir WAV en español por multipart | OpenAiTranscripcionAdapter probado con HTTP local real; cuenta/snapshot de producción sin verificar |
-| LLM OpenAI | Infraestructura futura | `gpt-5.4-mini-2026-03-17`, solicitado | Evaluación EVAL-1.0 | `.env.example`, `application.yml`; disponibilidad e integración pendientes |
+| LLM OpenAI | Infraestructura activa | gpt-5.4-mini-2026-03-17 exacto | Responses con JSON Schema EVAL-1.0, store=false, sin tools | OpenAiEvaluacionAdapter y LlmHttpFixture; protocolo HTTP local verificado, cuenta de producción pendiente |
 
 ## Consulta de versiones
+
+El Incremento 7 tampoco añade dependencias Maven/npm. Reutiliza HttpClient/JDK17 y Jackson para Responses con detección de claves duplicadas, límite de 2 MB y timeout total 60 s. Activa EvaluacionJpaEntity, octavo mapeo JPA, sin cambiar el esquema. ValidadorEvaluacion depende solo de Java. La firma GET usa AwsS3V4Signer/Aws4PresignerParams del SDK 2.31.54 existente, con signingClockOverride para respetar Clock (API legacy marcada deprecated por el SDK, funcional y probada). Los fixtures Java/Node verifican HMAC SigV4, expiración y manipulación; eso no acredita IAM de producción. Angular reutiliza Router, HttpClient, signals, RxJS y pipes; el resultado es una ruta standalone diferida.
 
 El Incremento 6 no añade dependencias Maven/npm. Usa HttpClient/BodyPublishers multipart del JDK 17, ProcessBuilder, AudioSystem para validar WAV sin hardware, Normalizer/Pattern/BigDecimal en dominio, ScheduledExecutorService para heartbeat y @Scheduled para trabajo secuencial. Activa dos mapeos JPA existentes en el esquema (transcripciones y metricas_comunicacion). Los fixtures HTTP usan HttpServer del JDK. Playwright sigue aislado en .tools para Chrome headless.
 

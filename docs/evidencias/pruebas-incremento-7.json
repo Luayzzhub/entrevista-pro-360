@@ -1,0 +1,324 @@
+{
+  "incremento": 7,
+  "fecha_utc": "2026-10-25T23:45:26.285300+00:00",
+  "resultado": "AUDITADO_APROBADO_SIN_OBSERVACIONES",
+  "auditoria": { "fecha": "2026-10-26", "aprobado": true, "observaciones": [], "cierre": "cerrado y publicado mediante este commit atomico en main" },
+  "git": {
+    "rama": "main",
+    "head": "f702fc4d03ff6e580e9cc92466c96a68798800db",
+    "incremento_6_auditoria": "APROBADO_SIN_OBSERVACIONES",
+    "incremento_6_publicado": "origin/main",
+    "mensaje_commit_6": "feat: implementar worker durable PROC-1.0, extraccion WAV, transcripcion STT, metricas MET-1.0 y reintento MCK08",
+    "antes_incremento_7": "## main...origin/main (limpio)",
+    "incremento_7_sin_commit": false,
+    "incremento_7_publicado": "este commit atomico en main",
+    "indice_vacio": true,
+    "tools_ignorado": true
+  },
+  "RF": {
+    "RF-15": "Verificado",
+    "RF-16": "En progreso: feedback individual",
+    "RF-17": "En progreso: resultado propio y reproduccion",
+    "RF-20": "Verificado: etapas1-4 por respuesta"
+  },
+  "pipeline": {
+    "etapas": [
+      "EXTRAER_AUDIO",
+      "TRANSCRIBIR",
+      "METRICAS",
+      "EVALUAR"
+    ],
+    "final": "EVALUADO / EVALUADO / FINALIZADO",
+    "reintento_manual": "unico; EVALUAR conserva hito TRANSCRITO sin repetir audio/STT/MET",
+    "fallo_definitivo": "CANCELADA; sin promedio",
+    "pregunta3": "sesion EN_PROCESO; puntaje_promedio=null; fecha_fin=null; cierre reservado al Incremento8"
+  },
+  "backend": {
+    "h2": {
+      "descubiertas": 154,
+      "ejecutadas": 152,
+      "omitidas": 2,
+      "fallas": 0,
+      "errores": 0,
+      "log_local": ".tools/inc7-h2.log"
+    },
+    "mysql84": {
+      "descubiertas": 154,
+      "ejecutadas": 154,
+      "omitidas": 0,
+      "fallas": 0,
+      "errores": 0,
+      "log_local": ".tools/inc7-mysql.log"
+    },
+    "suites_mysql": [
+      {
+        "nombre": "pe.utp.entrevistapro360.architecture.LayerDependenciesTest",
+        "pruebas": 1,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.CalculadorMetricasTest",
+        "pruebas": 7,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.ContextoProcesamientoTest",
+        "pruebas": 4,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.PuestoPreguntaTest",
+        "pruebas": 6,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.RespuestaVideoTest",
+        "pruebas": 8,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.SesionEntrevistaTest",
+        "pruebas": 15,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.UsuarioTest",
+        "pruebas": 11,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.domain.ValidadorEvaluacionTest",
+        "pruebas": 7,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.config.IdentidadConfigTest",
+        "pruebas": 3,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.llm.OpenAiEvaluacionAdapterTest",
+        "pruebas": 5,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.media.FfmpegExtractorAudioAdapterTest",
+        "pruebas": 2,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.media.FfprobeInspectorMultimediaAdapterTest",
+        "pruebas": 8,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.MySqlSchemaIntegrationTest",
+        "pruebas": 2,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.storage.S3AlmacenamientoVideoAdapterTest",
+        "pruebas": 3,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.infrastructure.stt.OpenAiTranscripcionAdapterTest",
+        "pruebas": 5,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.AuthPerfilIntegrationTest",
+        "pruebas": 13,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.CatalogoIntegrationTest",
+        "pruebas": 8,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.ConfirmacionRespuestaIntegrationTest",
+        "pruebas": 11,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.EvaluacionIntegrationTest",
+        "pruebas": 10,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.PipelineIntegrationTest",
+        "pruebas": 11,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      },
+      {
+        "nombre": "pe.utp.entrevistapro360.presentation.SesionIntegrationTest",
+        "pruebas": 14,
+        "fallas": 0,
+        "errores": 0,
+        "omitidas": 0
+      }
+    ],
+    "nuevas_pruebas": {
+      "dominio_EVAL": 7,
+      "cliente_LLM": 5,
+      "integracion_evaluacion_y_firma": 10
+    }
+  },
+  "llm": {
+    "modelo": "gpt-5.4-mini-2026-03-17",
+    "endpoint": "/v1/responses",
+    "store": false,
+    "tools": false,
+    "formato": "json_schema / evaluacion_eval_1_0 / strict=true",
+    "entrada_campos": 7,
+    "metadatos_identidad": false,
+    "timeout_total_segundos": 60,
+    "max_bytes_respuesta": 2000000,
+    "schema": "backend/src/main/resources/llm/eval-1.0.schema.json",
+    "validacion_y_puntaje": "domain/ValidadorEvaluacion",
+    "salida_invalida": "SALIDA_EVALUACION_INVALIDA recuperable; no persiste fila"
+  },
+  "reproduccion": {
+    "endpoint": "POST /api/v1/respuestas/{id}/reproduccion",
+    "autorizacion": "propietario JWT y HEAD privado",
+    "cache_control": "no-store",
+    "firma": "AWS SDK2 AwsS3V4Signer, signingClockOverride",
+    "segundos": 300,
+    "firma_criptografica_fixture": true,
+    "manipulacion_rechazada": true,
+    "expiracion_rechazada": true,
+    "video_ausente": "404 VIDEO_NO_DISPONIBLE; conserva resultado",
+    "infraestructura": "503 ALMACENAMIENTO_NO_DISPONIBLE",
+    "url_persistida": false
+  },
+  "frontend": {
+    "medios": {
+      "ejecutadas": 6,
+      "fallas": 0
+    },
+    "build": "correcto, sin advertencias de presupuesto",
+    "chrome": "156.0.8078.47",
+    "casos": [
+      {
+        "nombre": "MCK08 → MCK09: P1, cuatro criterios, feedback plano, MET, transcripción y reproducción real",
+        "correcto": true,
+        "id_respuesta": 1
+      },
+      {
+        "nombre": "URL firmada real: 300 s, no-store, renovación manual y firma alterada rechazada",
+        "correcto": true
+      },
+      {
+        "nombre": "Error de reproductor después de expira_en renueva el enlace automáticamente",
+        "correcto": true
+      },
+      {
+        "nombre": "VIDEO_NO_DISPONIBLE oculta video y conserva evaluación, transcripción y métricas",
+        "correcto": true
+      },
+      {
+        "nombre": "P1 EVALUADO habilita Pregunta 2 y el detalle ofrece enlace a MCK09",
+        "correcto": true
+      },
+      {
+        "nombre": "P2: cuatro elementos STAR cualitativos y MCK09 adaptable a móvil",
+        "correcto": true,
+        "id_respuesta": 2
+      },
+      {
+        "nombre": "P3 EVALUADO conserva EN_PROCESO, promedio y fecha_fin nulos; cierre reservado al Incremento8",
+        "correcto": true,
+        "id_respuesta": 3
+      },
+      {
+        "nombre": "EVALUAR 3 × HTTP503 → FALLIDO recuperable → manual202 → MCK09 sin repetir etapas previas",
+        "correcto": true,
+        "id_respuesta": 4
+      },
+      {
+        "nombre": "Nueva práctica exige confirmar cierre, cancela sesión vigente y abre /puestos",
+        "correcto": true
+      }
+    ],
+    "errores_javascript": [],
+    "evidencia": "pruebas-browser-incremento-7.json",
+    "STT": 4,
+    "LLM": 7,
+    "WAV": 4
+  },
+  "esquema": {
+    "mysql": "8.4.13",
+    "tablas": 8,
+    "columnas": 68,
+    "columnas_por_tabla": {
+      "evaluaciones_star": 14,
+      "metricas_comunicacion": 8,
+      "preguntas": 8,
+      "puestos": 6,
+      "respuestas_video": 10,
+      "sesiones_entrevista": 7,
+      "transcripciones": 6,
+      "usuarios": 9
+    },
+    "ddl_auto": "validate",
+    "migraciones": [
+      "V1__esquema_inicial.sql",
+      "V2__catalogo_semilla.sql"
+    ],
+    "V1_V2_modificadas": false,
+    "V3": false
+  },
+  "jar_sha256": "d7c118a50febc5db68c01be59af07e8eeeab3cb972e1d2464dd267cb420ce0db",
+  "aislamiento": {
+    "maven": "ep360_incremento7_test; worker programado deshabilitado",
+    "chrome": "ep360_incremento7_browser; worker habilitado, intervalo500ms/backoff1-1s"
+  },
+  "limites": [
+    "S3/STT/LLM HTTP locales con clientes Java reales; cuentas, IAM y disponibilidad de modelos de produccion no certificadas.",
+    "Chrome con dispositivos emulados; no es certificacion de hardware fisico.",
+    "No se implementa cierre automatico, promedio global ni resumen de sesion del Incremento8.",
+    "Flyway11.7.2 recomienda actualizar por MySQL8.4; las migraciones y validate pasaron.",
+    "La API de firma del SDK2.31.54 esta marcada deprecated, pero la firma SigV4 equivalente fue verificada con Clock y sin nuevas dependencias."
+  ]
+}
